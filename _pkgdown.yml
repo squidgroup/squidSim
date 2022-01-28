@@ -1,15 +1,3 @@
 url: https://squid-group.github.io/squidSim
-home:
-  title: squidSim
-  description: Simulation package for the Statistical Quantification of Individual Differences project
-authors: 
-  Joel L Pick:
-  Hassen Allegue:
-  Yimen G. Araya-Ajoy:
-  Niels J. Dingemanse:
-  Ned A. Dochtermann:
-  Laszlo Z. Garamszegi: 
-  Shinichi Nakagawa: 
-  Denis Reale: 
-  Holger Schielzeth: 
-  David F. Westneat:
+template:
+  bootstrap: 5
