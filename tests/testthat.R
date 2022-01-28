@@ -1,4 +1,4 @@
 library(testthat)
-library(squid)
+library(squidSim)
 
-test_check("squid")
+test_check("squidSim")

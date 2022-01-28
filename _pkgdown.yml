@@ -1,8 +1,9 @@
-url: https://squid-group.github.io/squid
+url: https://squid-group.github.io/squidSim
 home:
-  title: SQuID
-  description: Statistical Quantification of Individual Differences
+  title: squidSim
+  description: Siumulation package for the Statistical Quantification of Individual Differences project
 authors: 
+  Joel L Pick:
   Hassen Allegue:
   Yimen G. Araya-Ajoy:
   Niels J. Dingemanse:
