@@ -216,7 +216,7 @@ sample_population <- function(x, type, param, plot=FALSE){
 get_sample_data <- function(x, sample_set=1, list=FALSE,...){
   
   pop_list <- lapply(1:x$N_pop,function(i) {
-  	data.table(cbind(x$y[[i]],x$predictors[[i]],x$data_structure,squid_pop=i)[x$samples[[i]][[sample_set]],])
+  	data.table::data.table(cbind(x$y[[i]],x$predictors[[i]],x$data_structure,squid_pop=i)[x$samples[[i]][[sample_set]],])
   })
   
   if(list){

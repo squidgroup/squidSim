@@ -7,7 +7,7 @@ Status](https://travis-ci.org/squid-group/squid.svg?branch=master)](https://trav
 [![total
 downloads](http://cranlogs.r-pkg.org/badges/grand-total/squid)](http://cranlogs.r-pkg.org/badges/grand-total/squid) -->
 
-<img id='logo' src='./man/pictures/squidSim_blue.png' align='left' alt='' style='padding-right:20px;'>
+<img id='logo' src='./man/figures/squidSim_blue.png' align='left' alt='' style='padding-right:20px;' width='150'>
 
 The `squidSim` package is a simulation tool that can be used for both research and educational purposes. Its main aim is to aid empiricists in the understanding of linear mixed effects model and hierarchical data. The package allows hierarchical data structure to be created or imported, which is then used as the basis for simulations. It also provides tools for sampling the data in multiple ways. The package has been designed with flexibility in mind and can simulate some a huge variety of different models, including the simulation of genetic and phylogenetic effects. 
 
@@ -21,7 +21,7 @@ The framework is suitable for performing simulation studies, determining optimal
 Currently the squidSim package is not on CRAN, but you can install the development version from GitHub:
 
     # install.packages("devtools")
-    devtools::install_github("hallegue/squid")
+    devtools::install_github("squid-group/squidSim")
 
 
 #### Getting started
@@ -43,7 +43,7 @@ Briefly, load the squidSim package in R:
 
 #### Background to the project
 
-<img id='logo' src='./man/pictures/squidSim_blue.png' align='left' alt='' style='padding-right:20px;'>
+<img id='logo' src='./man/figures/logo_2.png' align='left' alt='' style='padding-right:20px;'>
 
 **SQuID** stands for **S**tatistical **Qu**antification of **I**ndividual **D**ifferences and refers to a working group of behavioural and evolutionary ecologists (link to main group page).
 
