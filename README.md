@@ -7,7 +7,7 @@ Status](https://travis-ci.org/squid-group/squid.svg?branch=master)](https://trav
 [![total
 downloads](http://cranlogs.r-pkg.org/badges/grand-total/squid)](http://cranlogs.r-pkg.org/badges/grand-total/squid) -->
 
-<img id='logo' src='./man/figures/squidSim_blue.png' align='left' alt='' style='padding-right:20px;' width='150'>
+<img id='logo' src='./man/figures/squidSim_logo.png' align='left' alt='' style='padding-right:20px;' width='150'>
 
 The `squidSim` package is a simulation tool that can be used for both research and educational purposes. Its main aim is to aid empiricists in the understanding of linear mixed effects model and hierarchical data. The package allows hierarchical data structure to be created or imported, which is then used as the basis for simulations. It also provides tools for sampling the data in multiple ways. The package has been designed with flexibility in mind and can simulate some a huge variety of different models, including the simulation of genetic and phylogenetic effects. 
 
