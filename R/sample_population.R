@@ -70,21 +70,25 @@ sample_missing <- function(pop_data, param, plot=FALSE){
 	## check that missingness predictors are are in y or predictors (error message will be given if they;re not, but might be worth making more informative one)
 	## by default center and scale predictors
 	## option to plot missingness function
-		
 	lapply(1:pop_data$N_pop, function(i){	
 
 		## put together y and predictors and scale
 		## scaling means that all coefficients are comparable
 		dat <- as.data.frame(apply(cbind(pop_data$y[[i]],pop_data$predictors[[i]]),2,scale) )
-	
-			l <- sapply(param, function(x) {
-				y <- eval(parse(text=x),envir = dat)
-			  if(length(y)==1) y <- rep(y, nrow(dat))
-			  return(y)
-			})
-			e <- stats::plogis(l)
-			o <- apply(e,2,function(x)as.logical(stats::rbinom(length(x),1,x)))
+
+		l <- sapply(param, function(x) {
+			y <- eval(parse(text=x),envir = dat)
+		  if(length(y)==1) y <- rep(y, nrow(dat))
+		  return(y)
+		})
+		e <- stats::plogis(l)
+		o <- apply(e,2,function(x)as.logical(stats::rbinom(length(x),1,x)))
+		indices  <- apply(o,2,which)
+		if(length(param)==1){
+			list(which(o))
+		}else{
 			apply(o,2,which)
+		}
 	})
 	# could make total N constant ;using the probabilities e with sample
 
@@ -129,8 +133,8 @@ sample_temporal <- function(data_structure, time, group, variance, N, plot=FALSE
   indices <- sort(c(lapply(1:N_levels, function(x){ 
         Tx <- sort(sample(1:TsampW,N, replace=FALSE)) + sample(1:TsampB,1) + Tmin -1
         if(plot) graphics::points(Tx,rep(x,N), pch=19, col=x)
-        Tx
-        all_levels[x]
+        # Tx
+        # all_levels[x]
         index1 <- which(data_structure[,group]==all_levels[x])
         index1[which(data_structure[index1,time] %in% Tx)]
         
@@ -143,22 +147,22 @@ sample_temporal <- function(data_structure, time, group, variance, N, plot=FALSE
 
 
 
-#' @title sample_population
-#' @description Sample population level data
-#' @param x A squid object, created using simulate_population().
-#' @param type Type of sampling, needs to be one of 'nested', 'missing' or temporal. See details.
-#' @param param A set of parameters, specific to the sampling type. See details.
-#' @param plot Logical. Should illustrative plots be made - defaults to FALSE.
-#' @details ...
-#' @return 
-#' @examples
-#' 
-#' @export
-sample_population <- function(x, type, param, plot=FALSE){
+## @title sample_population
+## @description Sample population level data
+## @param x A squid object, created using simulate_population().
+## @param type Type of sampling, needs to be one of 'nested', 'missing' or temporal. See details.
+## @param param A set of parameters, specific to the sampling type. See details.
+## @param plot Logical. Should illustrative plots be made - defaults to FALSE.
+## @details ...
+## @return 
+sample_population <- function(x){
 	
-	if(class(x) != "squid"){
-		stop("x needs to be class 'squid'")
-	}
+	type <- x$sample_type
+	param <- x$sample_param
+	plot <- x$sample_plot
+	# if(class(x) != "squid"){
+	# 	stop("x needs to be class 'squid'")
+	# }
 
 	if(type=="nested"){
 		if(!is.matrix(param)){
@@ -193,10 +197,10 @@ sample_population <- function(x, type, param, plot=FALSE){
 		stop("type must be 'nested', 'missing' or 'temporal'")
 	}
 
-	pop_data$sample_param <- list(type=type, param=param)
-
-	pop_data$samples <- indices
-	pop_data
+	# pop_data$sample_param <- list(type=type, param=param)
+	indices
+	# pop_data$samples <- indices
+	# pop_data
 	## apply to each population 
 	## incorporate into squid object
 
