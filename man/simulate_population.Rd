@@ -18,6 +18,9 @@ simulate_population(
   phylogeny,
   phylogeny_type,
   cov_str,
+  sample_type,
+  sample_param,
+  sample_plot = FALSE,
   N_pop = 1
 )
 }
@@ -48,10 +51,16 @@ simulate_population(
 
 \item{cov_str}{A list of covariance structures for each hierarchical level.}
 
+\item{sample_type}{Type of sampling, needs to be one of 'nested', 'missing' or temporal. See details}
+
+\item{sample_param}{A set of parameters, specific to the sampling type. See details.}
+
+\item{sample_plot}{Logical. Should illustrative plots be made - defaults to FALSE.}
+
 \item{N_pop}{Number of populations. Default = 1}
 }
 \value{
-
+a squid object, which is a list including all inputs and simulated data.
 }
 \description{
 Simulate population level data
@@ -60,5 +69,21 @@ Simulate population level data
 Parameter list ...
 }
 \examples{
+# simple linear model with three predictors variables
+squid_data <- simulate_population(
+  parameters = list(
+    observation = list(
+      names = c("temperature","rainfall", "wind"),
+      beta = c(0.5,-0.3, 0.4)    
+  ),
+    residual = list(
+      vcov = 1
+    )
+  ),
+  N=2000
+)
 
+}
+\author{
+Joel Pick - joel.l.pick@gmail.com
 }

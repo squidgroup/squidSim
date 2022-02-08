@@ -46,3 +46,4 @@ Suggests:
     scales,
     MCMCglmm
 VignetteBuilder: knitr
+Encoding: UTF-8

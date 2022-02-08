@@ -56,8 +56,19 @@ add_interactions <- function(all_levels, int){
 #' @param repeat_obs Number of repeated observations at the lowest level
 #' @param ... Further arguments passed to or from other methods.
 #' @details Factors are input as a text string. The name of each factor is followed by the number of levels in that factor in brackets e.g. "individual(100)". Nested factors can be specified using "/", e.g. "population(2)/individual(2)", the lower levels being specified after the higher levels, and the sample sizes of the lower levels 
-#' @return 
+#' @author Joel Pick - joel.l.pick@gmail.com
+#' @return A data.frame with the data structure
 #' @examples
+#' # simple data structure with 5 'individuals' and 2 observations per individual
+#' make_structure(structure="individual(5)", repeat_obs=2)
+#' 
+#' # nested data structure with 2 sexes, 5 individuals per sex
+#' # and 2 observations per individual
+#' make_structure(structure="sex(2)/individual(5)", repeat_obs=2)
+#' 
+#' # crossed data structure with 5 individuals in 2 treatments 
+#' # and 2 observations per individual and treatment combination
+#' make_structure(structure="treatment(2) + individual(5)", repeat_obs=1)
 #' 
 #' @export
 

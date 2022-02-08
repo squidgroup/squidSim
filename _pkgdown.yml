@@ -1,3 +1,4 @@
 url: https://squid-group.github.io/squidSim
 template:
   bootstrap: 5
+  bootswatch: yeti
