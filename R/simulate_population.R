@@ -75,20 +75,44 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, kno
 
 
 #####################  
+###---data structure as indexes
+      ## index data_structure
+
+#####################  
+
+  output$str_index <- do.call(index_factors, output)
+
+#####################  
 ###---cov structures
 #####################  
 
 
   ## check pedigree levels match data structure levels
   ## make function - that can check ped,phylo and covs
+  
+  if(!is.null(pedigree)){
+    if(missing(pedigree_type)){
+      output$pedigree_type <- as.list(rep("additive",length(pedigree)))
+      names(output$pedigree_type) <- names(pedigree)
+    }else{
+      if(!pedigree_type %in% c("additive","dominance","epistatic"))stop("phylogeny_type must be wither 'additive','dominance' or 'epistatic'")
+      if(length(pedigree)!=length(pedigree_type)) stop("pedigree and pedigree_type need to be the same length")
+      if(sort(names(pedigree))==sort(names(pedigree))) stop("names of pedigree and pedigree_type need to match")
+    }
+  }
+  if(!is.null(phylogeny)){
+    if(missing(phylogeny_type)){
+      output$phylogeny_type <- as.list(rep("brownian",length(phylogeny)))
+      names(output$phylogeny_type) <- names(phylogeny)
+    }else{
+      if(!phylogeny_type %in% c("brownian","OU")) stop("phylogeny_type must be wither 'brownian' or 'OU'")
+      if(length(phylogeny)!=length(phylogeny_type)) stop("phylogeny and phylogeny_type need to be the same length")
+      if(sort(names(phylogeny))==sort(names(phylogeny))) stop("names of phylogeny and phylogeny_type need to match")
+    }
+  }
 
-  output$cov_str <- do.call(cov_str_list, output)
+  output$cov_str_all <- do.call(cov_str_list, output)
   ## make cov_str with everything, then return it back to cov_str after predictors
-
-
-  ## MCAR, sample a given number 
-  ## MAR, sample a given number based of probability given by a predictor
-  ## MNAR, sample a given number based of probability given by that response
 
 
 #####################  
@@ -113,8 +137,17 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, kno
 ##################### 
 
   output$y <- lapply(y, function(x) transform_dist(x, family, link))
-  
+
+
+#####################  
+###--- DO SAMPLING 
+##################### 
+
   if(!is.null(output$sample_type)) output$samples <- sample_population(output)
+
+### work out what to return 
+
+  # output <- output[c("")]
 
   class(output) <- 'squid'
   return(output)

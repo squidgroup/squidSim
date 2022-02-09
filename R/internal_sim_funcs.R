@@ -6,86 +6,132 @@ ar1_cor <- function(n, rho) {
 # from https://www.r-bloggers.com/2020/02/generating-correlation-matrix-for-ar1-model/
 #ar1_cor(n=10,rho=0.5)
 
-index_factors <- function(data_structure, pedigree, parameters,...){
-  
-  if(is.null(data_structure)){
-    NULL
-  }else{
-    ## for each column of the data structure, are any of the parameters list names associated with it, linked with a pedigree. If so, then get the row number in the pedigree, as that will match the indexing in the pedigree
-    
-    new_ds <- do.call(cbind,lapply(colnames(data_structure), function(i){
+
+## cov_str_check
+##  performs error checking of all cov structures
+cov_str_check <- function(data_structure, pedigree, phylogeny, cov_str, parameters,...){
+  cs_check <- lapply(c("pedigree","phylogeny","cov_str"), function(j){
+      cs <- get(j)
+      if(!is.list(cs) | is.data.frame(cs)) stop(j, " needs to be a list", call.=FALSE) 
+    })
+
+  param_names <- names(parameters)
+  group_names <- sapply(parameters,function(x) x$group)
+  ped_names <- names(pedigree)
+  phylo_names <- names(phylogeny)
+  cov_names <- names(cov_str)
+  cs_names <- c(ped_names,phylo_names,cov_names)
+
+  if(any(duplicated(cs_names))) stop("Cannot have multiple covariance structures (pedigree/phylogeny/cov_str) linking to the same item in the parameter list. If multiple covariance structures are needed to be linked to the same grouping factor in the data_structure (for example simulating additive genetic and dominance effects), then create multiple items in the parameter list, with different names, but the same 'group', and link the covariance structures accordingly.", call.=FALSE)
+  if(any(!cs_names %in% param_names)) stop("Some names in pedigree/phylogeny/cov_str are not in parameters", call.=FALSE)
+
+
+  lapply(colnames(data_structure), function(i){
       # i = colnames(data_structure)[1]
-
-      if(any(names(parameters)[sapply(parameters,function(x) x$group) %in% i] %in% names(pedigree))){ 
-        
-        list_names <- names(parameters)[sapply(parameters,function(x) x$group) %in% i]
-        ped_link <- list_names[list_names %in% names(pedigree)]
-        if(length(ped_link)>1){stop("Multiple pedigrees linked to one grouping factor", call.=FALSE)}
-        match(data_structure[,i],pedigree[[ped_link]][,1])
-      }else{ 
-        as.numeric(factor(data_structure[,i]))
-      }
-    }))
     
-    # apply(data_structure,2,function(x) as.numeric(factor(x)))
-    colnames(new_ds) <- colnames(data_structure)
-    return(new_ds)
+    # are any of the parameter list names associated with it     
+    list_names <- param_names[group_names %in% i]
+    
+    ped_link <- list_names[list_names %in% ped_names]
+    phylo_link <- list_names[list_names %in% phylo_names]
+    cov_link <- list_names[list_names %in% cov_names]
+    all_link <- c(ped_link,phylo_link,cov_link)
 
-  }
-}
-
-index_ped <- function(pedigree, unknown=NA){
-  
-  new_ped <- data.frame(
-    1:nrow(pedigree), 
-    ifelse(is.na(pedigree[,2]),unknown,match(pedigree[,2], pedigree[,1])), 
-    ifelse(is.na(pedigree[,3]),unknown,match(pedigree[,3], pedigree[,1]))
-  )
-  colnames(new_ped) <- colnames(pedigree)[1:3]
-
-  return(new_ped) 
-}
-
-
-cov_str_list <- function(parameters, data_structure, pedigree, phylogeny, cov_str,...){
-
-  ped_check <- lapply(c("pedigree","phylogeny","cov_str"), function(j){
-    cs <- get(j)
-    if(!is.null(cs) && (!is.list(cs) | is.data.frame(cs))) stop(j, " needs to be a list", call.=FALSE) 
+    if(length(all_link)>1){ 
+      warning("Multiple covariance structures linked to ",i,". The function assumes that the covariance strictures are ordered exactly the same. If they are not then the simulations will not run as you expect. You will need to create multiple columns in grouping structure and link different covariance structures to each one.", call.=FALSE) 
+    }
   })
 
-  ped_names <- c(names(pedigree),names(phylogeny),names(cov_str))
-  if(any(duplicated(ped_names))) stop("Cannot have multiple covariance structures linking to the same item in the parameter list", call.=FALSE)
-  if(any(!ped_names %in% names(parameters))) stop("Some names in pedigree/phylogeny/cov_str are not in parameters", call.=FALSE)
+  # ped_names <- c(names(pedigree),names(phylogeny),names(cov_str))
 
-  ped_chol <- lapply(pedigree, function(x) Matrix::chol(nadiv::makeA(x)))
-  phylo_chol <- lapply(phylogeny, function(x) methods::as(chol(ape::vcv(x), corr = TRUE), "dgCMatrix"))
+  # names_check <- lapply(ped_names,function(i){
+  # # data_structure[,i]
+  #   if(!all(unique(rownames(chol_str_all[[i]])) %in% unique(data_structure[,parameters[[i]]$group]))) stop(paste("all IDs in the pedigree/phylogeny/cov_str linked with", i, "are not in the data_structure"), call.=FALSE)
+  #   if(!all(unique(data_structure[,parameters[[i]]$group]) %in% unique(rownames(chol_str_all[[i]])))) stop(paste("all IDs in data_structure are not in the pedigree/phylogeny/cov_str linked with", i), call.=FALSE)      
+  # })
+  
+}
+
+
+
+### function to turn data_structure into indexes. Matches names in data_structure to linked pedigree/phylogeny/cov_str to make sure indexing is correct. Doesnt do any error checking
+index_factors <- function(data_structure, pedigree, phylogeny, cov_str, parameters,...){
+  
+  new_ds <- if(is.null(data_structure)){   
+    NULL
+ 
+  }else if(is.null(pedigree) & is.null(phylogeny) & is.null(cov_str)){
+    apply(data_structure,2,function(x) as.numeric(factor(x)))
+
+  }else{
+
+    do.call(cbind,
+    ## for each column of the data structure
+      lapply(colnames(data_structure), function(i){
+      # i = colnames(data_structure)[1]
+        
+        # are any of the parameter list names associated with it     
+        list_names <- names(parameters)[sapply(parameters,function(x) x$group) %in% i]
+        
+        ped_link <- list_names[list_names %in% names(pedigree)]
+        phylo_link <- list_names[list_names %in% names(phylogeny)]
+        cov_link <- list_names[list_names %in% names(cov_str)]
+       
+        # if linked with a something get the row number in the relevant cov_str, so the indexing will match the order in that cov str.
+        # Can only match with one so is assuming that if multiple things are linked with it that the ordering is the same, so takes the first linked cov str it can find and indexes according to that
+
+        if(length(ped_link)>0){
+          # first column of pedigree
+          match(data_structure[,i],pedigree[[ped_link[1]]][,1])
+        }else if(length(phylo_link)>0){ 
+          match(data_structure[,i],phylogeny[[phylo_link[1]]]$tip.label)
+        }else if(length(cov_link)>0){
+          # rownames(of cov_str) 
+          match(data_structure[,i],rownames(cov_str[[cov_link[1]]]))
+        }else{
+          as.numeric(factor(data_structure[,i]))
+        }
+      })
+    )
+    
+  }
+  colnames(new_ds) <- colnames(data_structure)
+    return(new_ds)
+}
+
+
+cov_str_list <- function(parameters, data_structure, pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,...){
+
+  ped_chol <- lapply(names(pedigree), function(x){
+    if(pedigree_type[[x]]=="additive") Matrix::chol(nadiv::makeA(pedigree[[x]]))
+    if(pedigree_type[[x]]=="dominance") Matrix::chol(nadiv::makeD(pedigree[[x]]))
+    if(pedigree_type[[x]]=="epistatic") Matrix::chol(nadiv::makeAA(pedigree[[x]]))
+  })
+
+  phylo_chol <- lapply(names(phylogeny), function(x){
+    phylo_vcv <- ape::vcv(phylogeny[[x]], corr = TRUE)
+    # if(phylogeny_type[[x]]=="OU") {
+    #   ## need way of specifying alpha
+    #   phylo_vcv <- exp(phylo_vcv * - alpha)
+    #   diag(phylo_vcv) <- 1
+    # }
+    methods::as(chol(phylo_vcv), "dgCMatrix")
+  })
+
   cor_chol <- lapply(cov_str, function(x) methods::as(chol(x), "dgCMatrix"))
 
-  chol_str<-c(ped_chol,phylo_chol,cor_chol)
+  chol_str_all<-c(ped_chol,phylo_chol,cor_chol)
 
-  names_check <- lapply(ped_names,function(i){
-  # data_structure[,i]
-    if(!all(unique(rownames(chol_str[[i]])) %in% unique(data_structure[,parameters[[i]]$group]))) stop(paste("all IDs in the pedigree/phylogeny/cov_str linked with", i, "are not in the data_structure"), call.=FALSE)
-    if(!all(unique(data_structure[,parameters[[i]]$group]) %in% unique(rownames(chol_str[[i]])))) stop(paste("all IDs in data_structure are not in the pedigree/phylogeny/cov_str linked with", i), call.=FALSE)      
-  })
-  
-  add_list<-names(parameters)[!names(parameters) %in% c(names(chol_str),"interactions")]
+  add_list<-names(parameters)[!names(parameters) %in% c(names(chol_str_all),"interactions")]
   for(i in add_list){
-    chol_str[[i]] <- Matrix::Diagonal(parameters[[i]][["n_level"]])
+    chol_str_all[[i]] <- Matrix::Diagonal(parameters[[i]][["n_level"]])
   }
-  return( chol_str)
+  return( chol_str_all)
 }
 
 
 
-sim_predictors <- function(parameters, data_structure, pedigree, cov_str, known_predictors, ...){
-  
-  ## index data_structure
-  str_index <- index_factors(data_structure=data_structure,pedigree=pedigree,parameters=parameters)
-  # ped_index <- lapply(pedigree,index_ped)
-
-
+sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors, ...){
 
   traits <- do.call(cbind, lapply( names(parameters)[names(parameters)!="interactions"], function(i){  
 
@@ -105,8 +151,8 @@ sim_predictors <- function(parameters, data_structure, pedigree, cov_str, known_
 
     }else{
 
-      # x <- methods::as(Matrix::crossprod(cov_str[[i]],matrix(stats::rnorm( n*k,  0, 1), n, k)) %*% chol(p$vcov[!interactions,!interactions])   + matrix(p$mean[!interactions], n, k, byrow=TRUE),"matrix")
-      x <- methods::as(Matrix::crossprod(cov_str[[i]],matrix(stats::rnorm( n*k,  0, 1), n, k)) %*% chol(p$vcov)   + matrix(p$mean, n, k, byrow=TRUE),"matrix")
+      # x <- methods::as(Matrix::crossprod(cov_str_all[[i]],matrix(stats::rnorm( n*k,  0, 1), n, k)) %*% chol(p$vcov[!interactions,!interactions])   + matrix(p$mean[!interactions], n, k, byrow=TRUE),"matrix")
+      x <- methods::as(Matrix::crossprod(cov_str_all[[i]],matrix(stats::rnorm( n*k,  0, 1), n, k)) %*% chol(p$vcov)   + matrix(p$mean, n, k, byrow=TRUE),"matrix")
 
       ### apply functions
       ### add them in likes betas, making sure they are in the right order? then apply them to the cols?
@@ -184,10 +230,7 @@ generate_y <- function(predictors, betas, str_index,  model, y_pred_names,extra_
   return(y)
 }
 
-generate_y_list <- function(parameters, data_structure, predictors, pedigree, model,known_predictors,...){
-
-    ## index data_structure
-  str_index <- index_factors(data_structure=data_structure,pedigree=pedigree,parameters=parameters)
+generate_y_list <- function(parameters, str_index, predictors, model,known_predictors,...){
   
   ## put all betas together
   ## ned to order betas
