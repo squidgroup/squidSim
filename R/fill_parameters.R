@@ -168,7 +168,7 @@ fill_parameters <- function(parameters,data_structure, N, N_response,...){
     if(is.null(parameters[[i]][["names"]])){
       # if(k==1) parameters[[i]][["names"]] <- i
       # if(k>1) 
-      parameters[[i]][["names"]] <- paste0(i,"_effect",if(k>1){1:k})
+      parameters[[i]][["names"]] <- paste0(i,if(parameters[[i]][["group"]]!= "residual"){"_effect"},if(k>1){1:k})
     }else if(!is.vector(parameters[[i]][["names"]])){
       stop("'names' should be a vector for ", i, call.=FALSE)
     }
