@@ -84,6 +84,7 @@ index_factors <- function(data_structure, pedigree, phylogeny, cov_str, paramete
           # first column of pedigree
           match(data_structure[,i],pedigree[[ped_link[1]]][,1])
         }else if(length(phylo_link)>0){ 
+          # names of phylogeny
           match(data_structure[,i],phylogeny[[phylo_link[1]]]$tip.label)
         }else if(length(cov_link)>0){
           # rownames(of cov_str) 
@@ -203,7 +204,7 @@ sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors,
 
 
 generate_y <- function(predictors, betas, str_index,  model, y_pred_names,extra_param,...){
-  
+
   ## evaluate model
   ## - if model is missing, add all simulated predictors together
   if(is.null(model)) {
@@ -232,6 +233,8 @@ generate_y <- function(predictors, betas, str_index,  model, y_pred_names,extra_
 
 generate_y_list <- function(parameters, str_index, predictors, model,known_predictors,...){
   
+  if(missing(str_index)) str_index <- NULL
+
   ## put all betas together
   ## ned to order betas
   betas <- do.call(rbind,lapply(parameters,function(x) x$beta))

@@ -90,7 +90,7 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, kno
   ## check pedigree levels match data structure levels
   ## make function - that can check ped,phylo and covs
   
-  if(!is.null(pedigree)){
+  if(!missing(pedigree)){
     if(missing(pedigree_type)){
       output$pedigree_type <- as.list(rep("additive",length(pedigree)))
       names(output$pedigree_type) <- names(pedigree)
@@ -100,7 +100,7 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, kno
       if(sort(names(pedigree))==sort(names(pedigree))) stop("names of pedigree and pedigree_type need to match")
     }
   }
-  if(!is.null(phylogeny)){
+  if(!missing(phylogeny)){
     if(missing(phylogeny_type)){
       output$phylogeny_type <- as.list(rep("brownian",length(phylogeny)))
       names(output$phylogeny_type) <- names(phylogeny)
