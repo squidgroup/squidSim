@@ -74,13 +74,15 @@ fill_parameters <- function(parameters,data_structure, N, N_response,...){
       }else{
         if(!is.matrix(parameters[[i]][["vcorr"]])) stop("vcorr needs to be a matrix for ",i, call.=FALSE)
         if(nrow(parameters[[i]][["vcorr"]])!=ncol(parameters[[i]][["vcorr"]])) stop("need square vcorr matrix for ",i, call.=FALSE)
-        }
         if(!isSymmetric(parameters[[i]][["vcorr"]])) stop("vcorr matrix should be symmetric for ",i, call.=FALSE)
         if(!all(diag(parameters[[i]][["vcorr"]])>0)){ stop("Variances for ",i," must all be >0", call.=FALSE)}
-          sd <- sqrt(diag(parameters[[i]][["vcorr"]]))
-          corr <- parameters[[i]][["vcorr"]]
-          diag(corr) <- 1
-          parameters[[i]][["vcov"]] <- diag(sd) %*% corr %*% diag(sd)
+        if(any(parameters[[i]][["vcorr"]][lower.tri(parameters[[i]][["vcorr"]])]< -1 | parameters[[i]][["vcorr"]][lower.tri(parameters[[i]][["vcorr"]])]>1)){ stop("Correlations for ",i," must all be between -1 and 1", call.=FALSE)}
+
+        sd <- sqrt(diag(parameters[[i]][["vcorr"]]))
+        corr <- parameters[[i]][["vcorr"]]
+        diag(corr) <- 1
+        parameters[[i]][["vcov"]] <- diag(sd) %*% corr %*% diag(sd)
+      }
     }
 
     if(is.null(parameters[[i]][["beta"]]) & is.null(parameters[[i]][["vcov"]])){
