@@ -5,6 +5,7 @@
 #' @param N Sample size when data_structure is not specified
 #' @param parameters A list of parameters for each hierarchical level. See details.
 #' @param N_response The number of response variables, defaults to 1. 
+#' @param response_names Names given to response variables, defaults to y, or y1/y2... if there are multiple responses. Not used if model is specified. 
 #' @param known_predictors This option provides a way of inputting existing predictor variables, without simulating all predictors. This argument takes a list, with item 'predictors' and 'betas', where 'predictors' is a matrix or dataframe 
 #' @param model Optional. 
 #' @param family A description of the error distribution. Default "gaussian".
@@ -37,7 +38,7 @@
 #' )
 #' 
 #' @export
-simulate_population <- function(data_structure, N, parameters, N_response=1, known_predictors, model, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, N_pop=1){
+simulate_population <- function(data_structure, N, parameters, N_response=1, response_names, known_predictors, model, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, N_pop=1){
 
   if(!all(link %in% c("identity", "log", "inverse", "sqrt", "logit", "probit"))) stop("Link must be 'identity', 'log', 'inverse', 'sqrt', 'logit', 'probit'")
   if(!(length(link)==N_response || length(link)==1))  stop("Link must either be length 1 or same length as the number of responses")
@@ -59,6 +60,14 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, kno
 
   if(N_response > 1 & !missing("model")) stop("Currently cannot specify multiple responses and a model formula")
 
+  if(!missing(response_names) & !missing("model")){
+   message("response_names is ignored when a model formula is specified")
+  }else{
+    if(!missing(response_names)) 
+      if(length(response_names)!=N_response) stop("response_names needs to be the same length as N_response")  
+  }
+
+  
 
   ## gets the arguments into a list that is added to for the output
   output <- lapply(as.list(environment()), function(x) if (length(x)==1 && x=="") NULL else x)
@@ -136,7 +145,7 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, kno
 ###---TRANSFORM Y 
 ##################### 
 
-  output$y <- lapply(y, function(x) transform_dist(x, family, link))
+  output$y <- lapply(y, function(x) transform_dist(x, family, link, output$response_names))
 
 
 #####################  

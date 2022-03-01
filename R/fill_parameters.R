@@ -10,7 +10,7 @@ n_phenotypes <- function(parameters){
 
 
 ## I've used loops rather than apply functions in here because then the original parameter list can then be added to rather than new lists made - this will be slightly slower but very negligible given their size
-fill_parameters <- function(parameters,data_structure, N, N_response,...){
+fill_parameters <- function(parameters,data_structure, N, N_response, response_names,...){
 
   # Check whether list is given
   if(!is.list(parameters)) stop("parameters are not provided as a list", call.=FALSE)
@@ -326,9 +326,11 @@ fill_parameters <- function(parameters,data_structure, N, N_response,...){
 
 
   ## Check whether all names in data_structure and parameters contain only words, digits, : and _
-  all_names <- c(e_p, pred_names, colnames(data_structure))
+  all_names <- c(response_names, e_p, pred_names, colnames(data_structure))
 
-  if(!all(grepl("^[A-z0-9_:]*$",all_names))) stop("Names in data structure and in parameters must be alphanumeric, '_' or ':'", call.=FALSE)
+  if(any(duplicated(all_names))) stop("Response names, names in data structure and names in parameters must be unique")
+
+  if(!all(grepl("^[A-z0-9_:]*$",all_names))) stop("Response names, names in data structure and names in parameters must be alphanumeric, '_' or ':'", call.=FALSE)
 
   ### check no names are repeated!!
   if(any(duplicated(e_p)) || any(e_p %in% c(pred_names, colnames(data_structure)))) stop("Additional parameters names must be unique", call.=FALSE)

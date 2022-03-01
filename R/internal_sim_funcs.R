@@ -266,7 +266,7 @@ generate_y_list <- function(parameters, str_index, predictors, model,known_predi
 }
 
 
-transform_dist <- function(y, family, link,...){
+transform_dist <- function(y, family, link, response_names,...){
 
   inv <- function(x) 1/x
 
@@ -293,10 +293,14 @@ transform_dist <- function(y, family, link,...){
     if(family[i]=="binomial") stats::rbinom(length(y_link),1,y_link)
   })
   
+  ## think colnames(y) will be null unless model is specified but should check :)
   if(is.null(colnames(y))){
-    colnames(y_family) <- if(j==1)"y" else paste0("y",1:j)
-  }
-  else{
+    if(!is.null(response_names)){
+      colnames(y_family) <- response_names
+    }else{
+      colnames(y_family) <- if(j==1)"y" else paste0("y",1:j)  
+    }
+  }else{
     colnames(y_family) <- colnames(y)
   }
 
