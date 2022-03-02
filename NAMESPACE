@@ -2,6 +2,7 @@
 
 S3method(print,squid)
 S3method(summary,squid)
+export(expected_variance)
 export(get_parameters)
 export(get_population_data)
 export(get_sample_data)

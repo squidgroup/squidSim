@@ -2,7 +2,7 @@
 % Please edit documentation in R/make_structure.R
 \name{make_structure}
 \alias{make_structure}
-\title{Make nested and crossed balanced hierarchical structures}
+\title{make_structure}
 \usage{
 make_structure(structure, repeat_obs = 1, ...)
 }

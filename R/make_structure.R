@@ -49,8 +49,8 @@ add_interactions <- function(all_levels, int){
 
 }
 
-
-#' Make nested and crossed balanced hierarchical structures
+#' @title make_structure
+#' @description Make nested and crossed balanced hierarchical structures
 #'
 #' @param structure A formula specifying the structure and sample sizes at each level. See details.
 #' @param repeat_obs Number of repeated observations at the lowest level

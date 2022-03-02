@@ -9,6 +9,7 @@ simulate_population(
   N,
   parameters,
   N_response = 1,
+  response_names,
   known_predictors,
   model,
   family = "gaussian",
@@ -32,6 +33,8 @@ simulate_population(
 \item{parameters}{A list of parameters for each hierarchical level. See details.}
 
 \item{N_response}{The number of response variables, defaults to 1.}
+
+\item{response_names}{Names given to response variables, defaults to y, or y1/y2... if there are multiple responses. Not used if model is specified.}
 
 \item{known_predictors}{This option provides a way of inputting existing predictor variables, without simulating all predictors. This argument takes a list, with item 'predictors' and 'betas', where 'predictors' is a matrix or dataframe}
 
