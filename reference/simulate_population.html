@@ -56,6 +56,7 @@
   <span class="va">N</span>,
   <span class="va">parameters</span>,
   N_response <span class="op">=</span> <span class="fl">1</span>,
+  <span class="va">response_names</span>,
   <span class="va">known_predictors</span>,
   <span class="va">model</span>,
   family <span class="op">=</span> <span class="st">"gaussian"</span>,
@@ -82,6 +83,8 @@
 <dd><p>A list of parameters for each hierarchical level. See details.</p></dd>
 <dt>N_response</dt>
 <dd><p>The number of response variables, defaults to 1.</p></dd>
+<dt>response_names</dt>
+<dd><p>Names given to response variables, defaults to y, or y1/y2... if there are multiple responses. Not used if model is specified.</p></dd>
 <dt>known_predictors</dt>
 <dd><p>This option provides a way of inputting existing predictor variables, without simulating all predictors. This argument takes a list, with item 'predictors' and 'betas', where 'predictors' is a matrix or dataframe</p></dd>
 <dt>model</dt>
