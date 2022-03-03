@@ -43,14 +43,13 @@ Briefly, load the squidSim package in R:
 
 #### Background to the project
 
-
+<img id='logo' src='./man/figures/logo_2.png' align='left' alt='' width='160'>
 
 **SQuID** stands for **S**tatistical **Qu**antification of **I**ndividual **D**ifferences and refers to a working group of behavioural and evolutionary ecologists (link to main group page).
 
-<img id='logo' src='./man/figures/logo_2.png' align='left' alt='' style='padding-right:20px;' width='300'>
 Understanding the sources of phenotypic variance is a core component to a huge amount of research in ecology and evolutionary biology. Phenotypic variation is typically structured in a hierarchical way and the hierarchical modelling in mixed effect models provides a great tool to analyze and decompose such variation. Mixed models are very flexible statistical tools that provide a way to estimate the variation at these different levels, and represent the general statistical framework for ecology and evolutionary biology. Because of the progress in computational capacities mixed models have become increasingly popular among ecologists and evolutionary biologists over the last decade. However, fitting mixed model is not a straightforward exercise, and the way data are sampled among and within groups can have strong implications on the outcome of the model. Mixed models therefore present a highly flexible yet challenging tool.
 
-A major aim of the SQuID working group is to provide educational resources to help empiricists learn more about the properties, potentials and interpretational challenges of mixed effects models. The group formed during a workshop 2013, after which the first `squid` R package was made (link), with the aim of helping empiricists interested in decomposing phenotypic variance to get more familiar with the concept of hierarchical organization of traits, with mixed models and to avoid pitfalls caused by inappropriate sampling.
+A major aim of the SQuID working group is to provide educational resources to help empiricists learn more about the properties, potentials and interpretational challenges of mixed effects models. The group formed during a workshop 2013 with the aim of helping empiricists interested in decomposing phenotypic variance to get more familiar with the concept of hierarchical organization of traits, with mixed models and to avoid pitfalls caused by inappropriate sampling.
 
 The first `squid` R package is fairly limited in the range of models that can be used to simulate data. The aim of the current package is to overcome these limitations to provide a coherent and reproducible framework with which to do simulations, both for research and education. 
 
