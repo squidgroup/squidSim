@@ -6,17 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="A simulation-based tool made to help researchers to become familiar with
-    multilevel variations, and to build up sampling designs for their study. 
-    This tool has two main objectives: First, it provides an educational tool useful for students, 
-    teachers and researchers who want to learn to use mixed-effects models. 
-    Users can experience how the mixed-effects model framework can be used to understand 
-    distinct biological phenomena by interactively exploring simulated multilevel data. 
-    Second, it offers research opportunities to those who are already familiar with 
-    mixed-effects models, as it enables the generation of data sets that users may download 
-    and use for a range of simulation-based statistical analyses such as power 
-    and sensitivity analysis of multilevel and multivariate data [Allegue, H., Araya-Ajoy, Y.G., Dingemanse, 
-    N.J., Dochtermann N.A., Garamszegi, L.Z., Nakagawa, S., Reale, D., Schielzeth, H. and Westneat, D.F. (2016) 
-    &lt;doi: 10.1111/2041-210X.12659&gt;].">
+    multilevel variations, and to build up sampling designs for their study.">
 <title>Statistical Quantification of Individual Differences • squidSim</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.1.0/bootstrap.min.css" rel="stylesheet">
@@ -24,17 +14,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.rawgit.com/afeld/bootstrap-toc/v1.0.1/dist/bootstrap-toc.min.js"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="Statistical Quantification of Individual Differences">
 <meta property="og:description" content="A simulation-based tool made to help researchers to become familiar with
-    multilevel variations, and to build up sampling designs for their study. 
-    This tool has two main objectives: First, it provides an educational tool useful for students, 
-    teachers and researchers who want to learn to use mixed-effects models. 
-    Users can experience how the mixed-effects model framework can be used to understand 
-    distinct biological phenomena by interactively exploring simulated multilevel data. 
-    Second, it offers research opportunities to those who are already familiar with 
-    mixed-effects models, as it enables the generation of data sets that users may download 
-    and use for a range of simulation-based statistical analyses such as power 
-    and sensitivity analysis of multilevel and multivariate data [Allegue, H., Araya-Ajoy, Y.G., Dingemanse, 
-    N.J., Dochtermann N.A., Garamszegi, L.Z., Nakagawa, S., Reale, D., Schielzeth, H. and Westneat, D.F. (2016) 
-    &lt;doi: 10.1111/2041-210X.12659&gt;].">
+    multilevel variations, and to build up sampling designs for their study.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
@@ -118,9 +98,10 @@ downloads](http://cranlogs.r-pkg.org/badges/grand-total/squid)](http://cranlogs.
 <div class="section level4">
 <h4 id="background-to-the-project">Background to the project<a class="anchor" aria-label="anchor" href="#background-to-the-project"></a>
 </h4>
+<p><img id="logo" src="./reference/figures/logo_2.png" align="left" alt="" width="160"></p>
 <p><strong>SQuID</strong> stands for <strong>S</strong>tatistical <strong>Qu</strong>antification of <strong>I</strong>ndividual <strong>D</strong>ifferences and refers to a working group of behavioural and evolutionary ecologists (link to main group page).</p>
-<p><img id="logo" src="./reference/figures/logo_2.png" align="left" alt="" style="padding-right:20px;" width="300"> Understanding the sources of phenotypic variance is a core component to a huge amount of research in ecology and evolutionary biology. Phenotypic variation is typically structured in a hierarchical way and the hierarchical modelling in mixed effect models provides a great tool to analyze and decompose such variation. Mixed models are very flexible statistical tools that provide a way to estimate the variation at these different levels, and represent the general statistical framework for ecology and evolutionary biology. Because of the progress in computational capacities mixed models have become increasingly popular among ecologists and evolutionary biologists over the last decade. However, fitting mixed model is not a straightforward exercise, and the way data are sampled among and within groups can have strong implications on the outcome of the model. Mixed models therefore present a highly flexible yet challenging tool.</p>
-<p>A major aim of the SQuID working group is to provide educational resources to help empiricists learn more about the properties, potentials and interpretational challenges of mixed effects models. The group formed during a workshop 2013, after which the first <code>squid</code> R package was made (link), with the aim of helping empiricists interested in decomposing phenotypic variance to get more familiar with the concept of hierarchical organization of traits, with mixed models and to avoid pitfalls caused by inappropriate sampling.</p>
+<p>Understanding the sources of phenotypic variance is a core component to a huge amount of research in ecology and evolutionary biology. Phenotypic variation is typically structured in a hierarchical way and the hierarchical modelling in mixed effect models provides a great tool to analyze and decompose such variation. Mixed models are very flexible statistical tools that provide a way to estimate the variation at these different levels, and represent the general statistical framework for ecology and evolutionary biology. Because of the progress in computational capacities mixed models have become increasingly popular among ecologists and evolutionary biologists over the last decade. However, fitting mixed model is not a straightforward exercise, and the way data are sampled among and within groups can have strong implications on the outcome of the model. Mixed models therefore present a highly flexible yet challenging tool.</p>
+<p>A major aim of the SQuID working group is to provide educational resources to help empiricists learn more about the properties, potentials and interpretational challenges of mixed effects models. The group formed during a workshop 2013 with the aim of helping empiricists interested in decomposing phenotypic variance to get more familiar with the concept of hierarchical organization of traits, with mixed models and to avoid pitfalls caused by inappropriate sampling.</p>
 <p>The first <code>squid</code> R package is fairly limited in the range of models that can be used to simulate data. The aim of the current package is to overcome these limitations to provide a coherent and reproducible framework with which to do simulations, both for research and education.</p>
 </div>
 </div>
@@ -156,7 +137,6 @@ downloads](http://cranlogs.r-pkg.org/badges/grand-total/squid)](http://cranlogs.
 <li>Yimen G. Araya-Ajoy <br><small class="roles"> Author </small>  </li>
 <li>Niels J. Dingemanse <br><small class="roles"> Author </small>  </li>
 <li>Ned A. Dochtermann <br><small class="roles"> Author </small>  </li>
-<li>Laszlo Z. Garamszegi <br><small class="roles"> Author </small>  </li>
 <li>Shinichi Nakagawa <br><small class="roles"> Author </small>  </li>
 <li>Denis Reale <br><small class="roles"> Author </small>  </li>
 <li>Holger Schielzeth <br><small class="roles"> Author </small>  </li>
@@ -172,7 +152,7 @@ downloads](http://cranlogs.r-pkg.org/badges/grand-total/squid)](http://cranlogs.
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by Joel Pick, Hassen Allegue, Yimen G. Araya-Ajoy, Niels J. Dingemanse, Ned A. Dochtermann, Laszlo Z. Garamszegi, Shinichi Nakagawa, Denis Reale, Holger Schielzeth, David F. Westneat.</p>
+<p>Developed by Joel Pick, Hassen Allegue, Yimen G. Araya-Ajoy, Niels J. Dingemanse, Ned A. Dochtermann, Shinichi Nakagawa, Denis Reale, Holger Schielzeth, David F. Westneat.</p>
 </div>
 
 <div class="pkgdown-footer-right">
