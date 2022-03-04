@@ -7,34 +7,49 @@
 expected_variance(squid)
 }
 \arguments{
-\item{squid}{A squid object}
+\item{squid}{A squid object created with the simulate_population() function}
 }
 \value{
-A data.frame with the data structure
+A list with means and variance at each level
 }
 \description{
-Calculate expected variance in response variable(s)
+Calculate expected mean and variance in response variable(s)
 }
 \details{
-Calculated the expect variance from the simulation parameters. Has several limitaitons. 
-1. Doesn't work when 'model' is specific in simulate_population
-2. Assumes random factors are balanced - unbalanced designs will change the observed variance
+Calculates the expect variance from the simulation parameters,. as well as breaking down the source of this variance into the hierarchical levels given in the parameter list, and into individual predictors. This function has several limitations. 
+1. Doesn't work when 'model' is specified in simulate_population()
+2. Assumes grouping factors in the data_structure are balanced - unbalanced designs can change the observed variance
 3. Will be inaccurate with transformed variables (i.e. if functions are specified)
 4. Doesn't deal well with three way interactions and over, unless they are the same variable (i.e. polynomials)
 5. Doesn't account for covariance between interaction terms, e.g. if there is are two interaction terms rain:temp and wind:temp, they will covary, but this additional variance in the response is not calculated
 }
 \examples{
-# simple data structure with 5 'individuals' and 2 observations per individual
-make_structure(structure="individual(5)", repeat_obs=2)
+\dontrun{
+squid_data <- simulate_population(
+data_structure = make_structure(structure = "individual(10)", repeat_obs=2),
+parameters=list(
+   individual=list(
+ 		vcov=1.2
+ 	),
+ 	observation=list(
+     names=c("temperature","rainfall", "wind"),
+     mean = c(10,1 ,20),
+     vcov =matrix(c(
+       1, 0, 1,
+       0,0.1,0,
+       1, 0, 2
+       ), nrow=3 ,ncol=3),
+     beta =c(0.5,-3,0.4)
+   ),
+   residual=list(
+     mean=10,
+     vcov=1
+   )
+ )
+)
 
-# nested data structure with 2 sexes, 5 individuals per sex
-# and 2 observations per individual
-make_structure(structure="sex(2)/individual(5)", repeat_obs=2)
-
-# crossed data structure with 5 individuals in 2 treatments 
-# and 2 observations per individual and treatment combination
-make_structure(structure="treatment(2) + individual(5)", repeat_obs=1)
-
+expected_variance(squid_data)
+}
 }
 \author{
 Joel Pick - joel.l.pick@gmail.com

@@ -40,41 +40,79 @@ make_big_matrix<-function(x){
 }
 
 #' @title expected_variance
-#' @description Calculate expected variance in response variable(s)
+#' @description Calculate expected mean and variance in response variable(s)
 #'
-#' @param squid A squid object
+#' @param squid A squid object created with the simulate_population() function
 #' @details 
-#' Calculated the expect variance from the simulation parameters. Has several limitaitons. 
-#' 1. Doesn't work when 'model' is specific in simulate_population
-#' 2. Assumes random factors are balanced - unbalanced designs will change the observed variance
+#' Calculates the expect variance from the simulation parameters,. as well as breaking down the source of this variance into the hierarchical levels given in the parameter list, and into individual predictors. This function has several limitations. 
+#' 1. Doesn't work when 'model' is specified in simulate_population()
+#' 2. Assumes grouping factors in the data_structure are balanced - unbalanced designs can change the observed variance
 #' 3. Will be inaccurate with transformed variables (i.e. if functions are specified)
 #' 4. Doesn't deal well with three way interactions and over, unless they are the same variable (i.e. polynomials)
 #' 5. Doesn't account for covariance between interaction terms, e.g. if there is are two interaction terms rain:temp and wind:temp, they will covary, but this additional variance in the response is not calculated
 #' @author Joel Pick - joel.l.pick@gmail.com
-#' @return A data.frame with the data structure
+#' @return A list with means and variance at each level
 #' @examples
-#' # simple data structure with 5 'individuals' and 2 observations per individual
-#' make_structure(structure="individual(5)", repeat_obs=2)
+#' \dontrun{
+#' squid_data <- simulate_population(
+#' data_structure = make_structure(structure = "individual(10)", repeat_obs=2),
+#'	parameters=list(
+#'    individual=list(
+#'  		vcov=1.2
+#'  	),
+#'  	observation=list(
+#'      names=c("temperature","rainfall", "wind"),
+#'      mean = c(10,1 ,20),
+#'      vcov =matrix(c(
+#'        1, 0, 1,
+#'        0,0.1,0,
+#'        1, 0, 2
+#'        ), nrow=3 ,ncol=3),
+#'      beta =c(0.5,-3,0.4)
+#'    ),
+#'    residual=list(
+#'      mean=10,
+#'      vcov=1
+#'    )
+#'  )
+#')
 #' 
-#' # nested data structure with 2 sexes, 5 individuals per sex
-#' # and 2 observations per individual
-#' make_structure(structure="sex(2)/individual(5)", repeat_obs=2)
-#' 
-#' # crossed data structure with 5 individuals in 2 treatments 
-#' # and 2 observations per individual and treatment combination
-#' make_structure(structure="treatment(2) + individual(5)", repeat_obs=1)
-#' 
+#' expected_variance(squid_data)
+#' }
 #' @export
 
 
 expected_variance <- function(squid){
 	param <- squid$param
+	data_structure <- squid$data_structure
+	known_predicators <- squid$known_predicators
+
 	p_names <- names(param)[names(param)!="interactions"]
 
 	if(any(sapply(param, function(i) any(i$functions!="identity")))){
 		message("This will be inaccurate with transformed variables (i.e. using the functions argument)")
 	}
 	
+	fixed <- names(param)[sapply(param, function(i) i$fixed)]
+	if(length(fixed)>0){
+		for (i in fixed){
+			levels<-as.vector(table(data_structure[,param[[i]]$group]))
+			p <- levels/sum(levels)
+			param[[i]]$mean <- p
+			param[[i]]$vcov <- diag(p*(1-p), nrow=length(levels))
+			names(param[[i]]$mean) <- colnames(param[[i]]$vcov) <- rownames(param[[i]]$vcov) <- param[[i]]$names
+		}
+	}
+	covariate <- names(param)[sapply(param, function(i) i$covariate)]
+	if(length(covariate)>0){
+		for (i in covariate){
+			z <- data_structure[,param[[i]]$group]
+			param[[i]]$mean <- rep(mean(z), length(param[[i]]$names))
+			param[[i]]$vcov <- diag(stats::var(z), length(param[[i]]$names))
+			names(param[[i]]$mean) <- colnames(param[[i]]$vcov) <- rownames(param[[i]]$vcov) <- param[[i]]$names
+		}
+	}
+
 	if("interactions" %in% names(param)){
 		
 		p_names <- names(param)[names(param)!="interactions"]
@@ -96,11 +134,12 @@ expected_variance <- function(squid){
 				)
 		})
 
-
 		param[["interactions"]]$vcov <- diag(sapply(int_var,function(x)x$cov), nrow=length(int_names))
 		param[["interactions"]]$mean <- sapply(int_var,function(x)x$mean)
 		names(param[["interactions"]]$mean) <- colnames(param[["interactions"]]$vcov) <- rownames(param[["interactions"]]$vcov) <- int_names
 	}
+
+
 
 	means <- do.call(c,c(lapply(param, function(p) p$mean ), use.names=FALSE))
 	covs <- make_big_matrix(lapply(param, function(p) p$vcov ))
@@ -109,23 +148,48 @@ expected_variance <- function(squid){
 
 
 	total_var <- as.vector(t(betas) %*% covs %*% betas)
-list( 
-	## total
-	total = cbind(
-		mean = sum(betas * means),
-		var = total_var
-		),
 	
-	##hierarchy
-	groups = cbind(
-		mean= sapply(param, function(p) sum(p$beta*p$mean)),
-		var=sapply(param, function(p) t(p$beta) %*% p$vcov %*% p$beta )),
-
-	variables = cbind(
-		mean = betas * means,
-		var = betas * covs %*% betas
+	
+	out <- list( 
+		## total
+		total = c(
+			mean = sum(betas * means),
+			var = total_var
+		),
+		
+		##hierarchy
+		groups = data.frame(
+			mean= sapply(param, function(p) sum(p$beta*p$mean)),
+			var=sapply(param, function(p) t(p$beta) %*% p$vcov %*% p$beta )),
+	
+		variables = data.frame(
+			mean = betas * means,
+			var = betas * covs %*% betas
 		)
- 	
- )
+	 	
+	)
+	
+	class(out) <- "squid_var"
+	return(out)
+}
+
+
+#' @title print.squid_var
+#' @description Print method for class 'squid_var'
+#' @param x an R object of class 'squid_var'
+#' @param ... further arguments passed to or from other methods.
+#' @export
+print.squid_var <- function(x, ...){
+	cat("Contribution of the simulated predictors to the mean and variance in the response\n\n")
+
+	cat("Expected Mean:",x$total["mean"],"\n")
+	cat("Expected Variance:",x$total["var"],"\n\n")
+
+	cat("Contribution of different hierarchical levels to grand mean and variance:\n")
+	print(x$groups)
+	cat("\n\nContribution of different predictors to grand mean and variance:\n")
+	print(x$variables)
+
+	cat("\n\nContribution of different predictors to grand mean and variance:\n")
 }
 
