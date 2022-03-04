@@ -118,7 +118,7 @@ list(
 	
 	##hierarchy
 	groups = cbind(
-		mean= sapply(param, function(p) sum(p$mean)),
+		mean= sapply(param, function(p) sum(p$beta*p$mean)),
 		var=sapply(param, function(p) t(p$beta) %*% p$vcov %*% p$beta )),
 
 	variables = cbind(
