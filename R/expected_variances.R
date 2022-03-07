@@ -93,7 +93,7 @@ expected_variance <- function(squid){
 		message("This will be inaccurate with transformed variables (i.e. using the functions argument)")
 	}
 	
-	fixed <- names(param)[sapply(param, function(i) i$fixed)]
+	fixed <- p_names[sapply(p_names, function(i) param[[i]]$fixed)]
 	if(length(fixed)>0){
 		for (i in fixed){
 			levels<-as.vector(table(data_structure[,param[[i]]$group]))
@@ -103,7 +103,7 @@ expected_variance <- function(squid){
 			names(param[[i]]$mean) <- colnames(param[[i]]$vcov) <- rownames(param[[i]]$vcov) <- param[[i]]$names
 		}
 	}
-	covariate <- names(param)[sapply(param, function(i) i$covariate)]
+	covariate <- p_names[sapply(p_names, function(i) param[[i]]$covariate)]
 	if(length(covariate)>0){
 		for (i in covariate){
 			z <- data_structure[,param[[i]]$group]
