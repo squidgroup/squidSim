@@ -217,7 +217,7 @@ fill_parameters <- function(parameters,data_structure, N, N_response, response_n
 
     if(parameters[[i]][["covariate"]] && is.null(parameters[[i]][["fixed"]])) stop("covariate =TRUE and fixed=TRUE for ", i, call.=FALSE)
 
-    if(parameters[[i]][["covariate"]] & !is.numeric(data_structure[,parameters[[i]][["group"]]])) stop("If covariate =TRUE, the corresponding grouping factor in the data_structure needs to be coded as a numeric", call.=FALSE)
+    if(parameters[[i]][["covariate"]] && !is.numeric(data_structure[,parameters[[i]][["group"]]])) stop("If covariate =TRUE, the corresponding grouping factor in the data_structure needs to be coded as a numeric", call.=FALSE)
 
     # Check whether mean specified
     # If not, rep(0,k)
