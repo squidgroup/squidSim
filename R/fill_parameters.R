@@ -10,7 +10,7 @@ n_phenotypes <- function(parameters){
 
 
 ## I've used loops rather than apply functions in here because then the original parameter list can then be added to rather than new lists made - this will be slightly slower but very negligible given their size
-fill_parameters <- function(parameters,data_structure, N, N_response, response_names,...){
+fill_parameters <- function(parameters,data_structure, n, n_response, response_names,...){
 
   reserved_p_names <- c("intercept","observation","residual","interactions") 
 
@@ -134,17 +134,17 @@ fill_parameters <- function(parameters,data_structure, N, N_response, response_n
         parameters[[i]][["beta"]] <- matrix(parameters[[i]][["beta"]])
       }else if(!is.matrix(parameters[[i]][["beta"]])){stop("'beta' in ", i, " should be a vector or matrix", call.=FALSE)
       }
-    if(N_response != ncol(parameters[[i]][["beta"]])){ 
-        stop("Number of columns in beta is not the same as N_response for ",i, call.=FALSE)
+    if(n_response != ncol(parameters[[i]][["beta"]])){ 
+        stop("Number of columns in beta is not the same as n_response for ",i, call.=FALSE)
       }
       ##
     }else{ 
     ## if the number of responses and the size of cov are the same, and beta is not specified, then beta = I, as assuming that the user is simulating random effects
     ## if not the same then matrix of 1s
-      if(N_response == ncol(parameters[[i]][["vcov"]])){ 
-        parameters[[i]][["beta"]] <- diag(N_response)
+      if(n_response == ncol(parameters[[i]][["vcov"]])){ 
+        parameters[[i]][["beta"]] <- diag(n_response)
       }else{
-        parameters[[i]][["beta"]] <- matrix(1, nrow= ncol(parameters[[i]][["vcov"]]), ncol= N_response)  
+        parameters[[i]][["beta"]] <- matrix(1, nrow= ncol(parameters[[i]][["vcov"]]), ncol= n_response)  
       }
     }  
     ##
@@ -186,7 +186,7 @@ fill_parameters <- function(parameters,data_structure, N, N_response, response_n
     parameters[[i]][["n_level"]] <- 
       if(parameters[[i]][["group"]] %in% c("observation","residual")){
         if(is.null(data_structure)){ 
-          N
+          n
         }else{
           nrow(data_structure)
         }
@@ -260,18 +260,18 @@ fill_parameters <- function(parameters,data_structure, N, N_response, response_n
 ########
   if(!is.null(parameters[["intercept"]])){
     ## needs to be same length as n_response
-    if(length(parameters[["intercept"]])!=N_response) stop("intercept needs to same length as N_response")
+    if(length(parameters[["intercept"]])!=n_response) stop("intercept needs to same length as n_response")
     if(!is.vector(parameters[["intercept"]])) stop("intercept needs to be a vector of length N_reponse") 
 
   }else{
-    parameters[["intercept"]] <- rep(0, N_response)
+    parameters[["intercept"]] <- rep(0, n_response)
   }
 
 
 ########
 ## interactions
 ########
-  
+
   pred_names <- do.call(c, lapply(parameters[!names(parameters) %in% c("intercept")],function(x) x[["names"]]))
   if(any(duplicated(pred_names))) stop("Predictor names must be unique", call.=FALSE)
   
@@ -298,11 +298,11 @@ fill_parameters <- function(parameters,data_structure, N, N_response, response_n
         interactions[["beta"]] <- matrix(interactions[["beta"]])
       }else if(!is.matrix(interactions[["beta"]])){stop("'beta' in interactions should be a vector or matrix", call.=FALSE)
       }
-      if(N_response != ncol(interactions[["beta"]])){ 
-        stop("number of columns in beta is not the same as N_response for interactions", call.=FALSE)
+      if(n_response != ncol(interactions[["beta"]])){ 
+        stop("number of columns in beta is not the same as n_response for interactions", call.=FALSE)
       }
     }else{ 
-      interactions[["beta"]] <- matrix(1,length(interaction_names),N_response)
+      interactions[["beta"]] <- matrix(1,length(interaction_names),n_response)
       #diag(interactions[["n_response"]])
     } 
 
@@ -367,9 +367,9 @@ fill_parameters <- function(parameters,data_structure, N, N_response, response_n
 
 # data(BTdata)
 # known_predictors <- list(predictors=BTdata[,c("hatchdate","tarsus")], beta=matrix(c(1,2,3),nrow=3))
-# N_response <- 1
+# n_response <- 1
 
-fill_preds <- function(known_predictors,N_response,...){
+fill_preds <- function(known_predictors,n_response,...){
   if(!is.list(known_predictors)) stop("known_predictors must be a list", call.=FALSE)
   # if(any(!names(known_predictors) %in% c("predictors","beta"))) stop("known_predictors are not provided as a list", call.=FALSE)
   if(!all(c("predictors") %in% names(known_predictors))) stop("known_predictors must contain predictors ", call.=FALSE)
@@ -384,11 +384,11 @@ fill_preds <- function(known_predictors,N_response,...){
       stop("'beta' in known_predictors should be a vector or matrix", call.=FALSE)
     }
     if(!is.numeric(known_predictors[["beta"]]))stop("beta in known_predictors must be numeric", call.=FALSE)
-    if(N_response != ncol(known_predictors[["beta"]])) stop("Number of columns in beta is not the same as N_response for known_predictors", call.=FALSE)      
+    if(n_response != ncol(known_predictors[["beta"]])) stop("Number of columns in beta is not the same as n_response for known_predictors", call.=FALSE)      
     if(ncol(known_predictors[["predictors"]]) != nrow(known_predictors[["beta"]])) stop("The dimensions of beta do not match the number of predictors for known_predictors", call.=FALSE)
       ##
   }else{ 
-    known_predictors[["beta"]] <- matrix(1, nrow= ncol(known_predictors[["predictors"]]), ncol= N_response)  
+    known_predictors[["beta"]] <- matrix(1, nrow= ncol(known_predictors[["predictors"]]), ncol= n_response)  
   }
 
   rownames(known_predictors[["beta"]]) <- colnames(known_predictors[["predictors"]])

@@ -208,7 +208,7 @@ sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors,
 
 
 
-generate_y <- function(predictors, intercepts, betas, str_index,  model, y_pred_names,extra_param,...){
+generate_y <- function(predictors, intercepts, betas, str_index, model, y_pred_names,extra_param,...){
 
   ## evaluate model
   ## - if model is missing, add all simulated predictors together

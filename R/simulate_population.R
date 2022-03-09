@@ -2,9 +2,9 @@
 #' @title simulate_population
 #' @description Simulate population level data
 #' @param data_structure A matrix or dataframe with a named column for each grouping factor, including the levels
-#' @param N Sample size when data_structure is not specified
+#' @param n Sample size when data_structure is not specified
 #' @param parameters A list of parameters for each hierarchical level. See details.
-#' @param N_response The number of response variables, defaults to 1. 
+#' @param n_response The number of response variables, defaults to 1. 
 #' @param response_names Names given to response variables, defaults to y, or y1/y2... if there are multiple responses. Not used if model is specified. 
 #' @param known_predictors This option provides a way of inputting existing predictor variables, without simulating all predictors. This argument takes a list, with item 'predictors' and 'betas', where 'predictors' is a matrix or dataframe 
 #' @param model Optional. 
@@ -18,7 +18,7 @@
 #' @param sample_type Type of sampling, needs to be one of 'nested', 'missing' or temporal. See details
 #' @param sample_param A set of parameters, specific to the sampling type. See details.
 #' @param sample_plot Logical. Should illustrative plots be made - defaults to FALSE.
-#' @param N_pop Number of populations. Default = 1
+#' @param n_pop Number of populations. Default = 1
 #' @param verbose Logical. Whether to print diagnostics - defaults to FALSE
 #' @details Parameter list ... 
 #' @author Joel Pick - joel.l.pick@gmail.com
@@ -39,33 +39,33 @@
 #' )
 #' 
 #' @export
-simulate_population <- function(data_structure, N, parameters, N_response=1, response_names, known_predictors, model, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, N_pop=1, verbose=FALSE){
+simulate_population <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, n_pop=1, verbose=FALSE){
 
   if(verbose) cat("checking input\n")
 
   if(!all(link %in% c("identity", "log", "inverse", "sqrt", "logit", "probit"))) stop("Link must be 'identity', 'log', 'inverse', 'sqrt', 'logit', 'probit'")
-  if(!(length(link)==N_response || length(link)==1))  stop("Link must either be length 1 or same length as the number of responses")
+  if(!(length(link)==n_response || length(link)==1))  stop("Link must either be length 1 or same length as the number of responses")
   
   if(!all(family %in% c("gaussian", "poisson", "binomial"))) stop("Family must be 'gaussian', 'poisson', 'binomial'")
-  if(!(length(family)==N_response || length(family)==1))  stop("Family must either be length 1 or same length as the number of responses")
+  if(!(length(family)==n_response || length(family)==1))  stop("Family must either be length 1 or same length as the number of responses")
 
-  if(missing("N") & missing("data_structure")){
-    stop("Either N or data_structure need to be specified")
-  }else if(missing("N")){
+  if(missing("n") & missing("data_structure")){
+    stop("Either 'n' or 'data_structure' need to be specified")
+  }else if(missing("n")){
     N <- nrow(data_structure)
-  }else if(!missing("N") & !missing("data_structure")){
-    if(nrow(data_structure)!=N) stop("N and nrow(data_structure) are not equal. Only one needs to be specified.")
+  }else if(!missing("n") & !missing("data_structure")){
+    if(nrow(data_structure)!=n) stop("'n' and nrow(data_structure) are not equal. Only one needs to be specified.")
   }
   
   if(!missing("known_predictors")){
     if(N!=nrow(known_predictors[["predictors"]])) stop("The number of observation specified does not match the number of rows in known_predictors")
   }
 
-  if(N_response > 1 & !missing("model")) stop("Currently cannot specify multiple responses and a model formula")
+  if(n_response > 1 & !missing("model")) stop("Currently cannot specify multiple responses and a model formula")
 
   if(!missing(response_names)) {
     if(!missing("model")) message("response_names is ignored when a model formula is specified") 
-    if(length(response_names)!=N_response) stop("response_names needs to be the same length as N_response")  
+    if(length(response_names)!=n_response) stop("response_names needs to be the same length as n_response")  
   }
 
 
@@ -141,8 +141,8 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, res
 #####################  
   if(verbose) cat("simulating predictors\n")
 
-  output$predictors <- lapply(1:N_pop, function(x) do.call(sim_predictors, output))
-  # output$predictors <- lapply(1:N_pop, function(x) cbind(do.call(sim_predictors, output), known_predictors))
+  output$predictors <- lapply(1:n_pop, function(x) do.call(sim_predictors, output))
+  # output$predictors <- lapply(1:n_pop, function(x) cbind(do.call(sim_predictors, output), known_predictors))
   ## returns list of predictor matrices
 
   # output$cov_str <- cov_str
@@ -240,7 +240,7 @@ get_population_data <- function(x,list=FALSE,...){
 
   # data.table(cbind(x$y,x$predictors,x$data_structure))
 
-  pop_list <- lapply(1:x$N_pop,function(i) data.table::data.table(cbind(x$y[[i]],x$predictors[[i]],x$data_structure,squid_pop=i)))
+  pop_list <- lapply(1:x$n_pop,function(i) data.table::data.table(cbind(x$y[[i]],x$predictors[[i]],x$data_structure,squid_pop=i)))
 
   if(list){
     return(pop_list)
@@ -276,10 +276,10 @@ get_parameters <- function(x){
     }
 
     betas <- as.vector(y$beta)
-    names(betas) <- if(x$N_response==1){ 
+    names(betas) <- if(x$n_response==1){ 
       paste0(y$names,"_beta") 
     }else{ 
-      paste0(rep(y$names,x$N_response),"_beta_y",rep(1:x$N_response, each=nrow(y$beta) )) 
+      paste0(rep(y$names,x$n_response),"_beta_y",rep(1:x$n_response, each=nrow(y$beta) )) 
     }
 
     c(means,vars,covs,betas)  

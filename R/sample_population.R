@@ -70,7 +70,7 @@ sample_missing <- function(pop_data, param, plot=FALSE){
 	## check that missingness predictors are are in y or predictors (error message will be given if they;re not, but might be worth making more informative one)
 	## by default center and scale predictors
 	## option to plot missingness function
-	lapply(1:pop_data$N_pop, function(i){	
+	lapply(1:pop_data$n_pop, function(i){	
 
 		## put together y and predictors and scale
 		## scaling means that all coefficients are comparable
@@ -168,7 +168,7 @@ sample_population <- function(x){
 		if(!is.matrix(param)){
 		  stop("param needs to be a matrix for type='nested'")
 		}
-		indices <- lapply(1:x$N_pop,function(y) sample_nested(x$data_structure, param, plot))
+		indices <- lapply(1:x$n_pop,function(y) sample_nested(x$data_structure, param, plot))
 	
 	}else if(type=="missing"){
 		if(!is.vector(param)){
@@ -188,7 +188,7 @@ sample_population <- function(x){
 		  stop("vectors in param list must be same length or length 1, for type='temporal'")
 		}
 		param <- lapply(param,function(y) if(length(y)==1) {rep(y,max(vec_length))} else {y})
-		indices <- lapply(1:x$N_pop,function(y) { # for each population
+		indices <- lapply(1:x$n_pop,function(y) { # for each population
 			lapply(1:max(vec_length), function(i) { # for each set of parameters
 				do.call(sample_temporal, c(list(data_structure=x$data_structure),lapply(param,function(z) z[i]), plot=FALSE)) # 
 			})
@@ -219,7 +219,7 @@ sample_population <- function(x){
 #' @export
 get_sample_data <- function(x, sample_set=1, list=FALSE,...){
   
-  pop_list <- lapply(1:x$N_pop,function(i) {
+  pop_list <- lapply(1:x$n_pop,function(i) {
   	data.table::data.table(cbind(x$y[[i]],x$predictors[[i]],x$data_structure,squid_pop=i)[x$samples[[i]][[sample_set]],])
   })
   
