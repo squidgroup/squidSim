@@ -43,7 +43,6 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, res
 
   if(verbose) cat("checking input\n")
 
-
   if(!all(link %in% c("identity", "log", "inverse", "sqrt", "logit", "probit"))) stop("Link must be 'identity', 'log', 'inverse', 'sqrt', 'logit', 'probit'")
   if(!(length(link)==N_response || length(link)==1))  stop("Link must either be length 1 or same length as the number of responses")
   
@@ -70,8 +69,6 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, res
   }
 
 
-  
-
   ## gets the arguments into a list that is added to for the output
   output <- lapply(as.list(environment()), function(x) if (length(x)==1 && x=="") NULL else x)
 
@@ -85,9 +82,10 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, res
   output$parameters <- do.call(fill_parameters, output)
 
 
+  if(verbose) cat("checking known_predictors\n")
+
   if(!missing(known_predictors)) output$known_predictors <- do.call(fill_preds, output)
   
-  if(verbose) cat("checking known_predictors\n")
 
 
 #####################  

@@ -85,13 +85,13 @@ make_big_matrix<-function(x){
 expected_variance <- function(squid){
 	param <- squid$param
 	data_structure <- squid$data_structure
-	known_predicators <- squid$known_predicators
-
-	p_names <- names(param)[names(param)!="interactions"]
+	known_predictors <- squid$known_predictors
 
 	if(any(sapply(param, function(i) any(i$functions!="identity")))){
 		message("This will be inaccurate with transformed variables (i.e. using the functions argument)")
 	}
+
+	p_names <- names(param)[names(param)!="interactions"]
 	
 	fixed <- p_names[sapply(p_names, function(i) param[[i]]$fixed)]
 	if(length(fixed)>0){
@@ -113,10 +113,16 @@ expected_variance <- function(squid){
 		}
 	}
 
+	if(!is.null(known_predictors)){
+		param$known_predictors <- list(
+			mean = colMeans(known_predictors[["predictors"]]),
+			vcov = cov(known_predictors[["predictors"]]),
+			beta = known_predictors[["beta"]]
+		)
+	}
+
 	if("interactions" %in% names(param)){
 		
-		p_names <- names(param)[names(param)!="interactions"]
-
 		means1 <- do.call(c,c(sapply(p_names, function(i) param[[i]]$mean ), use.names=FALSE))
 
 		covs1 <- make_big_matrix(lapply(p_names, function(i) param[[i]]$vcov ))
@@ -143,13 +149,10 @@ expected_variance <- function(squid){
 
 	means <- do.call(c,c(lapply(param, function(p) p$mean ), use.names=FALSE))
 	covs <- make_big_matrix(lapply(param, function(p) p$vcov ))
-
 	betas <- do.call(rbind,lapply(param, function(p) p$beta ))
 
-
 	total_var <- as.vector(t(betas) %*% covs %*% betas)
-	
-	
+		
 	out <- list( 
 		## total
 		total = c(
