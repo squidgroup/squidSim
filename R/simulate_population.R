@@ -60,12 +60,12 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, res
 
   if(N_response > 1 & !missing("model")) stop("Currently cannot specify multiple responses and a model formula")
 
-  if(!missing(response_names) & !missing("model")){
-   message("response_names is ignored when a model formula is specified")
-  }else{
-    if(!missing(response_names)) 
-      if(length(response_names)!=N_response) stop("response_names needs to be the same length as N_response")  
+  if(!missing(response_names)) {
+    if(!missing("model")) message("response_names is ignored when a model formula is specified") 
+    if(length(response_names)!=N_response) stop("response_names needs to be the same length as N_response")  
   }
+
+
 
   
 

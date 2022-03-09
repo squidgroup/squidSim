@@ -57,6 +57,10 @@ cov_str_check <- function(data_structure, pedigree, phylogeny, cov_str, paramete
 ### function to turn data_structure into indexes. Matches names in data_structure to linked pedigree/phylogeny/cov_str to make sure indexing is correct. Doesnt do any error checking
 index_factors <- function(data_structure, pedigree, phylogeny, cov_str, parameters,...){
   
+  p_names <- names(parameters)[!names(parameters)%in%c("intercept","interactions")]
+
+  group_names <- sapply(p_names,function(x) parameters[[x]]$group)
+
   new_ds <- if(is.null(data_structure)){   
     NULL
  
@@ -70,8 +74,9 @@ index_factors <- function(data_structure, pedigree, phylogeny, cov_str, paramete
       lapply(colnames(data_structure), function(i){
       # i = colnames(data_structure)[1]
         
+
         # are any of the parameter list names associated with it     
-        list_names <- names(parameters)[sapply(parameters,function(x) x$group) %in% i]
+        list_names <- group_names[group_names %in% i]
         
         ped_link <- list_names[list_names %in% names(pedigree)]
         phylo_link <- list_names[list_names %in% names(phylogeny)]
@@ -123,7 +128,7 @@ cov_str_list <- function(parameters, data_structure, pedigree, pedigree_type, ph
 
   chol_str_all<-c(ped_chol,phylo_chol,cor_chol)
 
-  add_list<-names(parameters)[!names(parameters) %in% c(names(chol_str_all),"interactions")]
+  add_list<-names(parameters)[!names(parameters) %in% c(names(chol_str_all),"intercept","interactions")]
   for(i in add_list){
     chol_str_all[[i]] <- Matrix::Diagonal(parameters[[i]][["n_level"]])
   }
@@ -134,7 +139,7 @@ cov_str_list <- function(parameters, data_structure, pedigree, pedigree_type, ph
 
 sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors, ...){
 
-  traits <- do.call(cbind, lapply( names(parameters)[names(parameters)!="interactions"], function(i){  
+  traits <- do.call(cbind, lapply( names(parameters)[!names(parameters)%in%c("intercept","interactions")], function(i){  
 
 # i<-"animal"
     p <- parameters[[i]]
@@ -189,7 +194,7 @@ sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors,
   }
   
   #order predictors to match betas 
-  traits<-traits[,do.call(c,lapply(parameters,function(x) x$names))]
+  traits<-traits[,do.call(c,lapply(parameters[!names(parameters)%in%c("intercept")],function(x) x$names))]
 
   ## add in known predictors
   if(!is.null(known_predictors)){
@@ -203,12 +208,13 @@ sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors,
 
 
 
-generate_y <- function(predictors, betas, str_index,  model, y_pred_names,extra_param,...){
+generate_y <- function(predictors, intercepts, betas, str_index,  model, y_pred_names,extra_param,...){
 
   ## evaluate model
   ## - if model is missing, add all simulated predictors together
   if(is.null(model)) {
     y <- predictors %*% betas
+    y <- t(t(y) + intercepts)
   } else {
     ## for evaluation with model formula 
 
@@ -223,7 +229,7 @@ generate_y <- function(predictors, betas, str_index,  model, y_pred_names,extra_
     # y <- eval(parse(text=model), envir = c(as.data.frame(y_predictors),as.list(extra_param)))
     
     model2 <- paste(model,";\n return(data.frame(mget(ls()[!ls() %in% c(colnames(y_predictors),names(extra_param))])))")
-    y <- eval(parse(text=model2), envir = c(as.data.frame(y_predictors),as.list(extra_param)))
+    y <- eval(parse(text=model2), envir = c(as.data.frame(y_predictors),intercept=intercepts,as.list(extra_param)))
 
     if(is.vector(y)) y <- matrix(y)
   }
@@ -235,6 +241,8 @@ generate_y_list <- function(parameters, str_index, predictors, model,known_predi
   
   if(missing(str_index)) str_index <- NULL
 
+  intercepts <- parameters[["intercept"]]
+  parameters <- parameters[!names(parameters) %in% c("intercept")]
   ## put all betas together
   ## ned to order betas
   betas <- do.call(rbind,lapply(parameters,function(x) x$beta))
@@ -248,7 +256,7 @@ generate_y_list <- function(parameters, str_index, predictors, model,known_predi
   ## extract and name extra parameters
   if(!is.null(model)){
 
-    param_names <- c("names", "group", "mean", "vcov", "vcorr", "beta", "n_response", "fixed", "covariate", "n_level", "functions")
+    param_names <- c("names", "group", "mean", "vcov", "vcorr", "beta", "fixed", "covariate", "n_level", "functions")
     extra_param <- unlist(sapply(parameters, function(x){ x[!names(x) %in% param_names] }))
         
     if(!is.null(extra_param)){
@@ -259,7 +267,7 @@ generate_y_list <- function(parameters, str_index, predictors, model,known_predi
     }
   }
 
-  y <- lapply(predictors, function(x) generate_y(x, betas=betas, str_index=str_index,  model=model, y_pred_names=y_pred_names,extra_param=extra_param))
+  y <- lapply(predictors, function(x) generate_y(x, intercepts=intercepts, betas=betas, str_index=str_index,  model=model, y_pred_names=y_pred_names,extra_param=extra_param))
 
   return(y)
 

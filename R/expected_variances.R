@@ -189,7 +189,5 @@ print.squid_var <- function(x, ...){
 	print(x$groups)
 	cat("\n\nContribution of different predictors to grand mean and variance:\n")
 	print(x$variables)
-
-	cat("\n\nContribution of different predictors to grand mean and variance:\n")
 }
 

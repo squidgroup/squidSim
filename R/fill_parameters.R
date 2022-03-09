@@ -12,6 +12,8 @@ n_phenotypes <- function(parameters){
 ## I've used loops rather than apply functions in here because then the original parameter list can then be added to rather than new lists made - this will be slightly slower but very negligible given their size
 fill_parameters <- function(parameters,data_structure, N, N_response, response_names,...){
 
+  reserved_p_names <- c("intercept","observation","residual","interactions") 
+
   # Check whether list is given
   if(!is.list(parameters)) stop("parameters are not provided as a list", call.=FALSE)
 
@@ -25,7 +27,7 @@ fill_parameters <- function(parameters,data_structure, N, N_response, response_n
   # Check whether length(group)==1 - If not, give warning and use only first group
  
   #i <- names(parameters)[1]
-  for (i in names(parameters)[names(parameters) !="interactions"]){
+  for (i in names(parameters)[!names(parameters) %in% c("intercept","interactions")]){
     group <-parameters[[i]][["group"]]
     if(is.null(group)) group <- i
     if(length(group)>1){
@@ -35,11 +37,11 @@ fill_parameters <- function(parameters,data_structure, N, N_response, response_n
     parameters[[i]][["group"]] <- group
   }
 
-  group_names <- sapply(parameters[names(parameters) !="interactions"],function(x) x[["group"]])
+  group_names <- sapply(parameters[!names(parameters) %in% c("intercept","interactions")],function(x) x[["group"]])
 
   ## check data_structure
   if(is.null(data_structure)){
-    if(any(!group_names %in% c("observation","residual","interactions"))) stop("data_structure must be specified if there are more groups than 'observation', 'residual' and 'interactions' in parameter list", call.=FALSE)
+    if(any(!group_names %in% reserved_p_names)) stop("data_structure must be specified if there are more groups than 'intercept', 'observation', 'residual' and 'interactions' in parameter list", call.=FALSE)
   }else{
     if(!(is.matrix(data_structure)|is.data.frame(data_structure))) stop("data_structure is not a matrix or data.frame", call.=FALSE)   
   } 
@@ -48,10 +50,10 @@ fill_parameters <- function(parameters,data_structure, N, N_response, response_n
   if(! "residual" %in% group_names) stop("One of the parameters groups must be 'residual'", call.=FALSE)
  
   # Check whether all groups match ones in data structure - If not, give error
-  if(any(!group_names %in% c(colnames(data_structure),"observation","residual","interactions"))) stop("Group names in parameter list do not match group names in data_structure", call.=FALSE)
+  if(any(!group_names %in% c(colnames(data_structure),reserved_p_names))) stop("Group names in parameter list do not match group names in data_structure", call.=FALSE)
 
   # Check no group is called observation or residual - If not, give error
-  if(any(colnames(data_structure) %in% c("observation","residual","interactions"))) stop("'observation', 'residual' and 'interactions' are reserved names for grouping factors. Please rename grouping factors in data_structure", call.=FALSE)
+  if(any(colnames(data_structure) %in% reserved_p_names)) stop("'intercept', 'observation', 'residual' and 'interactions' are reserved names for grouping factors. Please rename grouping factors in data_structure", call.=FALSE)
 
 
 ########
@@ -63,7 +65,7 @@ fill_parameters <- function(parameters,data_structure, N, N_response, response_n
 
 
 
-  for (i in names(parameters)[!names(parameters) %in% c("interactions")]){
+  for (i in names(parameters)[!names(parameters) %in% c("intercept","interactions")]){
     # p <- parameters[[i]]
     
     ## make cov from vcorr
@@ -253,12 +255,24 @@ fill_parameters <- function(parameters,data_structure, N, N_response, response_n
   # j <- n_phenotypes(parameters)
 
 
+########
+## intercept
+########
+  if(!is.null(parameters[["intercept"]])){
+    ## needs to be same length as n_response
+    if(length(parameters[["intercept"]])!=N_response) stop("intercept needs to same length as N_response")
+    if(!is.vector(parameters[["intercept"]])) stop("intercept needs to be a vector of length N_reponse") 
+
+  }else{
+    parameters[["intercept"]] <- rep(0, N_response)
+  }
+
 
 ########
 ## interactions
 ########
-
-  pred_names <- do.call(c, lapply(parameters,function(x) x[["names"]]))
+  
+  pred_names <- do.call(c, lapply(parameters[!names(parameters) %in% c("intercept")],function(x) x[["names"]]))
   if(any(duplicated(pred_names))) stop("Predictor names must be unique", call.=FALSE)
   
 # pred_names <- c("a","b","c","d")
