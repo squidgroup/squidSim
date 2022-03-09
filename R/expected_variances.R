@@ -83,7 +83,8 @@ make_big_matrix<-function(x){
 
 
 expected_variance <- function(squid){
-	param <- squid$param
+	intercept <- squid$param$intercept
+	param <- squid$param[names(squid$param)!="intercept"]
 	data_structure <- squid$data_structure
 	known_predictors <- squid$known_predictors
 
@@ -156,18 +157,19 @@ expected_variance <- function(squid){
 	out <- list( 
 		## total
 		total = c(
-			mean = sum(betas * means),
+			mean = intercept + sum(betas * means),
 			var = total_var
 		),
 		
 		##hierarchy
 		groups = data.frame(
-			mean= sapply(param, function(p) sum(p$beta*p$mean)),
-			var=sapply(param, function(p) t(p$beta) %*% p$vcov %*% p$beta )),
+			mean= c(intercept=intercept,sapply(param, function(p) sum(p$beta*p$mean))),
+			var=c(intercept=0,sapply(param, function(p) t(p$beta) %*% p$vcov %*% p$beta ))
+			),
 	
 		variables = data.frame(
-			mean = betas * means,
-			var = betas * covs %*% betas
+			mean = rbind(intercept=intercept,betas * means),
+			var = rbind(intercept=0,betas * covs %*% betas)
 		)
 	 	
 	)

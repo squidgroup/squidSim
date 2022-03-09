@@ -256,7 +256,9 @@ get_population_data <- function(x,list=FALSE,...){
 #' @export
 
 get_parameters <- function(x){
-  param<- lapply(x$parameters,function(y){
+  intercept <- x$parameters$intercept
+  param <- x$parameters[names(x$parameters)!="intercept"]
+  p_out<- lapply(param,function(y){
 
     means <- y$mean
     names(means) <- paste0(y$names,"_mean")
@@ -273,16 +275,16 @@ get_parameters <- function(x){
     }
 
     betas <- as.vector(y$beta)
-    names(betas) <- if(y$n_response==1){ 
+    names(betas) <- if(x$N_response==1){ 
       paste0(y$names,"_beta") 
     }else{ 
-      paste0(rep(y$names,y$n_response),"_beta_y",rep(1:y$n_response, each=nrow(y$beta) )) 
+      paste0(rep(y$names,x$N_response),"_beta_y",rep(1:x$N_response, each=nrow(y$beta) )) 
     }
 
     c(means,vars,covs,betas)  
   })
-  names(param)<-NULL
-  c(param, recursive=TRUE)
+  names(p_out)<-NULL
+  c(intercept,p_out, recursive=TRUE)
 
   ## extra_parameters
 }
