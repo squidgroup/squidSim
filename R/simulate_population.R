@@ -176,7 +176,8 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, res
 
 ### work out what to return 
 
-  # output <- output[c("")]
+  output <- output[!names(output)%in%c("cov_str_all","str_index")]
+
 
   class(output) <- 'squid'
   return(output)
