@@ -19,6 +19,7 @@
 #' @param sample_param A set of parameters, specific to the sampling type. See details.
 #' @param sample_plot Logical. Should illustrative plots be made - defaults to FALSE.
 #' @param N_pop Number of populations. Default = 1
+#' @param verbose Logical. Whether to print diagnostics - defaults to FALSE
 #' @details Parameter list ... 
 #' @author Joel Pick - joel.l.pick@gmail.com
 #' @return a squid object, which is a list including all inputs and simulated data.
@@ -38,7 +39,10 @@
 #' )
 #' 
 #' @export
-simulate_population <- function(data_structure, N, parameters, N_response=1, response_names, known_predictors, model, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, N_pop=1){
+simulate_population <- function(data_structure, N, parameters, N_response=1, response_names, known_predictors, model, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, N_pop=1, verbose=FALSE){
+
+  if(verbose) cat("checking input\n")
+
 
   if(!all(link %in% c("identity", "log", "inverse", "sqrt", "logit", "probit"))) stop("Link must be 'identity', 'log', 'inverse', 'sqrt', 'logit', 'probit'")
   if(!(length(link)==N_response || length(link)==1))  stop("Link must either be length 1 or same length as the number of responses")
@@ -66,7 +70,6 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, res
   }
 
 
-
   
 
   ## gets the arguments into a list that is added to for the output
@@ -77,10 +80,14 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, res
 ##################### 
 
 
+  if(verbose) cat("checking parameter list\n")
 
   output$parameters <- do.call(fill_parameters, output)
 
+
   if(!missing(known_predictors)) output$known_predictors <- do.call(fill_preds, output)
+  
+  if(verbose) cat("checking known_predictors\n")
 
 
 #####################  
@@ -88,8 +95,10 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, res
       ## index data_structure
 
 #####################  
-
+  
+  if(verbose) cat("indexing data_structure\n")
   output$str_index <- do.call(index_factors, output)
+  
 
 #####################  
 ###---cov structures
@@ -99,6 +108,8 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, res
   ## check pedigree levels match data structure levels
   ## make function - that can check ped,phylo and covs
   
+  if(verbose) cat("checking pedigree/phylogeny \n")
+
   if(!missing(pedigree)){
     if(missing(pedigree_type)){
       output$pedigree_type <- as.list(rep("additive",length(pedigree)))
@@ -120,13 +131,17 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, res
     }
   }
 
+  if(verbose) cat("generating covariance structures \n")
+
   output$cov_str_all <- do.call(cov_str_list, output)
   ## make cov_str with everything, then return it back to cov_str after predictors
+
 
 
 #####################  
 ###---PREDICTORS 
 #####################  
+  if(verbose) cat("simulating predictors\n")
 
   output$predictors <- lapply(1:N_pop, function(x) do.call(sim_predictors, output))
   # output$predictors <- lapply(1:N_pop, function(x) cbind(do.call(sim_predictors, output), known_predictors))
@@ -134,16 +149,20 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, res
 
   # output$cov_str <- cov_str
 
+
 #####################  
 ###---GENERATE Y
 ##################### 
+  if(verbose) cat("generating y\n")
 
   # y <- do.call(generate_y, output)
   y <- do.call(generate_y_list, output)
 
+
 #####################  
 ###---TRANSFORM Y 
 ##################### 
+  if(verbose) cat("transforming y\n")
 
   output$y <- lapply(y, function(x) transform_dist(x, family, link, output$response_names))
 
@@ -152,7 +171,10 @@ simulate_population <- function(data_structure, N, parameters, N_response=1, res
 ###--- DO SAMPLING 
 ##################### 
 
+  if(verbose) cat("sampling\n")
+
   if(!is.null(output$sample_type)) output$samples <- sample_population(output)
+
 
 ### work out what to return 
 

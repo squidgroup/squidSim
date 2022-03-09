@@ -22,7 +22,8 @@ simulate_population(
   sample_type,
   sample_param,
   sample_plot = FALSE,
-  N_pop = 1
+  N_pop = 1,
+  verbose = FALSE
 )
 }
 \arguments{
@@ -61,6 +62,8 @@ simulate_population(
 \item{sample_plot}{Logical. Should illustrative plots be made - defaults to FALSE.}
 
 \item{N_pop}{Number of populations. Default = 1}
+
+\item{verbose}{Logical. Whether to print diagnostics - defaults to FALSE}
 }
 \value{
 a squid object, which is a list including all inputs and simulated data.
