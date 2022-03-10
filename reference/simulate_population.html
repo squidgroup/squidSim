@@ -69,7 +69,8 @@
   <span class="va">sample_type</span>,
   <span class="va">sample_param</span>,
   sample_plot <span class="op">=</span> <span class="cn">FALSE</span>,
-  N_pop <span class="op">=</span> <span class="fl">1</span>
+  N_pop <span class="op">=</span> <span class="fl">1</span>,
+  verbose <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span></code></pre></div>
     </div>
 
@@ -111,6 +112,8 @@
 <dd><p>Logical. Should illustrative plots be made - defaults to FALSE.</p></dd>
 <dt>N_pop</dt>
 <dd><p>Number of populations. Default = 1</p></dd>
+<dt>verbose</dt>
+<dd><p>Logical. Whether to print diagnostics - defaults to FALSE</p></dd>
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -140,6 +143,7 @@
 <span class="r-in">  <span class="op">)</span>,</span>
 <span class="r-in">  N<span class="op">=</span><span class="fl">2000</span></span>
 <span class="r-in"><span class="op">)</span></span>
+<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in simulate_population(parameters = list(observation = list(names = c("temperature",     "rainfall", "wind"), beta = c(0.5, -0.3, 0.4)), residual = list(vcov = 1)),     N = 2000):</span> unused argument (N = 2000)</span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
