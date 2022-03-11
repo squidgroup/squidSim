@@ -53,9 +53,9 @@
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">simulate_population</span><span class="op">(</span>
   <span class="va">data_structure</span>,
-  <span class="va">N</span>,
+  <span class="va">n</span>,
   <span class="va">parameters</span>,
-  N_response <span class="op">=</span> <span class="fl">1</span>,
+  n_response <span class="op">=</span> <span class="fl">1</span>,
   <span class="va">response_names</span>,
   <span class="va">known_predictors</span>,
   <span class="va">model</span>,
@@ -69,7 +69,7 @@
   <span class="va">sample_type</span>,
   <span class="va">sample_param</span>,
   sample_plot <span class="op">=</span> <span class="cn">FALSE</span>,
-  N_pop <span class="op">=</span> <span class="fl">1</span>,
+  n_pop <span class="op">=</span> <span class="fl">1</span>,
   verbose <span class="op">=</span> <span class="cn">FALSE</span>
 <span class="op">)</span></code></pre></div>
     </div>
@@ -78,11 +78,11 @@
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>data_structure</dt>
 <dd><p>A matrix or dataframe with a named column for each grouping factor, including the levels</p></dd>
-<dt>N</dt>
+<dt>n</dt>
 <dd><p>Sample size when data_structure is not specified</p></dd>
 <dt>parameters</dt>
 <dd><p>A list of parameters for each hierarchical level. See details.</p></dd>
-<dt>N_response</dt>
+<dt>n_response</dt>
 <dd><p>The number of response variables, defaults to 1.</p></dd>
 <dt>response_names</dt>
 <dd><p>Names given to response variables, defaults to y, or y1/y2... if there are multiple responses. Not used if model is specified.</p></dd>
@@ -110,7 +110,7 @@
 <dd><p>A set of parameters, specific to the sampling type. See details.</p></dd>
 <dt>sample_plot</dt>
 <dd><p>Logical. Should illustrative plots be made - defaults to FALSE.</p></dd>
-<dt>N_pop</dt>
+<dt>n_pop</dt>
 <dd><p>Number of populations. Default = 1</p></dd>
 <dt>verbose</dt>
 <dd><p>Logical. Whether to print diagnostics - defaults to FALSE</p></dd>
@@ -132,6 +132,7 @@
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># simple linear model with three predictors variables</span></span>
 <span class="r-in"><span class="va">squid_data</span> <span class="op">&lt;-</span> <span class="fu">simulate_population</span><span class="op">(</span></span>
+<span class="r-in">  n<span class="op">=</span><span class="fl">50</span>,</span>
 <span class="r-in">  parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span class="r-in">    observation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span class="r-in">      names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"temperature"</span>,<span class="st">"rainfall"</span>, <span class="st">"wind"</span><span class="op">)</span>,</span>
@@ -140,10 +141,8 @@
 <span class="r-in">    residual <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
 <span class="r-in">      vcov <span class="op">=</span> <span class="fl">1</span></span>
 <span class="r-in">    <span class="op">)</span></span>
-<span class="r-in">  <span class="op">)</span>,</span>
-<span class="r-in">  N<span class="op">=</span><span class="fl">2000</span></span>
+<span class="r-in">  <span class="op">)</span></span>
 <span class="r-in"><span class="op">)</span></span>
-<span class="r-err co"><span class="r-pr">#&gt;</span> <span class="error">Error in simulate_population(parameters = list(observation = list(names = c("temperature",     "rainfall", "wind"), beta = c(0.5, -0.3, 0.4)), residual = list(vcov = 1)),     N = 2000):</span> unused argument (N = 2000)</span>
 <span class="r-in"></span>
 </code></pre></div>
     </div>
