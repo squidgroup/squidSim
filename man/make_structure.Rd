@@ -4,12 +4,14 @@
 \alias{make_structure}
 \title{make_structure}
 \usage{
-make_structure(structure, repeat_obs = 1, ...)
+make_structure(structure, repeat_obs = 1, level_names, ...)
 }
 \arguments{
 \item{structure}{A formula specifying the structure and sample sizes at each level. See details.}
 
 \item{repeat_obs}{Number of repeated observations at the lowest level}
+
+\item{level_names}{An optional list, containing names for the levels of different grouping factors}
 
 \item{...}{Further arguments passed to or from other methods.}
 }
@@ -20,7 +22,7 @@ A data.frame with the data structure
 Make nested and crossed balanced hierarchical structures
 }
 \details{
-Factors are input as a text string. The name of each factor is followed by the number of levels in that factor in brackets e.g. "individual(100)". Nested factors can be specified using "/", e.g. "population(2)/individual(2)", the lower levels being specified after the higher levels, and the sample sizes of the lower levels
+Factors are input as a text string. The name of each factor is followed by the number of levels in that factor in brackets e.g. "individual(100)". Nested factors can be specified using "/", e.g. "population(2)/individual(2)", the lower levels being specified after the higher levels, and the sample sizes of the lower levels. Crossed factors are indicated using "+"
 }
 \examples{
 # simple data structure with 5 'individuals' and 2 observations per individual
@@ -29,6 +31,10 @@ make_structure(structure="individual(5)", repeat_obs=2)
 # nested data structure with 2 sexes, 5 individuals per sex
 # and 2 observations per individual
 make_structure(structure="sex(2)/individual(5)", repeat_obs=2)
+
+# Naming the sexes in the data_structure
+make_structure(structure="sex(2)/individual(5)", repeat_obs=2,
+ level_names=list(sex=c("female","male")))
 
 # crossed data structure with 5 individuals in 2 treatments 
 # and 2 observations per individual and treatment combination

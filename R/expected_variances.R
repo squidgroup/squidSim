@@ -117,7 +117,7 @@ expected_variance <- function(squid){
 	if(!is.null(known_predictors)){
 		param$known_predictors <- list(
 			mean = colMeans(known_predictors[["predictors"]]),
-			vcov = cov(known_predictors[["predictors"]]),
+			vcov = stats::cov(known_predictors[["predictors"]]),
 			beta = known_predictors[["beta"]]
 		)
 	}
