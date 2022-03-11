@@ -52,13 +52,13 @@ simulate_population <- function(data_structure, n, parameters, n_response=1, res
   if(missing("n") & missing("data_structure")){
     stop("Either 'n' or 'data_structure' need to be specified")
   }else if(missing("n")){
-    N <- nrow(data_structure)
+    n <- nrow(data_structure)
   }else if(!missing("n") & !missing("data_structure")){
     if(nrow(data_structure)!=n) stop("'n' and nrow(data_structure) are not equal. Only one needs to be specified.")
   }
   
   if(!missing("known_predictors")){
-    if(N!=nrow(known_predictors[["predictors"]])) stop("The number of observation specified does not match the number of rows in known_predictors")
+    if(n!=nrow(known_predictors[["predictors"]])) stop("The number of observation specified does not match the number of rows in known_predictors")
   }
 
   if(n_response > 1 & !missing("model")) stop("Currently cannot specify multiple responses and a model formula")

@@ -105,7 +105,7 @@ sample_missing <- function(pop_data, param, plot=FALSE){
 
 
 
-sample_temporal <- function(data_structure, time, group, variance, N, plot=FALSE){
+sample_temporal <- function(data_structure, time, group, variance, n, plot=FALSE){
 	# Which grouping factor is time
 	# Which grouping factor is temporally dependent
 	# Sampling parameters - between group variance in sampling across time
@@ -122,7 +122,7 @@ sample_temporal <- function(data_structure, time, group, variance, N, plot=FALSE
   TsampB <- round(Tsamp*variance,0)
   TsampW <- Tsamp-TsampB
   ## 
-  if(! TsampW >= N) stop("Number of time steps not enough to implement this varaince")
+  if(! TsampW >= n) stop("Number of time steps not enough to implement this varaince")
 
 
   if(plot){
@@ -131,8 +131,8 @@ sample_temporal <- function(data_structure, time, group, variance, N, plot=FALSE
   }
 
   indices <- sort(c(lapply(1:N_levels, function(x){ 
-        Tx <- sort(sample(1:TsampW,N, replace=FALSE)) + sample(1:TsampB,1) + Tmin -1
-        if(plot) graphics::points(Tx,rep(x,N), pch=19, col=x)
+        Tx <- sort(sample(1:TsampW,n, replace=FALSE)) + sample(1:TsampB,1) + Tmin -1
+        if(plot) graphics::points(Tx,rep(x,n), pch=19, col=x)
         # Tx
         # all_levels[x]
         index1 <- which(data_structure[,group]==all_levels[x])
