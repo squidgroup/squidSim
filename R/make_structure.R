@@ -54,8 +54,9 @@ add_interactions <- function(all_levels, int){
 #'
 #' @param structure A formula specifying the structure and sample sizes at each level. See details.
 #' @param repeat_obs Number of repeated observations at the lowest level
+#' @param level_names An optional list, containing names for the levels of different grouping factors
 #' @param ... Further arguments passed to or from other methods.
-#' @details Factors are input as a text string. The name of each factor is followed by the number of levels in that factor in brackets e.g. "individual(100)". Nested factors can be specified using "/", e.g. "population(2)/individual(2)", the lower levels being specified after the higher levels, and the sample sizes of the lower levels 
+#' @details Factors are input as a text string. The name of each factor is followed by the number of levels in that factor in brackets e.g. "individual(100)". Nested factors can be specified using "/", e.g. "population(2)/individual(2)", the lower levels being specified after the higher levels, and the sample sizes of the lower levels. Crossed factors are indicated using "+" 
 #' @author Joel Pick - joel.l.pick@gmail.com
 #' @return A data.frame with the data structure
 #' @examples
@@ -66,6 +67,10 @@ add_interactions <- function(all_levels, int){
 #' # and 2 observations per individual
 #' make_structure(structure="sex(2)/individual(5)", repeat_obs=2)
 #' 
+#' # Naming the sexes in the data_structure
+#' make_structure(structure="sex(2)/individual(5)", repeat_obs=2,
+#'  level_names=list(sex=c("female","male")))
+#' 
 #' # crossed data structure with 5 individuals in 2 treatments 
 #' # and 2 observations per individual and treatment combination
 #' make_structure(structure="treatment(2) + individual(5)", repeat_obs=1)
@@ -73,7 +78,9 @@ add_interactions <- function(all_levels, int){
 #' @export
 
 
-make_structure <- function(structure, repeat_obs=1,...){
+make_structure <- function(structure, repeat_obs=1, level_names,...){
+
+	if(missing(level_names)) level_names<-NULL
 
 	## strip white space from structure
 	structure <- gsub("\\s","",structure)
@@ -91,6 +98,8 @@ make_structure <- function(structure, repeat_obs=1,...){
 	## separate names and sample sizes
 	comp_list_N <- lapply(comp_list,extract_N)
 	comp_names <- do.call(c,lapply(comp_list,extract_name))
+
+	if(any(comp_names%in% c("intercept","observation","residual","interaction","squid_pop"))) stop("'intercept','observation','residual','interaction','squid_pop' are reserved names")
 
 	## apply generate levels function to all components	
 	comp_levels <- lapply(comp_list_N,generate_levels)
@@ -111,8 +120,26 @@ make_structure <- function(structure, repeat_obs=1,...){
 	## repeat levels for number of time steps
 	repeat_levels <- all_levels_int[rep(1:nrow(all_levels_int),each=repeat_obs),,drop=FALSE] 
 
-	return(as.data.frame(repeat_levels))
+	ds <- as.data.frame(repeat_levels)
+
+	if(!all(names(level_names)%in%colnames(ds))) stop("Some items in the level_names list do not match a grouping factor in structure")
+
+# apply(ds,2,function(x)length(unique(x)))
+# sapply(level_names,length)
+
+	for(i in colnames(ds)){
+		if(i %in% names(level_names)){
+		  if(length(unique(ds[,i]))!=length(level_names[[i]])) stop("Number of names given for grouping factor ",i," does not match number of levels")
+		  ds[,i] <- level_names[[i]][ds[,i]]
+		}
+	}
+	ds
+
 }
+
+# ds <- make_structure("year(10)+sex(2)",repeat_obs=1, level_names=list(sex=c("M","F"), year=2001:2010))
+## check level_names is same length
+## check groups in level names are in ds
 
 ## potential error messages
 ## can only be 

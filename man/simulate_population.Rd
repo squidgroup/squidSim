@@ -6,9 +6,9 @@
 \usage{
 simulate_population(
   data_structure,
-  N,
+  n,
   parameters,
-  N_response = 1,
+  n_response = 1,
   response_names,
   known_predictors,
   model,
@@ -22,18 +22,18 @@ simulate_population(
   sample_type,
   sample_param,
   sample_plot = FALSE,
-  N_pop = 1,
+  n_pop = 1,
   verbose = FALSE
 )
 }
 \arguments{
 \item{data_structure}{A matrix or dataframe with a named column for each grouping factor, including the levels}
 
-\item{N}{Sample size when data_structure is not specified}
+\item{n}{Sample size when data_structure is not specified}
 
 \item{parameters}{A list of parameters for each hierarchical level. See details.}
 
-\item{N_response}{The number of response variables, defaults to 1.}
+\item{n_response}{The number of response variables, defaults to 1.}
 
 \item{response_names}{Names given to response variables, defaults to y, or y1/y2... if there are multiple responses. Not used if model is specified.}
 
@@ -61,7 +61,7 @@ simulate_population(
 
 \item{sample_plot}{Logical. Should illustrative plots be made - defaults to FALSE.}
 
-\item{N_pop}{Number of populations. Default = 1}
+\item{n_pop}{Number of populations. Default = 1}
 
 \item{verbose}{Logical. Whether to print diagnostics - defaults to FALSE}
 }
@@ -77,6 +77,7 @@ Parameter list ...
 \examples{
 # simple linear model with three predictors variables
 squid_data <- simulate_population(
+  n=50,
   parameters = list(
     observation = list(
       names = c("temperature","rainfall", "wind"),
@@ -85,8 +86,7 @@ squid_data <- simulate_population(
     residual = list(
       vcov = 1
     )
-  ),
-  N=2000
+  )
 )
 
 }

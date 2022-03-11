@@ -26,6 +26,7 @@
 #' @examples
 #' # simple linear model with three predictors variables
 #' squid_data <- simulate_population(
+#'   n=50,
 #'   parameters = list(
 #'     observation = list(
 #'       names = c("temperature","rainfall", "wind"),
@@ -34,8 +35,7 @@
 #'     residual = list(
 #'       vcov = 1
 #'     )
-#'   ),
-#'   N=2000
+#'   )
 #' )
 #' 
 #' @export
