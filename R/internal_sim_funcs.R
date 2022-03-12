@@ -175,10 +175,13 @@ sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors,
   }))
 
 
-
 # traits <- data.frame(a=rnorm(100),b=rnorm(100),c=rnorm(100),d=rnorm(100))
 # interactions <- list(names=c("a:b","c:d", "exp(a)"), beta=c(2,3))
 
+  ## add in known predictors
+  if(!is.null(known_predictors)){
+    traits<-cbind(traits,known_predictors$predictors)
+  }
 
   ## add in interactions
   if(!is.null(parameters[["interactions"]])){
@@ -193,13 +196,6 @@ sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors,
 
   }
   
-  #order predictors to match betas 
-  traits<-traits[,do.call(c,lapply(parameters[!names(parameters)%in%c("intercept")],function(x) x$names))]
-
-  ## add in known predictors
-  if(!is.null(known_predictors)){
-    traits<-cbind(traits,known_predictors$predictors)
-  }
 
   return(traits)
 
@@ -243,13 +239,14 @@ generate_y_list <- function(parameters, str_index, predictors, model,known_predi
 
   intercepts <- parameters[["intercept"]]
   parameters <- parameters[!names(parameters) %in% c("intercept")]
+  
   ## put all betas together
-  ## ned to order betas
+  #order betas to match predictors
   betas <- do.call(rbind,lapply(parameters,function(x) x$beta))
   if(!is.null(known_predictors)){
     betas<-rbind(betas,known_predictors$beta)
   }
-  #betas <- rbind(do.call(rbind,lapply(parameters,function(x) x$beta)), extra_betas)
+  betas<-betas[colnames(predictors[[1]]),]
 
   y_pred_names <- c(colnames(predictors[[1]]), paste0(colnames(predictors[[1]]),"_raw"), if(!is.null(str_index)){paste0(colnames(str_index),"_ID")})
 

@@ -68,6 +68,31 @@ simulate_population <- function(data_structure, n, parameters, n_response=1, res
     if(length(response_names)!=n_response) stop("response_names needs to be the same length as n_response")  
   }
 
+  if(!missing(pedigree)){
+    if(missing(pedigree_type)){
+      pedigree_type <- as.list(rep("additive",length(pedigree)))
+      names(pedigree_type) <- names(pedigree)
+    }else{
+      if(!pedigree_type %in% c("additive","dominance","epistatic"))stop("phylogeny_type must be wither 'additive','dominance' or 'epistatic'")
+      if(length(pedigree)!=length(pedigree_type)) stop("pedigree and pedigree_type need to be the same length")
+      if(sort(names(pedigree))==sort(names(pedigree))) stop("names of pedigree and pedigree_type need to match")
+    }
+  }
+  if(!missing(phylogeny)){
+    if(missing(phylogeny_type)){
+      phylogeny_type <- as.list(rep("brownian",length(phylogeny)))
+      names(phylogeny_type) <- names(phylogeny)
+    }else{
+      if(!phylogeny_type %in% c("brownian","OU")) stop("phylogeny_type must be wither 'brownian' or 'OU'")
+      if(length(phylogeny)!=length(phylogeny_type)) stop("phylogeny and phylogeny_type need to be the same length")
+      if(sort(names(phylogeny))==sort(names(phylogeny))) stop("names of phylogeny and phylogeny_type need to match")
+    }
+  }
+
+
+
+
+
 
   ## gets the arguments into a list that is added to for the output
   output <- lapply(as.list(environment()), function(x) if (length(x)==1 && x=="") NULL else x)
@@ -77,14 +102,16 @@ simulate_population <- function(data_structure, n, parameters, n_response=1, res
 ##################### 
 
 
+  if(!missing(known_predictors)) {
+    if(verbose) cat("checking known_predictors\n")
+    output$known_predictors <- do.call(fill_preds, output)
+  }
+
   if(verbose) cat("checking parameter list\n")
 
   output$parameters <- do.call(fill_parameters, output)
 
 
-  if(verbose) cat("checking known_predictors\n")
-
-  if(!missing(known_predictors)) output$known_predictors <- do.call(fill_preds, output)
   
 
 
@@ -106,28 +133,9 @@ simulate_population <- function(data_structure, n, parameters, n_response=1, res
   ## check pedigree levels match data structure levels
   ## make function - that can check ped,phylo and covs
   
-  if(verbose) cat("checking pedigree/phylogeny \n")
+  # if(verbose) cat("checking pedigree/phylogeny \n")
 
-  if(!missing(pedigree)){
-    if(missing(pedigree_type)){
-      output$pedigree_type <- as.list(rep("additive",length(pedigree)))
-      names(output$pedigree_type) <- names(pedigree)
-    }else{
-      if(!pedigree_type %in% c("additive","dominance","epistatic"))stop("phylogeny_type must be wither 'additive','dominance' or 'epistatic'")
-      if(length(pedigree)!=length(pedigree_type)) stop("pedigree and pedigree_type need to be the same length")
-      if(sort(names(pedigree))==sort(names(pedigree))) stop("names of pedigree and pedigree_type need to match")
-    }
-  }
-  if(!missing(phylogeny)){
-    if(missing(phylogeny_type)){
-      output$phylogeny_type <- as.list(rep("brownian",length(phylogeny)))
-      names(output$phylogeny_type) <- names(phylogeny)
-    }else{
-      if(!phylogeny_type %in% c("brownian","OU")) stop("phylogeny_type must be wither 'brownian' or 'OU'")
-      if(length(phylogeny)!=length(phylogeny_type)) stop("phylogeny and phylogeny_type need to be the same length")
-      if(sort(names(phylogeny))==sort(names(phylogeny))) stop("names of phylogeny and phylogeny_type need to match")
-    }
-  }
+
 
   if(verbose) cat("generating covariance structures \n")
 
