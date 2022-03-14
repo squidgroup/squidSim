@@ -11,7 +11,7 @@
 #' @param family A description of the error distribution. Default "gaussian".
 #' @param link A description of the link function distribution. Default "identity".
 #' @param pedigree A list of pedigrees for each hierarchical level. Each pedigree must be matrix or data.frame, that is at least 3 columns, which correspond to ID, dam and sire.
-#' @param pedigree_type A list describing what kind of genetic variance is to be simulated from each pedigree. Default is 'additive', other options are 'dominance' and 'epistatic'. Makes use of relationship matrices created by the nadiv package.
+#' @param pedigree_type A list describing what kind of genetic variance is to be simulated from each pedigree. Default is 'A', other options are 'D' and 'E'. Makes use of relationship matrices created by the nadiv package.
 #' @param phylogeny A list of phylogenies for each hierarchical level. Each pedigree should be phylo class.
 #' @param phylogeny_type A list describing what mode of evolution should be simulated from each phylogeny. Options are 'brownian'(default) or 'OU'. 
 #' @param cov_str A list of covariance structures for each hierarchical level. 
@@ -70,10 +70,10 @@ simulate_population <- function(data_structure, n, parameters, n_response=1, res
 
   if(!missing(pedigree)){
     if(missing(pedigree_type)){
-      pedigree_type <- as.list(rep("additive",length(pedigree)))
+      pedigree_type <- as.list(rep("A",length(pedigree)))
       names(pedigree_type) <- names(pedigree)
     }else{
-      if(!pedigree_type %in% c("additive","dominance","epistatic"))stop("phylogeny_type must be wither 'additive','dominance' or 'epistatic'")
+      if(!pedigree_type %in% c("A","D","E"))stop("phylogeny_type must be either 'A','D' or 'E'")
       if(length(pedigree)!=length(pedigree_type)) stop("pedigree and pedigree_type need to be the same length")
       if(sort(names(pedigree))==sort(names(pedigree))) stop("names of pedigree and pedigree_type need to match")
     }

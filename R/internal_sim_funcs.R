@@ -108,13 +108,13 @@ index_factors <- function(data_structure, pedigree, phylogeny, cov_str, paramete
 
 cov_str_list <- function(parameters, data_structure, pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,...){
 
-  ped_chol <- lapply(names(pedigree), function(x){
-    if(pedigree_type[[x]]=="additive") Matrix::chol(nadiv::makeA(pedigree[[x]]))
-    if(pedigree_type[[x]]=="dominance") Matrix::chol(nadiv::makeD(pedigree[[x]]))
-    if(pedigree_type[[x]]=="epistatic") Matrix::chol(nadiv::makeAA(pedigree[[x]]))
+  ped_chol <- sapply(names(pedigree), function(x){
+    if(pedigree_type[[x]]=="A") Matrix::chol(nadiv::makeA(pedigree[[x]]))
+    else if(pedigree_type[[x]]=="D") Matrix::chol(nadiv::makeD(pedigree[[x]]))
+    else if(pedigree_type[[x]]=="E") Matrix::chol(nadiv::makeAA(pedigree[[x]]))
   })
 
-  phylo_chol <- lapply(names(phylogeny), function(x){
+  phylo_chol <- sapply(names(phylogeny), function(x){
     phylo_vcv <- ape::vcv(phylogeny[[x]], corr = TRUE)
     # if(phylogeny_type[[x]]=="OU") {
     #   ## need way of specifying alpha
