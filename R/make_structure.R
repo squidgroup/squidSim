@@ -44,7 +44,8 @@ add_interactions <- function(all_levels, int){
 	    })
 			as.numeric(as.factor(apply(z, 1, paste, collapse="")))
 		}))
-	colnames(int_str)<-int
+	
+	colnames(int_str) <- gsub(":","_",int)
 	cbind(all_levels,int_str)
 
 }
@@ -85,7 +86,7 @@ make_structure <- function(structure, repeat_obs=1, level_names,...){
 	## strip white space from structure
 	structure <- gsub("\\s","",structure)
 
-    if(!grepl("^[A-z0-9_:/()+]*$",structure)) stop("Characters in structure must be alphanumeric, '_', '/', '+', '(', ')' or ':'", call.=FALSE)
+    if(!grepl("^[A-z0-9_:/()+]*$",structure)) stop("Characters in structure must be alphanumeric or in one of _ / + ( ) :", call.=FALSE)
 
 	## separate into crossed and nested components
 	components <- strsplit(structure, "\\+")[[1]]
