@@ -103,9 +103,11 @@ sample_missing <- function(pop_data, param, plot=FALSE){
 }
 
 
+#https://stat.ethz.ch/pipermail/r-help/2005-May/070680.html
+rztpois <- function(N, lambda) qpois(runif(N, dpois(0, lambda), 1), lambda)
 
 
-sample_temporal <- function(data_structure, time, group, variance, n, plot=FALSE){
+sample_temporal <- function(data_structure, time, group, variance, n, balanced=TRUE, plot=FALSE){
 	# Which grouping factor is time
 	# Which grouping factor is temporally dependent
 	# Sampling parameters - between group variance in sampling across time
@@ -122,7 +124,7 @@ sample_temporal <- function(data_structure, time, group, variance, n, plot=FALSE
   TsampB <- round(Tsamp*variance,0)
   TsampW <- Tsamp-TsampB
   ## 
-  if(! TsampW >= n) stop("Number of time steps not enough to implement this varaince")
+  if(! TsampW >= n) stop("Number of time steps not enough to implement this variance")
 
 
   if(plot){
@@ -131,6 +133,7 @@ sample_temporal <- function(data_structure, time, group, variance, n, plot=FALSE
   }
 
   indices <- sort(c(lapply(1:N_levels, function(x){ 
+  			if(!balanced) n <- rztpois(1,n)
         Tx <- sort(sample(1:TsampW,n, replace=FALSE)) + sample(1:TsampB,1) + Tmin -1
         if(plot) graphics::points(Tx,rep(x,n), pch=19, col=x)
         # Tx
