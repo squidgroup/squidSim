@@ -117,7 +117,7 @@ make_structure <- function(structure, repeat_obs=1, level_names,...){
 		all_levels
 	}
 
-	## repeat levels for number of time steps
+	## repeat levels for number of repeat obs
 	repeat_levels <- all_levels_int[rep(1:nrow(all_levels_int),each=repeat_obs),,drop=FALSE] 
 
 	ds <- as.data.frame(repeat_levels)
