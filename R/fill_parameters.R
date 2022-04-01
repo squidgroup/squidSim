@@ -134,10 +134,12 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
         parameters[[i]][["beta"]] <- matrix(parameters[[i]][["beta"]])
       }else if(!is.matrix(parameters[[i]][["beta"]])){stop("'beta' in ", i, " should be a vector or matrix", call.=FALSE)
       }
-    if(n_response != ncol(parameters[[i]][["beta"]])){ 
+      if(n_response != ncol(parameters[[i]][["beta"]])){ 
         stop("Number of columns in beta is not the same as n_response for ",i, call.=FALSE)
       }
       ##
+      ## remove any colnames on beta
+      colnames(parameters[[i]][["beta"]])<-NULL
     }else{ 
     ## if the number of responses and the size of cov are the same, and beta is not specified, then beta = I, as assuming that the user is simulating random effects
     ## if not the same then matrix of 1s
