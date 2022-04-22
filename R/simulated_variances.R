@@ -39,12 +39,12 @@ make_big_matrix<-function(x){
 	mat
 }
 
-#' @title expected_variance
-#' @description Calculate expected mean and variance in response variable(s)
+#' @title simulated_variance
+#' @description Calculate simulated mean and variance in response variable(s)
 #'
 #' @param squid A squid object created with the simulate_population() function
 #' @details 
-#' Calculates the expect variance from the simulation parameters,. as well as breaking down the source of this variance into the hierarchical levels given in the parameter list, and into individual predictors. This function has several limitations. 
+#' Calculates the simulated variance from the simulation parameters, as well as breaking down the source of this variance into the hierarchical levels given in the parameter list, and into individual predictors. This function has several limitations. 
 #' 1. Doesn't work when 'model' is specified in simulate_population()
 #' 2. Assumes grouping factors in the data_structure are balanced - unbalanced designs can change the observed variance
 #' 3. Will be inaccurate with transformed variables (i.e. if functions are specified)
@@ -82,7 +82,7 @@ make_big_matrix<-function(x){
 #' @export
 
 
-expected_variance <- function(squid){
+simulated_variance <- function(squid){
 	intercept <- squid$param$intercept
 	param <- squid$param[names(squid$param)!="intercept"]
 	data_structure <- squid$data_structure
@@ -187,8 +187,8 @@ expected_variance <- function(squid){
 print.squid_var <- function(x, ...){
 	cat("Contribution of the simulated predictors to the mean and variance in the response\n\n")
 
-	cat("Expected Mean:",x$total["mean"],"\n")
-	cat("Expected Variance:",x$total["var"],"\n\n")
+	cat("Simulated Mean:",x$total["mean"],"\n")
+	cat("Simulated Variance:",x$total["var"],"\n\n")
 
 	cat("Contribution of different hierarchical levels to grand mean and variance:\n")
 	print(x$groups)
