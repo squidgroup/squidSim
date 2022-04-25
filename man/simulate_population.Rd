@@ -47,7 +47,7 @@ simulate_population(
 
 \item{pedigree}{A list of pedigrees for each hierarchical level. Each pedigree must be matrix or data.frame, that is at least 3 columns, which correspond to ID, dam and sire.}
 
-\item{pedigree_type}{A list describing what kind of genetic variance is to be simulated from each pedigree. Default is 'additive', other options are 'dominance' and 'epistatic'. Makes use of relationship matrices created by the nadiv package.}
+\item{pedigree_type}{A list describing what kind of genetic variance is to be simulated from each pedigree. Default is 'A', other options are 'D' and 'E'. Makes use of relationship matrices created by the nadiv package.}
 
 \item{phylogeny}{A list of phylogenies for each hierarchical level. Each pedigree should be phylo class.}
 

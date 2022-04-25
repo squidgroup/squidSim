@@ -77,7 +77,7 @@ make_big_matrix<-function(x){
 #'  )
 #')
 #' 
-#' expected_variance(squid_data)
+#' simulated_variance(squid_data)
 #' }
 #' @export
 
