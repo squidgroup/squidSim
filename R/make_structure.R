@@ -100,7 +100,7 @@ make_structure <- function(structure, repeat_obs=1, level_names,...){
 	comp_list_N <- lapply(comp_list,extract_N)
 	comp_names <- do.call(c,lapply(comp_list,extract_name))
 
-	if(any(comp_names%in% c("intercept","observation","residual","interaction","squid_pop"))) stop("'intercept','observation','residual','interaction','squid_pop' are reserved names")
+	if(any(comp_names%in% c("intercept","observation","residual","interactions","squid_pop"))) stop("'intercept','observation','residual','interactions','squid_pop' are reserved names")
 
 	## apply generate levels function to all components	
 	comp_levels <- lapply(comp_list_N,generate_levels)

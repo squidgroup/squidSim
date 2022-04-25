@@ -23,7 +23,7 @@ cov_str_check <- function(data_structure, pedigree, phylogeny, cov_str, paramete
   cs_names <- c(ped_names,phylo_names,cov_names)
 
   if(any(duplicated(cs_names))) stop("Cannot have multiple covariance structures (pedigree/phylogeny/cov_str) linking to the same item in the parameter list. If multiple covariance structures are needed to be linked to the same grouping factor in the data_structure (for example simulating additive genetic and dominance effects), then create multiple items in the parameter list, with different names, but the same 'group', and link the covariance structures accordingly.", call.=FALSE)
-  if(any(!cs_names %in% param_names)) stop("Some names in pedigree/phylogeny/cov_str are not in parameters", call.=FALSE)
+  if(any(!cs_names %in% param_names)) stop("Some names in pedigree/phylogeny/cov_str are not in the parameter list", call.=FALSE)
 
 
   lapply(colnames(data_structure), function(i){
@@ -38,7 +38,7 @@ cov_str_check <- function(data_structure, pedigree, phylogeny, cov_str, paramete
     all_link <- c(ped_link,phylo_link,cov_link)
 
     if(length(all_link)>1){ 
-      warning("Multiple covariance structures linked to ",i,". The function assumes that the covariance strictures are ordered exactly the same. If they are not then the simulations will not run as you expect. You will need to create multiple columns in grouping structure and link different covariance structures to each one.", call.=FALSE) 
+      warning("Multiple covariance structures linked to ",i,". The function assumes that the covariance structures are ordered exactly the same. If they are not then the simulations will not run as you expect. You will need to create multiple columns in grouping structure and link different covariance structures to each one.", call.=FALSE) 
     }
   })
 
@@ -62,9 +62,11 @@ index_factors <- function(data_structure, pedigree, phylogeny, cov_str, paramete
   group_names <- sapply(p_names,function(x) parameters[[x]]$group)
 
   new_ds <- if(is.null(data_structure)){   
+    
     NULL
- 
+
   }else if(is.null(pedigree) & is.null(phylogeny) & is.null(cov_str)){
+
     apply(data_structure,2,function(x) as.numeric(factor(x)))
 
   }else{
