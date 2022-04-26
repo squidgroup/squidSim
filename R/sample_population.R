@@ -44,7 +44,9 @@ sample_nested <- function(data_structure, param, plot=FALSE){
 		##then cascade through nested groups to get right number of levels within each
 		if(ncol(param)>1){
 			for(i in 2:ncol(param)){
-				index_new <- sort(which(data_structure[index,groups[i]] %in% c(tapply(data_structure[index,groups[i]],data_structure[index,groups[i-1]], function(x) sample(unique(x),j[i], replace=FALSE)), recursive=TRUE)))
+				index_new <- sort(which(data_structure[index,groups[i]] %in% c(tapply(data_structure[index,groups[i]],data_structure[index,groups[i-1]], function(x){
+					if(length(x)>1) sample(unique(x),j[i], replace=FALSE) else x
+				}), recursive=TRUE)))
 				index <- index[index_new]
 			}	
 		}
