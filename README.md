@@ -21,7 +21,7 @@ The framework is suitable for performing simulation studies, determining optimal
 Currently the squidSim package is not on CRAN, but you can install the development version from GitHub:
 
     # install.packages("devtools")
-    devtools::install_github("squid-group/squidSim")
+    devtools::install_github("squidgroup/squidSim")
 
 
 #### Getting started

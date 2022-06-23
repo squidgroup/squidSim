@@ -48,7 +48,7 @@ parameters=list(
  )
 )
 
-expected_variance(squid_data)
+simulated_variance(squid_data)
 }
 }
 \author{
