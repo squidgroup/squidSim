@@ -160,7 +160,12 @@ sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors,
     }else{
 
       # x <- methods::as(Matrix::crossprod(cov_str_all[[i]],matrix(stats::rnorm( n*k,  0, 1), n, k)) %*% chol(p$vcov[!interactions,!interactions])   + matrix(p$mean[!interactions], n, k, byrow=TRUE),"matrix")
-      x <- methods::as(Matrix::crossprod(cov_str_all[[i]],matrix(stats::rnorm( n*k,  0, 1), n, k)) %*% chol(p$vcov)   + matrix(p$mean, n, k, byrow=TRUE),"matrix")
+      # x <- methods::as(Matrix::crossprod(cov_str_all[[i]],matrix(stats::rnorm( n*k,  0, 1), n, k)) %*% chol(p$vcov)   + matrix(p$mean, n, k, byrow=TRUE),"matrix")
+      x <- if(is.null(cov_str_all[[i]])) {
+        mvnfast:rmvn(n=n, mu=p$mean, sigma=p$vcov)
+      }else{
+        methods::as(Matrix::crossprod(cov_str_all[[i]],mvnfast:rmvn(n=n, mu=p$mean, sigma=p$vcov)),"matrix")
+      }
 
       ### apply functions
       ### add them in likes betas, making sure they are in the right order? then apply them to the cols?
