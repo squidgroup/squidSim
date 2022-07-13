@@ -51,73 +51,112 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="fu">simulate_population</span><span class="op">(</span>
-  <span class="va">data_structure</span>,
-  <span class="va">n</span>,
-  <span class="va">parameters</span>,
-  n_response <span class="op">=</span> <span class="fl">1</span>,
-  <span class="va">response_names</span>,
-  <span class="va">known_predictors</span>,
-  <span class="va">model</span>,
-  family <span class="op">=</span> <span class="st">"gaussian"</span>,
-  link <span class="op">=</span> <span class="st">"identity"</span>,
-  <span class="va">pedigree</span>,
-  <span class="va">pedigree_type</span>,
-  <span class="va">phylogeny</span>,
-  <span class="va">phylogeny_type</span>,
-  <span class="va">cov_str</span>,
-  <span class="va">sample_type</span>,
-  <span class="va">sample_param</span>,
-  sample_plot <span class="op">=</span> <span class="cn">FALSE</span>,
-  n_pop <span class="op">=</span> <span class="fl">1</span>,
-  verbose <span class="op">=</span> <span class="cn">FALSE</span>
-<span class="op">)</span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">simulate_population</span><span class="op">(</span></span>
+<span>  <span class="va">data_structure</span>,</span>
+<span>  <span class="va">n</span>,</span>
+<span>  <span class="va">parameters</span>,</span>
+<span>  n_response <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  <span class="va">response_names</span>,</span>
+<span>  <span class="va">known_predictors</span>,</span>
+<span>  <span class="va">model</span>,</span>
+<span>  family <span class="op">=</span> <span class="st">"gaussian"</span>,</span>
+<span>  link <span class="op">=</span> <span class="st">"identity"</span>,</span>
+<span>  <span class="va">pedigree</span>,</span>
+<span>  <span class="va">pedigree_type</span>,</span>
+<span>  <span class="va">phylogeny</span>,</span>
+<span>  <span class="va">phylogeny_type</span>,</span>
+<span>  <span class="va">cov_str</span>,</span>
+<span>  <span class="va">sample_type</span>,</span>
+<span>  <span class="va">sample_param</span>,</span>
+<span>  sample_plot <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  n_pop <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  verbose <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>data_structure</dt>
 <dd><p>A matrix or dataframe with a named column for each grouping factor, including the levels</p></dd>
+
+
 <dt>n</dt>
 <dd><p>Sample size when data_structure is not specified</p></dd>
+
+
 <dt>parameters</dt>
 <dd><p>A list of parameters for each hierarchical level. See details.</p></dd>
+
+
 <dt>n_response</dt>
 <dd><p>The number of response variables, defaults to 1.</p></dd>
+
+
 <dt>response_names</dt>
 <dd><p>Names given to response variables, defaults to y, or y1/y2... if there are multiple responses. Not used if model is specified.</p></dd>
+
+
 <dt>known_predictors</dt>
 <dd><p>This option provides a way of inputting existing predictor variables, without simulating all predictors. This argument takes a list, with item 'predictors' and 'betas', where 'predictors' is a matrix or dataframe</p></dd>
+
+
 <dt>model</dt>
 <dd><p>Optional.</p></dd>
+
+
 <dt>family</dt>
 <dd><p>A description of the error distribution. Default "gaussian".</p></dd>
+
+
 <dt>link</dt>
 <dd><p>A description of the link function distribution. Default "identity".</p></dd>
+
+
 <dt>pedigree</dt>
 <dd><p>A list of pedigrees for each hierarchical level. Each pedigree must be matrix or data.frame, that is at least 3 columns, which correspond to ID, dam and sire.</p></dd>
+
+
 <dt>pedigree_type</dt>
 <dd><p>A list describing what kind of genetic variance is to be simulated from each pedigree. Default is 'A', other options are 'D' and 'E'. Makes use of relationship matrices created by the nadiv package.</p></dd>
+
+
 <dt>phylogeny</dt>
 <dd><p>A list of phylogenies for each hierarchical level. Each pedigree should be phylo class.</p></dd>
+
+
 <dt>phylogeny_type</dt>
 <dd><p>A list describing what mode of evolution should be simulated from each phylogeny. Options are 'brownian'(default) or 'OU'.</p></dd>
+
+
 <dt>cov_str</dt>
 <dd><p>A list of covariance structures for each hierarchical level.</p></dd>
+
+
 <dt>sample_type</dt>
 <dd><p>Type of sampling, needs to be one of 'nested', 'missing' or temporal. See details</p></dd>
+
+
 <dt>sample_param</dt>
 <dd><p>A set of parameters, specific to the sampling type. See details.</p></dd>
+
+
 <dt>sample_plot</dt>
 <dd><p>Logical. Should illustrative plots be made - defaults to FALSE.</p></dd>
+
+
 <dt>n_pop</dt>
 <dd><p>Number of populations. Default = 1</p></dd>
+
+
 <dt>verbose</dt>
 <dd><p>Logical. Whether to print diagnostics - defaults to FALSE</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>a squid object, which is a list including all inputs and simulated data.</p>
+    
+
+<p>a squid object, which is a list including all inputs and simulated data.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -130,20 +169,20 @@
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span class="co"># simple linear model with three predictors variables</span></span>
-<span class="r-in"><span class="va">squid_data</span> <span class="op">&lt;-</span> <span class="fu">simulate_population</span><span class="op">(</span></span>
-<span class="r-in">  n<span class="op">=</span><span class="fl">50</span>,</span>
-<span class="r-in">  parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">    observation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">      names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"temperature"</span>,<span class="st">"rainfall"</span>, <span class="st">"wind"</span><span class="op">)</span>,</span>
-<span class="r-in">      beta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="op">-</span><span class="fl">0.3</span>, <span class="fl">0.4</span><span class="op">)</span>    </span>
-<span class="r-in">  <span class="op">)</span>,</span>
-<span class="r-in">    residual <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span>
-<span class="r-in">      vcov <span class="op">=</span> <span class="fl">1</span></span>
-<span class="r-in">    <span class="op">)</span></span>
-<span class="r-in">  <span class="op">)</span></span>
-<span class="r-in"><span class="op">)</span></span>
-<span class="r-in"></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># simple linear model with three predictors variables</span></span></span>
+<span class="r-in"><span><span class="va">squid_data</span> <span class="op">&lt;-</span> <span class="fu">simulate_population</span><span class="op">(</span></span></span>
+<span class="r-in"><span>  n<span class="op">=</span><span class="fl">50</span>,</span></span>
+<span class="r-in"><span>  parameters <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>    observation <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>      names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"temperature"</span>,<span class="st">"rainfall"</span>, <span class="st">"wind"</span><span class="op">)</span>,</span></span>
+<span class="r-in"><span>      beta <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0.5</span>,<span class="op">-</span><span class="fl">0.3</span>, <span class="fl">0.4</span><span class="op">)</span>    </span></span>
+<span class="r-in"><span>  <span class="op">)</span>,</span></span>
+<span class="r-in"><span>    residual <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span></span></span>
+<span class="r-in"><span>      vcov <span class="op">=</span> <span class="fl">1</span></span></span>
+<span class="r-in"><span>    <span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
@@ -155,7 +194,7 @@
 </div>
 
 <div class="pkgdown-footer-right">
-  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+  <p></p><p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.5.</p>
 </div>
 
     </footer></div>
