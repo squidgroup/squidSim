@@ -95,7 +95,7 @@ simulate_population <- function(data_structure, n, parameters, n_response=1, res
 
 
   ## gets the arguments into a list that is added to for the output
-  output <- lapply(as.list(environment()), function(x) if (length(x)==1 && x=="") NULL else x)
+  output <- lapply(as.list(environment()), function(x) if (!is.list(x) &&length(x)==1 && x=="") NULL else x)
 
 #####################  
 ###---Fill in parameter lists 
