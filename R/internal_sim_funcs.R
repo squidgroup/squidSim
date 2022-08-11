@@ -226,9 +226,11 @@ generate_y <- function(predictors, intercepts, betas, str_index, model, y_pred_n
     # evaluate the formula in the context of y_predictors and the extra params
     # y <- eval(parse(text=model), envir = c(as.data.frame(y_predictors),as.list(extra_param)))
     
-    model2 <- paste(model,";\n return(data.frame(mget(ls()[!ls() %in% c(colnames(y_predictors),names(extra_param))])))")
+    model2 <- paste(model,";\n return(data.frame(mget(ls()[!ls() %in% c(colnames(y_predictors),names(extra_param),'intercept')])))")
     y <- eval(parse(text=model2), envir = c(as.data.frame(y_predictors),intercept=intercepts,as.list(extra_param)))
 
+    if(!grepl("intercept",model)) y <- y + intercepts
+    
     if(is.vector(y)) y <- matrix(y)
   }
   
