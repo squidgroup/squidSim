@@ -1,4 +1,4 @@
-### wrapper for MCMCglmm rbv that allows 0 variances 
+### wrapper for MCMCglmm::rbv that allows 0 variances 
 rbv0 <- function(pedigree, G){
   X <- matrix(0, nrow=nrow(pedigree), ncol=nrow(G))
   index <- which(diag(G)!=0)
@@ -7,6 +7,15 @@ rbv0 <- function(pedigree, G){
   X[,index] <- X2
   X
 }
+
+### wrapper for mvnfast::rmvn that allows 0 variances 
+rmvn0 <- function(n,mu,sigma){
+  X <- matrix(0, nrow=n, ncol=nrow(sigma))
+  index <- which(diag(sigma)!=0)
+  X[,index] <- mvnfast::rmvn(n=n, mu=mu[index], sigma=sigma[index,index])
+  X
+}
+
 
 ### function to generate ar1 matrix 
 ar1_cor <- function(n, rho) {
@@ -172,12 +181,15 @@ sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors,
 
     }else{
 
-      # x <- methods::as(Matrix::crossprod(cov_str_all[[i]],matrix(stats::rnorm( n*k,  0, 1), n, k)) %*% chol(p$vcov[!interactions,!interactions])   + matrix(p$mean[!interactions], n, k, byrow=TRUE),"matrix")
-      # x <- methods::as(Matrix::crossprod(cov_str_all[[i]],matrix(stats::rnorm( n*k,  0, 1), n, k)) %*% chol(p$vcov)   + matrix(p$mean, n, k, byrow=TRUE),"matrix")
-      x <- if(is.null(cov_str_all[[i]])) {
-        mvnfast::rmvn(n=n, mu=p$mean, sigma=p$vcov)
-      }else{
-        methods::as(Matrix::crossprod(cov_str_all[[i]],mvnfast::rmvn(n=n, mu=p$mean, sigma=p$vcov)),"matrix")
+      # x <- if(is.null(cov_str_all[[i]])) {
+      #   mvnfast::rmvn(n=n, mu=p$mean, sigma=p$vcov)
+      # }else{
+      #   methods::as(Matrix::crossprod(cov_str_all[[i]],mvnfast::rmvn(n=n, mu=p$mean, sigma=p$vcov)),"matrix")
+      # }
+      
+      x <- rmvn0(n=n, mu=p$mean, sigma=p$vcov)
+      if(!is.null(cov_str_all[[i]])) {
+        x <- methods::as(Matrix::crossprod(cov_str_all[[i]],x),"matrix")
       }
 
       ### apply functions
