@@ -22,17 +22,16 @@ LazyData: true
 Imports:
     stats,
     MASS (>= 7.3-51.1),
-    data.table (>= 1.12.2),
     Matrix,
     ape,
     nadiv,
-    methods
-RoxygenNote: 7.1.2
+    methods,
+    MCMCglmm
+RoxygenNote: 7.2.0
 Suggests: 
     rmarkdown,
     knitr,
     testthat,
     scales,
-    MCMCglmm
 VignetteBuilder: knitr
 Encoding: UTF-8

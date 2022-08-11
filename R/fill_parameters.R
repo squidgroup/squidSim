@@ -77,7 +77,7 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
         if(!is.matrix(parameters[[i]][["vcorr"]])) stop("vcorr needs to be a matrix for ",i, call.=FALSE)
         if(nrow(parameters[[i]][["vcorr"]])!=ncol(parameters[[i]][["vcorr"]])) stop("need square vcorr matrix for ",i, call.=FALSE)
         if(!isSymmetric(parameters[[i]][["vcorr"]])) stop("vcorr matrix should be symmetric for ",i, call.=FALSE)
-        if(!all(diag(parameters[[i]][["vcorr"]])>0)){ stop("Variances for ",i," must all be >0", call.=FALSE)}
+        if(!all(diag(parameters[[i]][["vcorr"]])>=0)){ stop("Variances for ",i," must all be >=0", call.=FALSE)}
         if(any(parameters[[i]][["vcorr"]][lower.tri(parameters[[i]][["vcorr"]])]< -1 | parameters[[i]][["vcorr"]][lower.tri(parameters[[i]][["vcorr"]])]>1)){ stop("Correlations for ",i," must all be between -1 and 1", call.=FALSE)}
 
         sd <- sqrt(diag(parameters[[i]][["vcorr"]]))
@@ -100,10 +100,16 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
         if(nrow(parameters[[i]][["vcov"]])!=ncol(parameters[[i]][["vcov"]])) stop("need square vcov matrix for ",i, call.=FALSE)
         if(!isSymmetric(parameters[[i]][["vcov"]])) stop("vcov matrix should be symmetric for ",i, call.=FALSE)
           #any(x[lower.tri(x)] != x[upper.tri(x)])
-        if(any(eigen(parameters[[i]][["vcov"]])$values<0))stop("vcov matrix should be positive definite for ",i, call.=FALSE)
-        if(!all(diag(parameters[[i]][["vcov"]])>0)){ stop("Variances for ",i," must all be >0", call.=FALSE)}
+
+        ## remove rows and columns associated with 0 variance components to check positive definite
+        # if(any(diag(parameters[[i]][["vcov"]])==0)){
+        #   v <- parameters[[i]][["vcov"]]
+        #   if(any(eigen(v[which(diag(v)!=0),which(diag(v)!=0)])$values<0))stop("vcov matrix should be positive definite for ",i, call.=FALSE)
+        # }
+        if(any(eigen(parameters[[i]][["vcov"]])$values<0))stop("vcov matrix should be positive semi-definite for ",i, call.=FALSE)
+        if(!all(diag(parameters[[i]][["vcov"]])>=0)){ stop("Variances for ",i," must all be >=0", call.=FALSE)}
       }else if(is.vector(parameters[[i]][["vcov"]])){
-        if(!all(parameters[[i]][["vcov"]]>0)){ stop("Variances for ",i," must all be >0", call.=FALSE)}
+        if(!all(parameters[[i]][["vcov"]]>=0)){ stop("Variances for ",i," must all be >=0", call.=FALSE)}
         parameters[[i]][["vcov"]] <- if(length(parameters[[i]][["vcov"]])==1) as.matrix(parameters[[i]][["vcov"]]) else diag(parameters[[i]][["vcov"]])
       }else{
         stop("vcov must be a symmetric square matrix or a vector", call.=FALSE)
