@@ -26,7 +26,8 @@ Imports:
     ape,
     nadiv,
     methods,
-    MCMCglmm
+    MCMCglmm,
+    mvnfast
 RoxygenNote: 7.2.0
 Suggests: 
     rmarkdown,
