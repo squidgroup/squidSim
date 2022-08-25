@@ -1,3 +1,23 @@
+### wrapper for MCMCglmm::rbv that allows 0 variances 
+rbv0 <- function(pedigree, G){
+  X <- matrix(0, nrow=nrow(pedigree), ncol=nrow(G))
+  index <- which(diag(G)!=0)
+  if(any(diag(G)==0)) G <- G[index,index]
+  X2 <- MCMCglmm::rbv(pedigree=pedigree, G=G)
+  X[,index] <- X2
+  X
+}
+
+### wrapper for mvnfast::rmvn that allows 0 variances 
+rmvn0 <- function(n,mu,sigma){
+  X <- matrix(0, nrow=n, ncol=nrow(sigma))
+  index <- which(diag(sigma)!=0)
+  X[,index] <- mvnfast::rmvn(n=n, mu=mu[index], sigma=sigma[index,index])
+  X
+}
+
+
+### function to generate ar1 matrix 
 ar1_cor <- function(n, rho) {
   exponent <- abs(matrix(1:n - 1, nrow = n, ncol = n, byrow = TRUE) - 
       (1:n - 1))
@@ -132,7 +152,7 @@ cov_str_list <- function(parameters, data_structure, pedigree, pedigree_type, ph
 
   add_list<-names(parameters)[!names(parameters) %in% c(names(chol_str_all),"intercept","interactions")]
   for(i in add_list){
-    chol_str_all[[i]] <- Matrix::Diagonal(parameters[[i]][["n_level"]])
+    chol_str_all[[i]] <- NULL#Matrix::Diagonal(parameters[[i]][["n_level"]])
   }
   return( chol_str_all)
 }
@@ -151,21 +171,26 @@ sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors,
     ## simulate 'traits' at each level from multivariate normal 
     if(p$fixed){
       
+      ## if factor make design matrix
       x<-stats::model.matrix(stats::formula(paste("~ factor(",p$group,")-1")),as.data.frame(str_index))
     
     }else if(p$covariate){
-
+      
+      ## if covariate, make design matrix from data structure
       x<- matrix(rep(str_index[,p$group],k),nrow(str_index),k)
 
     }else{
 
-      # x <- methods::as(Matrix::crossprod(cov_str_all[[i]],matrix(stats::rnorm( n*k,  0, 1), n, k)) %*% chol(p$vcov[!interactions,!interactions])   + matrix(p$mean[!interactions], n, k, byrow=TRUE),"matrix")
-      x <- methods::as(Matrix::crossprod(cov_str_all[[i]],matrix(stats::rnorm( n*k,  0, 1), n, k)) %*% chol(p$vcov)   + matrix(p$mean, n, k, byrow=TRUE),"matrix")
       # x <- if(is.null(cov_str_all[[i]])) {
-        # mvnfast::rmvn(n=n, mu=p$mean, sigma=p$vcov)
+      #   mvnfast::rmvn(n=n, mu=p$mean, sigma=p$vcov)
       # }else{
-        # methods::as(Matrix::crossprod(cov_str_all[[i]],mvnfast::rmvn(n=n, mu=p$mean, sigma=p$vcov)),"matrix")
+      #   methods::as(Matrix::crossprod(cov_str_all[[i]],mvnfast::rmvn(n=n, mu=p$mean, sigma=p$vcov)),"matrix")
       # }
+      
+      x <- rmvn0(n=n, mu=p$mean, sigma=p$vcov)
+      if(!is.null(cov_str_all[[i]])) {
+        x <- methods::as(Matrix::crossprod(cov_str_all[[i]],x),"matrix")
+      }
 
       ### apply functions
       ### add them in likes betas, making sure they are in the right order? then apply them to the cols?
@@ -231,9 +256,11 @@ generate_y <- function(predictors, intercepts, betas, str_index, model, y_pred_n
     # evaluate the formula in the context of y_predictors and the extra params
     # y <- eval(parse(text=model), envir = c(as.data.frame(y_predictors),as.list(extra_param)))
     
-    model2 <- paste(model,";\n return(data.frame(mget(ls()[!ls() %in% c(colnames(y_predictors),names(extra_param))])))")
+    model2 <- paste(model,";\n return(data.frame(mget(ls()[!ls() %in% c(colnames(y_predictors),names(extra_param),'intercept')])))")
     y <- eval(parse(text=model2), envir = c(as.data.frame(y_predictors),intercept=intercepts,as.list(extra_param)))
 
+    if(!grepl("intercept",model)) y <- y + intercepts
+    
     if(is.vector(y)) y <- matrix(y)
   }
   
