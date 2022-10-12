@@ -77,22 +77,15 @@ downloads](http://cranlogs.r-pkg.org/badges/grand-total/squid)](http://cranlogs.
 <div class="section level4">
 <h4 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h4>
-<p>Currently the squidSim package is not on CRAN, but you can install the development version from GitHub:</p>
+<p>Currently the squidSim package is not on CRAN, but you can install the development version from GitHub using the devtools pacakge:</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1"></a><span class="co"># install.packages("devtools")</span></span>
-<span id="cb1-2"><a href="#cb1-2"></a>devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">"squidgroup/squidSim"</span>)</span></code></pre></div>
+<span id="cb1-2"><a href="#cb1-2"></a>devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">"squidgroup/squidSim"</span>)</span>
+<span id="cb1-3"><a href="#cb1-3"></a><span class="kw">library</span>(squidSim)</span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="getting-started">Getting started<a class="anchor" aria-label="anchor" href="#getting-started"></a>
 </h4>
-<p>We have an extensive vignette, which we strongly recommend reading through before using the package (link).</p>
-<p>Briefly, load the squidSim package in R:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1"></a><span class="co"># run SQuID application</span></span>
-<span id="cb2-2"><a href="#cb2-2"></a><span class="kw">library</span>(squidSim)</span></code></pre></div>
-<p><code>squidSim</code> then has two main functions:</p>
-<ul>
-<li><p><strong><code><a href="reference/make_structure.html">make_structure()</a></code>:</strong></p></li>
-<li><p><strong><code><a href="reference/simulate_population.html">simulate_population()</a></code>:</strong></p></li>
-</ul>
+<p>We have an extensive <a href="http://squidgroup.org/squidSim_vignette/" class="external-link">vignette</a>, which we strongly recommend reading through before using the package.</p>
 </div>
 <div class="section level4">
 <h4 id="background-to-the-project">Background to the project<a class="anchor" aria-label="anchor" href="#background-to-the-project"></a>
