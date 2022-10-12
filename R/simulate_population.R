@@ -1,12 +1,12 @@
 
 #' @title simulate_population
 #' @description Simulate population level data
-#' @param data_structure A matrix or dataframe with a named column for each grouping factor, including the levels
+#' @param data_structure A matrix or data.frame with a named column for each grouping factor, including the levels
 #' @param n Sample size when data_structure is not specified
 #' @param parameters A list of parameters for each hierarchical level. See details.
 #' @param n_response The number of response variables, defaults to 1. 
 #' @param response_names Names given to response variables. Defaults to 'y', or c('y1','y2',...) if n_response>1. Not used if model is specified. 
-#' @param known_predictors This argument provides a way of inputting existing predictor variables. This argument takes a list, with items 'predictors' and 'betas', where 'predictors' is a matrix or dataframe, the number of rows of which MUST equal 'n' or the number of rows in 'data_structure'. 
+#' @param known_predictors This argument provides a way of inputting existing predictor variables. This argument takes a list, with items 'predictors' and 'betas', where 'predictors' is a matrix or data.frame, the number of rows of which MUST equal 'n' or the number of rows in 'data_structure'. 
 #' @param model Optional. A formula description of the simulation model. See details.
 #' @param family A description of the error distribution. Options are 'gaussian' (default), 'poisson' and 'binomial'. 'binomial' generates a binary response variable.
 #' @param link A description of the link function distribution. Options are 'identity' (default),'log', 'inverse', 'sqrt', 'logit' and 'probit'.
