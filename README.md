@@ -18,27 +18,16 @@ The framework is suitable for performing simulation studies, determining optimal
 
 #### Installation
 
-Currently the squidSim package is not on CRAN, but you can install the development version from GitHub:
+Currently the squidSim package is not on CRAN, but you can install the development version from GitHub using the devtools pacakge:
 
     # install.packages("devtools")
     devtools::install_github("squidgroup/squidSim")
+    library(squidSim)
 
 
 #### Getting started
 
-We have an extensive vignette, which we strongly recommend reading through before using the package (link).
-
-Briefly, load the squidSim package in R: 
-
-    # run SQuID application
-    library(squidSim)
-
-`squidSim` then has two main functions:
-
--   **`make_structure()`:** 
-
--   **`simulate_population()`:** 
-
+We have an extensive [vignette](http://squidgroup.org/squidSim_vignette/), which we strongly recommend reading through before using the package.
 
 
 #### Background to the project
