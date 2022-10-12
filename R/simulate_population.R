@@ -5,22 +5,40 @@
 #' @param n Sample size when data_structure is not specified
 #' @param parameters A list of parameters for each hierarchical level. See details.
 #' @param n_response The number of response variables, defaults to 1. 
-#' @param response_names Names given to response variables, defaults to y, or y1/y2... if there are multiple responses. Not used if model is specified. 
-#' @param known_predictors This option provides a way of inputting existing predictor variables, without simulating all predictors. This argument takes a list, with item 'predictors' and 'betas', where 'predictors' is a matrix or dataframe 
-#' @param model Optional. 
-#' @param family A description of the error distribution. Default "gaussian".
-#' @param link A description of the link function distribution. Default "identity".
-#' @param pedigree A list of pedigrees for each hierarchical level. Each pedigree must be matrix or data.frame, that is at least 3 columns, which correspond to ID, dam and sire.
-#' @param pedigree_type A list describing what kind of genetic variance is to be simulated from each pedigree. Default is 'A', other options are 'D' and 'E'. Makes use of relationship matrices created by the nadiv package.
-#' @param phylogeny A list of phylogenies for each hierarchical level. Each pedigree should be phylo class.
+#' @param response_names Names given to response variables. Defaults to 'y', or c('y1','y2',...) if n_response>1. Not used if model is specified. 
+#' @param known_predictors This argument provides a way of inputting existing predictor variables. This argument takes a list, with items 'predictors' and 'betas', where 'predictors' is a matrix or dataframe, the number of rows of which MUST equal 'n' or the number of rows in 'data_structure'. 
+#' @param model Optional. A formula description of the simulation model. See details.
+#' @param family A description of the error distribution. Options are 'gaussian' (default), 'poisson' and 'binomial'. 'binomial' generates a binary response variable.
+#' @param link A description of the link function distribution. Options are 'identity' (default),'log', 'inverse', 'sqrt', 'logit' and 'probit'.
+#' @param pedigree A list of pedigrees for each hierarchical level. Each pedigree must be matrix or data.frame, that is at least 3 columns, which correspond to ID, dam and sire. The name in the pedigree list must match a name in the parameter list.
+#' @param pedigree_type A list describing what kind of genetic variance is to be simulated from each pedigree. Default is 'A', other options are 'D' (dominance) and 'E' (epistatic). Makes use of relationship matrices created by the MCMCglmm and nadiv packages.
+#' @param phylogeny A list of phylogenies for each hierarchical level. Each phylogeny should be phylo class. The name in the phylogeny list must match a name in the parameter list.
 #' @param phylogeny_type A list describing what mode of evolution should be simulated from each phylogeny. Options are 'brownian'(default) or 'OU'. 
-#' @param cov_str A list of covariance structures for each hierarchical level. 
-#' @param sample_type Type of sampling, needs to be one of 'nested', 'missing' or temporal. See details
+#' @param cov_str A list of covariance structures for each hierarchical level. The name in the cov_str list must match a name in the parameter list.
+#' @param sample_type Type of sampling, must be one of 'nested', 'missing' or temporal. If not specified, then no sampling is done. See details
 #' @param sample_param A set of parameters, specific to the sampling type. See details.
-#' @param sample_plot Logical. Should illustrative plots be made - defaults to FALSE.
+#' @param sample_plot Logical. Should illustrative plots be made - defaults to FALSE - currently not implemented.
 #' @param n_pop Number of populations. Default = 1
-#' @param verbose Logical. Whether to print diagnostics - defaults to FALSE
-#' @details Parameter list ... 
+#' @param verbose Logical. Whether to print diagnostics. Useful for debugging. Defaults to FALSE
+#' @details 
+#' A detailed vignette can be found at http://squidgroup.org/squidSim_vignette/
+#' 
+#' The parameters list contains one (or more) list for each hierarchical level that you want to simulate at. A residual list is always need, specifying variances/covariances for the residual. Additionally, the parameter list can also be provided with an intercept vector and interactions list. For each item in the parameter list (excluding intercept, interactions, and residual), the following can be specified (but all have default values): 
+#' names - vector containing the names of predictors simulated at this level
+#'  group - character string relating to the data_structure
+#' mean - vector of means for the predictor variables
+#' vcov or vcorr - Either a vector of variances, or a variance-covariance/correlation matrix, for the predictor variables
+#' beta - vector of effect sizes (or matrix with n_response columns when n_response>1)
+#' fixed - Logical, indicating whether the effects for the levels are fixed or to be simulated
+#' covariate - Logical, indicating whether the indexes in the data structure are to be used as a continuous variable rather than simulating one
+#' functions - vector - transformation to be applied to the response variable. Defaults to ‘identity’.
+#' A more detailed explanation can be found at http://squidgroup.org/squidSim_vignette/1.9-parameter-list-summary.html 
+#' 
+#' The model argument is character string which explicitly tells the simulate_population function how to put the simulated predictors together to form the response variable. For example, if the predictors temperature and rainfall had been specified in the parameter list, providing the model argument with "y = temperature + rainfall + residual" would result in generating a response variable 'y' in the same way the siumulate_population function does by default. For more detailed information see http://squidgroup.org/squidSim_vignette/1.7-modeleq.html
+#' 
+#' Different sampling schemes can be implemented, (sample_type can be 'nested', 'missing' or temporal). The sample_param takes a different form depending on the sample_type. See http://squidgroup.org/squidSim_vignette/7-sampling.html for full details.
+#' 
+#' 
 #' @author Joel Pick - joel.l.pick@gmail.com
 #' @return a squid object, which is a list including all inputs and simulated data.
 #' @examples
