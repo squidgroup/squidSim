@@ -128,13 +128,14 @@ index_factors <- function(data_structure, pedigree, phylogeny, cov_str, paramete
 }
 
 
-cov_str_list <- function(parameters, data_structure, pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,...){
+cov_str_list <- function(parameters, data_structure, phylogeny, phylogeny_type, cov_str,...){
+#pedigree, pedigree_type, 
 
-  ped_chol <- sapply(names(pedigree), function(x){
-    if(pedigree_type[[x]]=="A") Matrix::chol(nadiv::makeA(pedigree[[x]]))
-    else if(pedigree_type[[x]]=="D") Matrix::chol(nadiv::makeD(pedigree[[x]]))
-    else if(pedigree_type[[x]]=="E") Matrix::chol(nadiv::makeAA(pedigree[[x]]))
-  })
+  # ped_chol <- sapply(names(pedigree), function(x){
+  #   if(pedigree_type[[x]]=="A") Matrix::chol(nadiv::makeA(pedigree[[x]]))
+  #   else if(pedigree_type[[x]]=="D") Matrix::chol(nadiv::makeD(pedigree[[x]]))
+  #   else if(pedigree_type[[x]]=="E") Matrix::chol(nadiv::makeAA(pedigree[[x]]))
+  # })
 
   phylo_chol <- sapply(names(phylogeny), function(x){
     phylo_vcv <- ape::vcv(phylogeny[[x]], corr = TRUE)
@@ -148,7 +149,7 @@ cov_str_list <- function(parameters, data_structure, pedigree, pedigree_type, ph
 
   cor_chol <- lapply(cov_str, function(x) methods::as(chol(x), "dgCMatrix"))
 
-  chol_str_all<-c(ped_chol,phylo_chol,cor_chol)
+  chol_str_all<-c(phylo_chol,cor_chol)#ped_chol,
 
   add_list<-names(parameters)[!names(parameters) %in% c(names(chol_str_all),"intercept","interactions")]
   for(i in add_list){
@@ -159,7 +160,7 @@ cov_str_list <- function(parameters, data_structure, pedigree, pedigree_type, ph
 
 
 
-sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors, ...){
+sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors, pedigree, ...){
 
   traits <- do.call(cbind, lapply( names(parameters)[!names(parameters)%in%c("intercept","interactions")], function(i){  
 
@@ -179,6 +180,9 @@ sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors,
       ## if covariate, make design matrix from data structure
       x<- matrix(rep(str_index[,p$group],k),nrow(str_index),k)
 
+    }else if(i %in% names(pedigree)){
+    ## if name is listed in pedigree argument, link to pedigree
+      x <- rbv0(pedigree[[i]],p$vcov)
     }else{
 
       # x <- if(is.null(cov_str_all[[i]])) {

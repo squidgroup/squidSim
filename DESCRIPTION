@@ -1,6 +1,6 @@
 Package: squidSim
 Title: Statistical Quantification of Individual Differences
-Version: 0.1.0
+Version: 0.2.0
 Authors@R: c(
     person("Joel"    , "Pick"           , email = "joel.l.pick@gmail.com"             , role = c("aut","cre")),
     person("Hassen"  , "Allegue"        , email = "h.all@disroot.org"                 , role = "aut"),
@@ -24,11 +24,10 @@ Imports:
     MASS (>= 7.3-51.1),
     Matrix,
     ape,
-    nadiv,
     methods,
     MCMCglmm,
     mvnfast
-RoxygenNote: 7.2.0
+RoxygenNote: 7.3.1
 Suggests: 
     rmarkdown,
     knitr,

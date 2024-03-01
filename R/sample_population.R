@@ -106,7 +106,7 @@ sample_missing <- function(pop_data, param, plot=FALSE){
 
 
 #https://stat.ethz.ch/pipermail/r-help/2005-May/070680.html
-rztpois <- function(N, lambda) qpois(runif(N, dpois(0, lambda), 1), lambda)
+rztpois <- function(N, lambda) stats::qpois(stats::runif(N, stats::dpois(0, lambda), 1), lambda)
 
 
 sample_temporal <- function(data_structure, time, group, variance, n, balanced=TRUE, plot=FALSE){
