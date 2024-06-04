@@ -8,6 +8,7 @@
 #' @param response_names Names given to response variables. Defaults to 'y', or c('y1','y2',...) if n_response>1. Not used if model is specified. 
 #' @param known_predictors This argument provides a way of inputting existing predictor variables. This argument takes a list, with items 'predictors' and 'betas', where 'predictors' is a matrix or data.frame, the number of rows of which MUST equal 'n' or the number of rows in 'data_structure'. 
 #' @param model Optional. A formula description of the simulation model. See details.
+#' @param index_link Optional. Make new factors in the data structure indexed by other factors. This is only really used in the context of the model argument. Takes a list, the names of which indicate the new grouping factor name and the elements of the list represent which grouping factors should be linked, for example "mother-ID" would index mother with the same indexes as ID.  
 #' @param family A description of the error distribution. Options are 'gaussian' (default), 'poisson' and 'binomial'. 'binomial' generates a binary response variable.
 #' @param link A description of the link function distribution. Options are 'identity' (default),'log', 'inverse', 'sqrt', 'logit' and 'probit'.
 #' @param pedigree A list of pedigrees for each hierarchical level. Each pedigree must be matrix or data.frame, that is at least 3 columns, which correspond to ID, dam and sire. The name in the pedigree list must match a name in the parameter list.
@@ -57,7 +58,7 @@
 #' )
 #' 
 #' @export
-simulate_population <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, n_pop=1, verbose=FALSE){
+simulate_population <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, index_link, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, n_pop=1, verbose=FALSE){
 
   if(verbose) cat("checking input\n")
 
@@ -91,7 +92,7 @@ simulate_population <- function(data_structure, n, parameters, n_response=1, res
       pedigree_type <- as.list(rep("A",length(pedigree)))
       names(pedigree_type) <- names(pedigree)
     }else{
-      if(!pedigree_type %in% c("A","D","E"))stop("phylogeny_type must be either 'A','D' or 'E'")
+      if(!pedigree_type %in% c("A","D","E"))stop("pedigree_type must be either 'A','D' or 'E'")
       if(length(pedigree)!=length(pedigree_type)) stop("pedigree and pedigree_type need to be the same length")
       if(sort(names(pedigree))==sort(names(pedigree))) stop("names of pedigree and pedigree_type need to match")
     }
@@ -101,7 +102,7 @@ simulate_population <- function(data_structure, n, parameters, n_response=1, res
       phylogeny_type <- as.list(rep("brownian",length(phylogeny)))
       names(phylogeny_type) <- names(phylogeny)
     }else{
-      if(!phylogeny_type %in% c("brownian","OU")) stop("phylogeny_type must be wither 'brownian' or 'OU'")
+      if(!phylogeny_type %in% c("brownian","OU")) stop("phylogeny_type must be either 'brownian' or 'OU'")
       if(length(phylogeny)!=length(phylogeny_type)) stop("phylogeny and phylogeny_type need to be the same length")
       if(sort(names(phylogeny))==sort(names(phylogeny))) stop("names of phylogeny and phylogeny_type need to match")
     }

@@ -75,7 +75,7 @@ cov_str_check <- function(data_structure, pedigree, phylogeny, cov_str, paramete
 
 
 ### function to turn data_structure into indexes. Matches names in data_structure to linked pedigree/phylogeny/cov_str to make sure indexing is correct. Doesnt do any error checking
-index_factors <- function(data_structure, pedigree, phylogeny, cov_str, parameters,...){
+index_factors <- function(data_structure, pedigree, phylogeny, cov_str, parameters, index_link,...){
   
   p_names <- names(parameters)[!names(parameters)%in%c("intercept","interactions")]
 
@@ -124,7 +124,23 @@ index_factors <- function(data_structure, pedigree, phylogeny, cov_str, paramete
     
   }
   colnames(new_ds) <- colnames(data_structure)
+
+  if(!is.null(index_link){
+    more_ds <- do.call(cbind,lapply(index_link, function(x){
+      ds_links <- strsplit(x, '-')[[1]]
+      
+      ## give warning if not all levels match
+      if(!all(data_structure[,ds_links[1]] %in% data_structure[,ds_links[2]])) warning(paste("Not all levels are of", ds_links[1], "are present in", ds_links[2], "meaning that there will be NAs in the new grouping factor"))
+      
+      data_structure[,ds_links[2]][match(data_structure[,ds_links[1]], data_structure[,ds_links[2]])]
+
+      }
+    ))
+    return(cbind(new_ds,more_ds))
+  }else{
     return(new_ds)
+  }
+
 }
 
 
