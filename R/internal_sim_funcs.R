@@ -2,9 +2,11 @@
 rbv0 <- function(pedigree, G){
   X <- matrix(0, nrow=nrow(pedigree), ncol=nrow(G))
   index <- which(diag(G)!=0)
-  if(any(diag(G)==0)) G <- G[index,index]
-  X2 <- MCMCglmm::rbv(pedigree=pedigree, G=G)
-  X[,index] <- X2
+  if(length(index)>0){
+    if(any(diag(G)==0)) G <- G[index,index]
+    X2 <- MCMCglmm::rbv(pedigree=pedigree, G=G)
+    X[,index] <- X2 
+  }
   X
 }
 
@@ -125,7 +127,7 @@ index_factors <- function(data_structure, pedigree, phylogeny, cov_str, paramete
   }
   colnames(new_ds) <- colnames(data_structure)
 
-  if(!is.null(index_link){
+  if(!is.null(index_link)){
     more_ds <- do.call(cbind,lapply(index_link, function(x){
       ds_links <- strsplit(x, '-')[[1]]
       
