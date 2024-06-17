@@ -187,7 +187,6 @@ sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors,
     k <- length(p$mean)
     n <- p$n_level
 
-    ## simulate 'traits' at each level from multivariate normal 
     if(p$fixed){
       
       ## if factor make design matrix
@@ -198,18 +197,22 @@ sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors,
       ## if covariate, make design matrix from data structure
       x<- matrix(rep(str_index[,p$group],k),nrow(str_index),k)
 
-    }else if(i %in% names(pedigree)){
-    ## if name is listed in pedigree argument, link to pedigree
-      x <- rbv0(pedigree[[i]],p$vcov)
     }else{
+      ## otherwise simulate 'traits' at each level from multivariate normal 
 
       # x <- if(is.null(cov_str_all[[i]])) {
       #   mvnfast::rmvn(n=n, mu=p$mean, sigma=p$vcov)
       # }else{
       #   methods::as(Matrix::crossprod(cov_str_all[[i]],mvnfast::rmvn(n=n, mu=p$mean, sigma=p$vcov)),"matrix")
       # }
+
+      if(i %in% names(pedigree)){
+        ## if name is listed in pedigree argument, link to pedigree
+        x <- rbv0(pedigree[[i]],p$vcov)
+      }else{
+        x <- rmvn0(n=n, mu=p$mean, sigma=p$vcov)  
+      }
       
-      x <- rmvn0(n=n, mu=p$mean, sigma=p$vcov)
       if(!is.null(cov_str_all[[i]])) {
         x <- methods::as(Matrix::crossprod(cov_str_all[[i]],x),"matrix")
       }
