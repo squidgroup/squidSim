@@ -12,6 +12,7 @@ simulate_population(
   response_names,
   known_predictors,
   model,
+  index_link,
   family = "gaussian",
   link = "identity",
   pedigree,
@@ -40,6 +41,8 @@ simulate_population(
 \item{known_predictors}{This argument provides a way of inputting existing predictor variables. This argument takes a list, with items 'predictors' and 'betas', where 'predictors' is a matrix or data.frame, the number of rows of which MUST equal 'n' or the number of rows in 'data_structure'.}
 
 \item{model}{Optional. A formula description of the simulation model. See details.}
+
+\item{index_link}{Optional. Make new factors in the data structure indexed by other factors. This is only really used in the context of the model argument. Takes a list, the names of which indicate the new grouping factor name and the elements of the list represent which grouping factors should be linked, for example "mother-ID" would index mother with the same indexes as ID.}
 
 \item{family}{A description of the error distribution. Options are 'gaussian' (default), 'poisson' and 'binomial'. 'binomial' generates a binary response variable.}
 

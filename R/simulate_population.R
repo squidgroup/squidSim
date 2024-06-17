@@ -130,7 +130,7 @@ simulate_population <- function(data_structure, n, parameters, n_response=1, res
 
   output$parameters <- do.call(fill_parameters, output)
 
-
+  # if(verbose) print(output$parameters)
   
 
 
@@ -143,7 +143,10 @@ simulate_population <- function(data_structure, n, parameters, n_response=1, res
   if(verbose) cat("indexing data_structure\n")
   output$str_index <- do.call(index_factors, output)
   
-
+  # if(verbose)  {
+  #   print(head(output$str_index))
+  #   print(tail(output$str_index))
+  # }
 #####################  
 ###---cov structures
 #####################  
