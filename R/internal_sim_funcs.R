@@ -134,7 +134,7 @@ index_factors <- function(data_structure, pedigree, phylogeny, cov_str, paramete
       ## give warning if not all levels match
       if(!all(data_structure[,ds_links[1]] %in% data_structure[,ds_links[2]])) warning(paste("Not all levels are of", ds_links[1], "are present in", ds_links[2], "meaning that there will be NAs in the new grouping factor"))
       
-      data_structure[,ds_links[2]][match(data_structure[,ds_links[1]], data_structure[,ds_links[2]])]
+      new_ds[,ds_links[2]][match(data_structure[,ds_links[1]], data_structure[,ds_links[2]])]
 
       }
     ))
