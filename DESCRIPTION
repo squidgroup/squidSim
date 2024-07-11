@@ -1,6 +1,6 @@
 Package: squidSim
 Title: Statistical Quantification of Individual Differences
-Version: 0.2.1
+Version: 0.2.2
 Authors@R: c(
     person("Joel"    , "Pick"           , email = "joel.l.pick@gmail.com"             , role = c("aut","cre")),
     person("Hassen"  , "Allegue"        , email = "h.all@disroot.org"                 , role = "aut"),

@@ -209,19 +209,20 @@ sample_population <- function(x){
 		if(!all(sapply(param,length)==1)) {
 		  stop("vectors in param list must be length 1 for type='survival'")
 		}
-		if(!all(c("y", "ID", "age")	%in% names(param)){
+		if(!all(c("y", "ID", "age")	%in% names(param))) {
 			stop("param list must include 'y', 'ID' and 'age' for type='survival'")
 		}
-
-		indices <- lapply(1:x$n_pop,function(i) { # for each population
-				sample_survival(
-					y=y[[i]][,param[["y"]]], 
-					age=data_structure[,param[["age"]]], 
-					ID=data_structure[,param[["ID"]]],
-					death=if(is.null(param[["death"]])){1}else{param[["death"]]},
-					all= if(is.null(param[["all"]])){TRUE}else{param[["all"]]} ) # 
+		if(!is.null(param[["all"]]) && !is.logical(param[["all"]]) ){
+			stop("'all' in param list must logical for type='survival'")
 		}
-
+		indices <- lapply(x$y,function(z) { # for each population
+			list(sample_survival(
+				y=z[,param[["y"]]], 
+				age=x$data_structure[,param[["age"]]], 
+				ID=x$data_structure[,param[["ID"]]],
+				death=if(is.null(param[["death"]])){1}else{param[["death"]]},
+				all= if(is.null(param[["all"]])){TRUE}else{param[["all"]]} ) )
+		})
 
 	}else if(type=="temporal"){
 		if(!is.list(param)){

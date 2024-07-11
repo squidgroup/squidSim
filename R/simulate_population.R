@@ -16,7 +16,7 @@
 #' @param phylogeny A list of phylogenies for each hierarchical level. Each phylogeny should be phylo class. The name in the phylogeny list must match a name in the parameter list.
 #' @param phylogeny_type A list describing what mode of evolution should be simulated from each phylogeny. Options are 'brownian'(default) or 'OU'. 
 #' @param cov_str A list of covariance structures for each hierarchical level. The name in the cov_str list must match a name in the parameter list.
-#' @param sample_type Type of sampling, must be one of 'nested', 'missing' or temporal. If not specified, then no sampling is done. See details
+#' @param sample_type Type of sampling, must be one of 'nested', 'missing', 'survival' or temporal. If not specified, then no sampling is done. See details
 #' @param sample_param A set of parameters, specific to the sampling type. See details.
 #' @param sample_plot Logical. Should illustrative plots be made - defaults to FALSE - currently not implemented.
 #' @param n_pop Number of populations. Default = 1
@@ -37,7 +37,7 @@
 #' 
 #' The model argument is character string which explicitly tells the simulate_population function how to put the simulated predictors together to form the response variable. For example, if the predictors temperature and rainfall had been specified in the parameter list, providing the model argument with "y = temperature + rainfall + residual" would result in generating a response variable 'y' in the same way the siumulate_population function does by default. For more detailed information see http://squidgroup.org/squidSim_vignette/1.7-modeleq.html
 #' 
-#' Different sampling schemes can be implemented, (sample_type can be 'nested', 'missing' or temporal). The sample_param takes a different form depending on the sample_type. See http://squidgroup.org/squidSim_vignette/7-sampling.html for full details.
+#' Different sampling schemes can be implemented, (sample_type can be 'nested', 'missing', 'survival' or 'temporal'). The sample_param takes a different form depending on the sample_type. See http://squidgroup.org/squidSim_vignette/7-sampling.html for full details.
 #' 
 #' 
 #' @author Joel Pick - joel.l.pick@gmail.com
