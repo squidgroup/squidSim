@@ -270,8 +270,9 @@ generate_y <- function(predictors, intercepts, betas, str_index, model, y_pred_n
     y <- t(t(y) + intercepts)
   } else {
     ## for evaluation with model formula 
-
-    y_predictors <- cbind(predictors %*% diag(as.vector(betas)),predictors,str_index)
+    
+    beta_predictors <- predictors * rep(betas, rep(nrow(predictors),length(betas))) #predictors %*% diag(as.vector(betas))
+    y_predictors <- cbind(beta_predictors,predictors,str_index)
     colnames(y_predictors) <- y_pred_names
 
     ## allow I() and subsets to be properly linked to y_predictors
