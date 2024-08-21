@@ -6,9 +6,9 @@
 #' @param parameters A list of parameters for each hierarchical level. See details.
 #' @param n_response The number of response variables, defaults to 1. 
 #' @param response_names Names given to response variables. Defaults to 'y', or c('y1','y2',...) if n_response>1. Not used if model is specified. 
-#' @param known_predictors This argument provides a way of inputting existing predictor variables. This argument takes a list, with items 'predictors' and 'betas', where 'predictors' is a matrix or data.frame, the number of rows of which MUST equal 'n' or the number of rows in 'data_structure'. 
+#' @param known_predictors This argument provides a way of inputting existing predictor variables. This argument takes a list, with items 'predictors' and 'beta', where 'predictors' is a matrix or data.frame, the number of rows of which MUST equal 'n' or the number of rows in 'data_structure'. The column names of 'predictors' are used as the variable names, and the 'beta's are assumed to be int he same order as the predictors.
 #' @param model Optional. A formula description of the simulation model. See details.
-#' @param index_link Optional. Make new factors in the data structure indexed by other factors. This is only really used in the context of the model argument. Takes a list, the names of which indicate the new grouping factor name and the elements of the list represent which grouping factors should be linked, for example "mother-ID" would index mother with the same indexes as ID.  
+#' @param index_link Optional. Make new factors in the data structure indexed by other factors. This is only really used in the context of the model argument. Takes a list, the names of which indicate the new grouping factor name and the elements of the list represent which grouping factors should be linked, for example "mother-ID" would index mother with the same indexes as ID.
 #' @param family A description of the error distribution. Options are 'gaussian' (default), 'poisson' and 'binomial'. 'binomial' generates a binary response variable.
 #' @param link A description of the link function distribution. Options are 'identity' (default),'log', 'inverse', 'sqrt', 'logit' and 'probit'.
 #' @param pedigree A list of pedigrees for each hierarchical level. Each pedigree must be matrix or data.frame, that is at least 3 columns, which correspond to ID, dam and sire. The name in the pedigree list must match a name in the parameter list.
@@ -16,11 +16,12 @@
 #' @param phylogeny A list of phylogenies for each hierarchical level. Each phylogeny should be phylo class. The name in the phylogeny list must match a name in the parameter list.
 #' @param phylogeny_type A list describing what mode of evolution should be simulated from each phylogeny. Options are 'brownian'(default) or 'OU'. 
 #' @param cov_str A list of covariance structures for each hierarchical level. The name in the cov_str list must match a name in the parameter list.
-#' @param sample_type Type of sampling, must be one of 'nested', 'missing', 'survival' or temporal. If not specified, then no sampling is done. See details
+#' @param sample_type Type of sampling, must be one of 'nested', 'missing', 'survival' or 'temporal.' If not specified, then no sampling is done. See details
 #' @param sample_param A set of parameters, specific to the sampling type. See details.
 #' @param sample_plot Logical. Should illustrative plots be made - defaults to FALSE - currently not implemented.
 #' @param n_pop Number of populations. Default = 1
 #' @param verbose Logical. Whether to print diagnostics. Useful for debugging. Defaults to FALSE
+#' @param suppress_index_warning Logical. Whether to print warnings relating to the index-link argument. Useful to switch off if using in large number of simulations. Defaults to FALSE.
 #' @details 
 #' A detailed vignette can be found at http://squidgroup.org/squidSim_vignette/
 #' 
@@ -58,70 +59,73 @@
 #' )
 #' 
 #' @export
-simulate_population <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, index_link, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, n_pop=1, verbose=FALSE){
+simulate_population <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, index_link, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, n_pop=1, verbose=FALSE,suppress_index_warning=FALSE){
+
+
 
   if(verbose) cat("checking input\n")
+  output <- do.call(generate_internal_structure,as.list(environment()))
 
-  if(!all(link %in% c("identity", "log", "inverse", "sqrt", "logit", "probit"))) stop("Link must be 'identity', 'log', 'inverse', 'sqrt', 'logit', 'probit'")
-  if(!(length(link)==n_response || length(link)==1))  stop("Link must either be length 1 or same length as the number of responses")
+  # if(!all(link %in% c("identity", "log", "inverse", "sqrt", "logit", "probit"))) stop("Link must be 'identity', 'log', 'inverse', 'sqrt', 'logit', 'probit'")
+  # if(!(length(link)==n_response || length(link)==1))  stop("Link must either be length 1 or same length as the number of responses")
   
-  if(!all(family %in% c("gaussian", "poisson", "binomial"))) stop("Family must be 'gaussian', 'poisson', 'binomial'")
-  if(!(length(family)==n_response || length(family)==1))  stop("Family must either be length 1 or same length as the number of responses")
+  # if(!all(family %in% c("gaussian", "poisson", "binomial"))) stop("Family must be 'gaussian', 'poisson', 'binomial'")
+  # if(!(length(family)==n_response || length(family)==1))  stop("Family must either be length 1 or same length as the number of responses")
 
-  if(missing("n") & missing("data_structure")){
-    stop("Either 'n' or 'data_structure' need to be specified")
-  }else if(missing("n")){
-    n <- nrow(data_structure)
-  }else if(!missing("n") & !missing("data_structure")){
-    if(nrow(data_structure)!=n) stop("'n' and nrow(data_structure) are not equal. Only one needs to be specified.")
-  }
+  # if(missing("n") & missing("data_structure")){
+  #   stop("Either 'n' or 'data_structure' need to be specified")
+  # }else if(missing("n")){
+  #   n <- nrow(data_structure)
+  # }else if(!missing("n") & !missing("data_structure")){
+  #   if(nrow(data_structure)!=n) stop("'n' and nrow(data_structure) are not equal. Only one needs to be specified.")
+  # }
   
-  if(!missing("known_predictors")){
-    if(n!=nrow(known_predictors[["predictors"]])) stop("The number of observation specified does not match the number of rows in known_predictors")
-  }
 
-  if(n_response > 1 & !missing("model")) stop("Currently cannot specify multiple responses and a model formula")
 
-  if(!missing(response_names)) {
-    if(!missing("model")) message("response_names is ignored when a model formula is specified") 
-    if(length(response_names)!=n_response) stop("response_names needs to be the same length as n_response")  
-  }
+  # if(n_response > 1 & !missing("model")) stop("Currently cannot specify multiple responses and a model formula")
 
-  if(!missing(pedigree)){
-    if(missing(pedigree_type)){
-      pedigree_type <- as.list(rep("A",length(pedigree)))
-      names(pedigree_type) <- names(pedigree)
-    }else{
-      if(!pedigree_type %in% c("A","D","E"))stop("pedigree_type must be either 'A','D' or 'E'")
-      if(length(pedigree)!=length(pedigree_type)) stop("pedigree and pedigree_type need to be the same length")
-      if(sort(names(pedigree))==sort(names(pedigree))) stop("names of pedigree and pedigree_type need to match")
-    }
-  }
-  if(!missing(phylogeny)){
-    if(missing(phylogeny_type)){
-      phylogeny_type <- as.list(rep("brownian",length(phylogeny)))
-      names(phylogeny_type) <- names(phylogeny)
-    }else{
-      if(!phylogeny_type %in% c("brownian","OU")) stop("phylogeny_type must be either 'brownian' or 'OU'")
-      if(length(phylogeny)!=length(phylogeny_type)) stop("phylogeny and phylogeny_type need to be the same length")
-      if(sort(names(phylogeny))==sort(names(phylogeny))) stop("names of phylogeny and phylogeny_type need to match")
-    }
-  }
+  # if(!missing(response_names)) {
+  #   if(!missing("model")) message("response_names is ignored when a model formula is specified") 
+  #   if(length(response_names)!=n_response) stop("response_names needs to be the same length as n_response")  
+  # }
+
+  # if(!missing(pedigree)){
+  #   if(missing(pedigree_type)){
+  #     pedigree_type <- as.list(rep("A",length(pedigree)))
+  #     names(pedigree_type) <- names(pedigree)
+  #   }else{
+  #     if(!pedigree_type %in% c("A","D","E"))stop("pedigree_type must be either 'A','D' or 'E'")
+  #     if(length(pedigree)!=length(pedigree_type)) stop("pedigree and pedigree_type need to be the same length")
+  #     if(sort(names(pedigree))==sort(names(pedigree))) stop("names of pedigree and pedigree_type need to match")
+  #   }
+  # }
+  # if(!missing(phylogeny)){
+  #   if(missing(phylogeny_type)){
+  #     phylogeny_type <- as.list(rep("brownian",length(phylogeny)))
+  #     names(phylogeny_type) <- names(phylogeny)
+  #   }else{
+  #     if(!phylogeny_type %in% c("brownian","OU")) stop("phylogeny_type must be either 'brownian' or 'OU'")
+  #     if(length(phylogeny)!=length(phylogeny_type)) stop("phylogeny and phylogeny_type need to be the same length")
+  #     if(sort(names(phylogeny))==sort(names(phylogeny))) stop("names of phylogeny and phylogeny_type need to match")
+  #   }
+  # }
 
 
 
 
 
 
-  ## gets the arguments into a list that is added to for the output
-  output <- lapply(as.list(environment()), function(x) if (!is.list(x) &&length(x)==1 && x=="") NULL else x)
+  # ## gets the arguments into a list that is added to for the output
+  # output <- lapply(as.list(environment()), function(x) if (!is.list(x) &&length(x)==1 && x=="") NULL else x)
+  
 
 #####################  
 ###---Fill in parameter lists 
 ##################### 
 
 
-  if(!missing(known_predictors)) {
+  # if(!missing(known_predictors)) {
+  if(!is.null(output$known_predictors)) {
     if(verbose) cat("checking known_predictors\n")
     output$known_predictors <- do.call(fill_preds, output)
   }
