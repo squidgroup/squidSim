@@ -24,7 +24,8 @@ simulate_population(
   sample_param,
   sample_plot = FALSE,
   n_pop = 1,
-  verbose = FALSE
+  verbose = FALSE,
+  suppress_index_warning = FALSE
 )
 }
 \arguments{
@@ -38,7 +39,7 @@ simulate_population(
 
 \item{response_names}{Names given to response variables. Defaults to 'y', or c('y1','y2',...) if n_response>1. Not used if model is specified.}
 
-\item{known_predictors}{This argument provides a way of inputting existing predictor variables. This argument takes a list, with items 'predictors' and 'betas', where 'predictors' is a matrix or data.frame, the number of rows of which MUST equal 'n' or the number of rows in 'data_structure'.}
+\item{known_predictors}{This argument provides a way of inputting existing predictor variables. This argument takes a list, with items 'predictors' and 'beta', where 'predictors' is a matrix or data.frame, the number of rows of which MUST equal 'n' or the number of rows in 'data_structure'. The column names of 'predictors' are used as the variable names, and the 'beta's are assumed to be int he same order as the predictors.}
 
 \item{model}{Optional. A formula description of the simulation model. See details.}
 
@@ -58,7 +59,7 @@ simulate_population(
 
 \item{cov_str}{A list of covariance structures for each hierarchical level. The name in the cov_str list must match a name in the parameter list.}
 
-\item{sample_type}{Type of sampling, must be one of 'nested', 'missing' or temporal. If not specified, then no sampling is done. See details}
+\item{sample_type}{Type of sampling, must be one of 'nested', 'missing', 'survival' or 'temporal.' If not specified, then no sampling is done. See details}
 
 \item{sample_param}{A set of parameters, specific to the sampling type. See details.}
 
@@ -67,6 +68,8 @@ simulate_population(
 \item{n_pop}{Number of populations. Default = 1}
 
 \item{verbose}{Logical. Whether to print diagnostics. Useful for debugging. Defaults to FALSE}
+
+\item{suppress_index_warning}{Logical. Whether to print warnings relating to the index-link argument. Useful to switch off if using in large number of simulations. Defaults to FALSE.}
 }
 \value{
 a squid object, which is a list including all inputs and simulated data.
@@ -90,7 +93,7 @@ A more detailed explanation can be found at http://squidgroup.org/squidSim_vigne
 
 The model argument is character string which explicitly tells the simulate_population function how to put the simulated predictors together to form the response variable. For example, if the predictors temperature and rainfall had been specified in the parameter list, providing the model argument with "y = temperature + rainfall + residual" would result in generating a response variable 'y' in the same way the siumulate_population function does by default. For more detailed information see http://squidgroup.org/squidSim_vignette/1.7-modeleq.html
 
-Different sampling schemes can be implemented, (sample_type can be 'nested', 'missing' or temporal). The sample_param takes a different form depending on the sample_type. See http://squidgroup.org/squidSim_vignette/7-sampling.html for full details.
+Different sampling schemes can be implemented, (sample_type can be 'nested', 'missing', 'survival' or 'temporal'). The sample_param takes a different form depending on the sample_type. See http://squidgroup.org/squidSim_vignette/7-sampling.html for full details.
 }
 \examples{
 # simple linear model with three predictors variables
