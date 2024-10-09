@@ -105,6 +105,24 @@ sample_missing <- function(pop_data, param, plot=FALSE){
 }
 
 
+sample_survival <- function(y,ID,age,death=1,all=TRUE){
+	do.call(c,lapply(split(data.frame(y=y,age=age,index=1:length(y)),ID), function(x){
+	  if(death %in% x$y) {
+	  	# make sure age is right order
+	  	x_order <- x[order(x$age),]
+	  	if(death==0){x_order$y<-abs(x_order$y-1)}
+	  	# subset until death, and then return indexes 
+	 		x_order[1:which(cumsum(x_order$y)==1)[1],"index"]
+		}else if(all){
+			x$index
+		}else{
+			NULL
+		}
+	}))
+}
+
+
+
 #https://stat.ethz.ch/pipermail/r-help/2005-May/070680.html
 rztpois <- function(N, lambda) stats::qpois(stats::runif(N, stats::dpois(0, lambda), 1), lambda)
 
@@ -181,6 +199,31 @@ sample_population <- function(x){
 		}
 		indices <- sample_missing(x, param, plot)
 	
+	}else if(type=="survival"){
+		if(!is.list(param)){
+		  stop("param needs to be a list for type='survival'")
+		}
+		if(!all(sapply(param,is.vector))){
+		  stop("All elements of param list must be vectors for type='survival'")
+		}
+		if(!all(sapply(param,length)==1)) {
+		  stop("vectors in param list must be length 1 for type='survival'")
+		}
+		if(!all(c("y", "ID", "age")	%in% names(param))) {
+			stop("param list must include 'y', 'ID' and 'age' for type='survival'")
+		}
+		if(!is.null(param[["all"]]) && !is.logical(param[["all"]]) ){
+			stop("'all' in param list must logical for type='survival'")
+		}
+		indices <- lapply(x$y,function(z) { # for each population
+			list(sample_survival(
+				y=z[,param[["y"]]], 
+				age=x$data_structure[,param[["age"]]], 
+				ID=x$data_structure[,param[["ID"]]],
+				death=if(is.null(param[["death"]])){1}else{param[["death"]]},
+				all= if(is.null(param[["all"]])){TRUE}else{param[["all"]]} ) )
+		})
+
 	}else if(type=="temporal"){
 		if(!is.list(param)){
 		  stop("param needs to be a list for type='temporal'")
@@ -199,7 +242,7 @@ sample_population <- function(x){
 			})
 		})
 	}else {
-		stop("type must be 'nested', 'missing' or 'temporal'")
+		stop("type must be 'nested', 'missing', 'survival' or 'temporal'")
 	}
 
 	# pop_data$sample_param <- list(type=type, param=param)

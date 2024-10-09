@@ -77,7 +77,7 @@ cov_str_check <- function(data_structure, pedigree, phylogeny, cov_str, paramete
 
 
 ### function to turn data_structure into indexes. Matches names in data_structure to linked pedigree/phylogeny/cov_str to make sure indexing is correct. Doesnt do any error checking
-index_factors <- function(data_structure, pedigree, phylogeny, cov_str, parameters, index_link,...){
+index_factors <- function(data_structure, pedigree, phylogeny, cov_str, parameters, index_link,suppress_index_warning,...){
   
   p_names <- names(parameters)[!names(parameters)%in%c("intercept","interactions")]
 
@@ -132,7 +132,8 @@ index_factors <- function(data_structure, pedigree, phylogeny, cov_str, paramete
       ds_links <- strsplit(x, '-')[[1]]
       
       ## give warning if not all levels match
-      if(!all(data_structure[,ds_links[1]] %in% data_structure[,ds_links[2]])) warning(paste("Not all levels are of", ds_links[1], "are present in", ds_links[2], "meaning that there will be NAs in the new grouping factor"), call.=FALSE)
+
+      if(!all(data_structure[,ds_links[1]] %in% data_structure[,ds_links[2]]) & !suppress_index_warning) warning(paste("Not all levels are of", ds_links[1], "are present in", ds_links[2], "meaning that there will be NAs in the new grouping factor"), call.=FALSE)
       
       new_ds[,ds_links[2]][match(data_structure[,ds_links[1]], data_structure[,ds_links[2]])]
 
@@ -270,8 +271,9 @@ generate_y <- function(predictors, intercepts, betas, str_index, model, y_pred_n
     y <- t(t(y) + intercepts)
   } else {
     ## for evaluation with model formula 
-
-    y_predictors <- cbind(predictors %*% diag(as.vector(betas)),predictors,str_index)
+    
+    beta_predictors <- predictors * rep(betas, rep(nrow(predictors),length(betas))) #predictors %*% diag(as.vector(betas))
+    y_predictors <- cbind(beta_predictors,predictors,str_index)
     colnames(y_predictors) <- y_pred_names
 
     ## allow I() and subsets to be properly linked to y_predictors

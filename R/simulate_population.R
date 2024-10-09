@@ -8,7 +8,7 @@
 #' @param response_names Names given to response variables. Defaults to 'y', or c('y1','y2',...) if n_response>1. Not used if model is specified. 
 #' @param known_predictors This argument provides a way of inputting existing predictor variables. This argument takes a list, with items 'predictors' and 'beta', where 'predictors' is a matrix or data.frame, the number of rows of which MUST equal 'n' or the number of rows in 'data_structure'. The column names of 'predictors' are used as the variable names, and the 'beta's are assumed to be int he same order as the predictors.
 #' @param model Optional. A formula description of the simulation model. See details.
-#' @param index_link Optional. Make new factors in the data structure indexed by other factors. This is only really used in the context of the model argument. Takes a list, the names of which indicate the new grouping factor name and the elements of the list represent which grouping factors should be linked, for example "mother-ID" would index mother with the same indexes as ID.  
+#' @param index_link Optional. Make new factors in the data structure indexed by other factors. This is only really used in the context of the model argument. Takes a list, the names of which indicate the new grouping factor name and the elements of the list represent which grouping factors should be linked, for example "mother-ID" would index mother with the same indexes as ID.
 #' @param family A description of the error distribution. Options are 'gaussian' (default), 'poisson' and 'binomial'. 'binomial' generates a binary response variable.
 #' @param link A description of the link function distribution. Options are 'identity' (default),'log', 'inverse', 'sqrt', 'logit' and 'probit'.
 #' @param pedigree A list of pedigrees for each hierarchical level. Each pedigree must be matrix or data.frame, that is at least 3 columns, which correspond to ID, dam and sire. The name in the pedigree list must match a name in the parameter list.
@@ -16,11 +16,12 @@
 #' @param phylogeny A list of phylogenies for each hierarchical level. Each phylogeny should be phylo class. The name in the phylogeny list must match a name in the parameter list.
 #' @param phylogeny_type A list describing what mode of evolution should be simulated from each phylogeny. Options are 'brownian'(default) or 'OU'. 
 #' @param cov_str A list of covariance structures for each hierarchical level. The name in the cov_str list must match a name in the parameter list.
-#' @param sample_type Type of sampling, must be one of 'nested', 'missing' or temporal. If not specified, then no sampling is done. See details
+#' @param sample_type Type of sampling, must be one of 'nested', 'missing', 'survival' or 'temporal.' If not specified, then no sampling is done. See details
 #' @param sample_param A set of parameters, specific to the sampling type. See details.
 #' @param sample_plot Logical. Should illustrative plots be made - defaults to FALSE - currently not implemented.
 #' @param n_pop Number of populations. Default = 1
 #' @param verbose Logical. Whether to print diagnostics. Useful for debugging. Defaults to FALSE
+#' @param suppress_index_warning Logical. Whether to print warnings relating to the index-link argument. Useful to switch off if using in large number of simulations. Defaults to FALSE.
 #' @details 
 #' A detailed vignette can be found at http://squidgroup.org/squidSim_vignette/
 #' 
@@ -37,7 +38,7 @@
 #' 
 #' The model argument is character string which explicitly tells the simulate_population function how to put the simulated predictors together to form the response variable. For example, if the predictors temperature and rainfall had been specified in the parameter list, providing the model argument with "y = temperature + rainfall + residual" would result in generating a response variable 'y' in the same way the siumulate_population function does by default. For more detailed information see http://squidgroup.org/squidSim_vignette/1.7-modeleq.html
 #' 
-#' Different sampling schemes can be implemented, (sample_type can be 'nested', 'missing' or temporal). The sample_param takes a different form depending on the sample_type. See http://squidgroup.org/squidSim_vignette/7-sampling.html for full details.
+#' Different sampling schemes can be implemented, (sample_type can be 'nested', 'missing', 'survival' or 'temporal'). The sample_param takes a different form depending on the sample_type. See http://squidgroup.org/squidSim_vignette/7-sampling.html for full details.
 #' 
 #' 
 #' @author Joel Pick - joel.l.pick@gmail.com
@@ -58,7 +59,9 @@
 #' )
 #' 
 #' @export
-simulate_population <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, index_link, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, n_pop=1, verbose=FALSE){
+simulate_population <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, index_link, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, n_pop=1, verbose=FALSE,suppress_index_warning=FALSE){
+
+
 
 
 
