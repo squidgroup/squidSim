@@ -38,7 +38,7 @@ simulate_population(
 
 \item{response_names}{Names given to response variables. Defaults to 'y', or c('y1','y2',...) if n_response>1. Not used if model is specified.}
 
-\item{known_predictors}{This argument provides a way of inputting existing predictor variables. This argument takes a list, with items 'predictors' and 'betas', where 'predictors' is a matrix or data.frame, the number of rows of which MUST equal 'n' or the number of rows in 'data_structure'.}
+\item{known_predictors}{This argument provides a way of inputting existing predictor variables. This argument takes a list, with items 'predictors' and 'beta', where 'predictors' is a matrix or data.frame, the number of rows of which MUST equal 'n' or the number of rows in 'data_structure'. The column names of 'predictors' are used as the variable names, and the 'beta's are assumed to be int he same order as the predictors.}
 
 \item{model}{Optional. A formula description of the simulation model. See details.}
 

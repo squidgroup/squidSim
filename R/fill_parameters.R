@@ -117,7 +117,7 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
     }
   
 
-## maybe dont have special rule for resiudal, because if in multivaraite model want residuals at one level but not another, need to be able to specify beta=0 
+## maybe dont have special rule for residual, because if in multivariate model want residuals at one level but not another, need to be able to specify beta=0 
 
     # if(i=="residual"){
     #   if(any(!names(parameters[[i]])) %in% c("mean", "vcov","vcorr")){
