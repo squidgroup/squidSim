@@ -64,6 +64,8 @@ simulate_population <- function(data_structure, n, parameters, n_response=1, res
 
 
 
+
+
   if(verbose) cat("checking input\n")
   output <- do.call(generate_internal_structure,as.list(environment()))
 
