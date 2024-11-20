@@ -20,6 +20,7 @@
 #' @param sample_param A set of parameters, specific to the sampling type. See details.
 #' @param sample_plot Logical. Should illustrative plots be made - defaults to FALSE - currently not implemented.
 #' @param n_pop Number of populations. Default = 1
+#' @param seed Seed for random number generation. Setting seed allows for simulations to be easily reproduced. If seed is not set, one is set internally, which is then saved and returned in the squidSim object
 #' @param verbose Logical. Whether to print diagnostics. Useful for debugging. Defaults to FALSE
 #' @param suppress_index_warning Logical. Whether to print warnings relating to the index-link argument. Useful to switch off if using in large number of simulations. Defaults to FALSE.
 #' @details 
@@ -59,7 +60,7 @@
 #' )
 #' 
 #' @export
-simulate_population <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, index_link, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, n_pop=1, verbose=FALSE,suppress_index_warning=FALSE){
+simulate_population <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, index_link, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, n_pop=1, seed, verbose=FALSE,suppress_index_warning=FALSE){
 
 
 
@@ -175,6 +176,9 @@ simulate_population <- function(data_structure, n, parameters, n_response=1, res
 #####################  
   if(verbose) cat("simulating predictors\n")
 
+  if(is.null(output$seed))output$seed<-sample(1:10000,1)
+  set.seed(output$seed)
+  
   output$predictors <- lapply(1:n_pop, function(x) do.call(sim_predictors, output))
   # output$predictors <- lapply(1:n_pop, function(x) cbind(do.call(sim_predictors, output), known_predictors))
   ## returns list of predictor matrices
