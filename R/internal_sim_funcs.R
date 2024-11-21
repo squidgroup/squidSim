@@ -191,8 +191,18 @@ sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors,
     if(p$fixed){
       
       ## if factor make design matrix
-      x<-stats::model.matrix(stats::formula(paste("~ factor(",p$group,")-1")),as.data.frame(str_index))
-    
+      # x<-stats::model.matrix(stats::formula(paste("~ factor(",p$group,")-1")),as.data.frame(str_index))
+      ## if there are group names in the data structure, then use factor levels with the same order as the specified names
+      ds_levels_group <- unique(data_structure[,p[["group"]]])
+
+      if(all(ds_levels_group %in% 1:length(ds_levels_group)) ){
+        fac_levels <- 1:length(ds_levels_group)
+      }else{
+        fac_levels <- p$names
+      }
+
+      x<-stats::model.matrix(stats::formula(paste("~ factor(",p$group,",levels=fac_levels)-1")),as.data.frame(data_structure))
+
     }else if(p$covariate){
       
       ## if covariate, make design matrix from data structure
