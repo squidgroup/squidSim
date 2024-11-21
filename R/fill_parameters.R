@@ -215,7 +215,19 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
     
     if(parameters[[i]][["fixed"]] & is.null(parameters[[i]][["beta"]])) stop("If fixed =TRUE, beta also needs to be specified", call.=FALSE)
 
-    if(parameters[[i]][["fixed"]] & (!is.null(parameters[[i]][["mean"]]) || !is.null(parameters[[i]][["vcov"]]) || !is.null(parameters[[i]][["functions"]]))) warning("Fixed=TRUE for ",i,", so mean, cov and functions are ignored", call.=FALSE)
+    if(parameters[[i]][["fixed"]] & (!is.null(parameters[[i]][["mean"]]) || !is.null(parameters[[i]][["vcov"]]) || !is.null(parameters[[i]][["functions"]]))) warning("Fixed=TRUE for ",i,", so mean, vcov and functions are ignored", call.=FALSE)
+
+    if(parameters[[i]][["fixed"]] & (!is.null(parameters[[i]][["mean"]]) || !is.null(parameters[[i]][["vcov"]]) || !is.null(parameters[[i]][["functions"]]))) warning("Fixed=TRUE for ",i,", so mean, vcov and functions are ignored", call.=FALSE)
+
+    ## check factor levels match those in the data structure, if data structure had numeric names
+    ds_levels_group <- unique(data_structure[,parameters[[i]][["group"]]])
+
+    if(parameters[[i]][["fixed"]] & 
+      !all(ds_levels_group %in% 1:length(ds_levels_group)) & 
+      !all(parameters[[i]][["names"]] %in%ds_levels_group)
+    ){
+      stop("Fixed=TRUE for ",i,", so either levels in data structure match names, or levels in data structure are consecutive and numeric starting from 1.", call.=FALSE)
+    }
 
 
     # Check whether covariate is specified
