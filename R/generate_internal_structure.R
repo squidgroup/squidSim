@@ -1,5 +1,5 @@
 
-generate_internal_structure <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, index_link, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, n_pop=1, verbose=FALSE,suppress_index_warning=FALSE){
+generate_internal_structure <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, index_link, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, n_pop=1, seed, verbose=FALSE,suppress_index_warning=FALSE){
   
   if(missing("n") & missing("data_structure")){
     stop("Either 'n' or 'data_structure' need to be specified")
