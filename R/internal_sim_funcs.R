@@ -179,7 +179,7 @@ cov_str_list <- function(parameters, data_structure, phylogeny, phylogeny_type, 
 
 
 
-sim_predictors <- function(parameters, str_index, cov_str_all, known_predictors, pedigree, ...){
+sim_predictors <- function(parameters,data_structure, str_index, cov_str_all, known_predictors, pedigree, ...){
 
   traits <- do.call(cbind, lapply( names(parameters)[!names(parameters)%in%c("intercept","interactions")], function(i){  
 

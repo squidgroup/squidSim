@@ -25,3 +25,10 @@ squidSim 0.2.2
 ===========
 
 -   New survival sampling functionality. If you simulate binomial data with a age structure, then you can sample so that you only have the ages up to (and including) the first 0 or 1 (depending on whether you are simulating survival or mortality)
+
+
+
+squidSim 0.2.3
+===========
+
+Bug with 'fixed' factor is fixed. Now if the levels in the data structure have names, the same names have to be specified in the parameter list. The order doesn't matter (this will be matched internally), but the names have to match exactly. If the factor levels in the data structure are numeric then these do not need to match; the order of the effects will match the order of the numeric factor levels.
