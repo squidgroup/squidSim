@@ -4,7 +4,7 @@
 \alias{make_structure}
 \title{make_structure}
 \usage{
-make_structure(structure, repeat_obs = 1, level_names, ...)
+make_structure(structure, repeat_obs = 1, level_names, int_names, ...)
 }
 \arguments{
 \item{structure}{A formula specifying the structure and sample sizes at each level. See details.}
@@ -12,6 +12,8 @@ make_structure(structure, repeat_obs = 1, level_names, ...)
 \item{repeat_obs}{Number of repeated observations at the lowest level}
 
 \item{level_names}{An optional list, containing names for the levels of different grouping factors}
+
+\item{int_names}{An optional vector, containing names for the interactions (see details). These will be applied to the interaction terms in the same order they are specified in the structure argument}
 
 \item{...}{Further arguments passed to or from other methods.}
 }
@@ -22,7 +24,7 @@ A data.frame with the data structure
 Make nested and crossed balanced hierarchical structures
 }
 \details{
-Factors are input as a text string. The name of each factor is followed by the number of levels in that factor in brackets e.g. "individual(100)". Nested factors can be specified using "/", e.g. "population(2)/individual(2)", the lower levels being specified after the higher levels, and the sample sizes of the lower levels. Crossed factors are indicated using "+"
+Factors are input as a text string. The name of each factor is followed by the number of levels in that factor in brackets e.g. "individual(100)". Nested factors can be specified using "/", e.g. "population(2)/individual(2)", the lower levels being specified after the higher levels, and the sample sizes of the lower levels. Crossed factors are indicated using "+". Factor levels can be combined to make new combinations, with unique levels for each combination, as an 'interaction' using ':', with factors already in the character existing  (e.g. "population(2)/individual(2) + population:individual").
 }
 \examples{
 # simple data structure with 5 'individuals' and 2 observations per individual

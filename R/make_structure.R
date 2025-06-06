@@ -36,7 +36,7 @@ cross_levels <-function(x){
     do.call(cbind,lapply( 1:ncol(crossed_lower_levels), function(j) x[[j]][crossed_lower_levels[,j],] ))
 }
 
-add_interactions <- function(all_levels, int){	
+add_interactions <- function(all_levels, int, int_names){	
 	int_str <-do.call(cbind,lapply(strsplit(int, ":"), function(x){
 			z<- apply(all_levels[,x],2,function(y) {
 			  char_dif <- max(nchar(y)) - nchar(y)
@@ -45,7 +45,11 @@ add_interactions <- function(all_levels, int){
 			as.numeric(as.factor(apply(z, 1, paste, collapse="")))
 		}))
 	
-	colnames(int_str) <- gsub(":","_",int)
+	if(is.null(int_names)){
+	  colnames(int_str) <- gsub(":", "_", int)
+	}else{
+	  colnames(int_str) <- int_names
+	}
 	cbind(all_levels,int_str)
 
 }
@@ -56,8 +60,9 @@ add_interactions <- function(all_levels, int){
 #' @param structure A formula specifying the structure and sample sizes at each level. See details.
 #' @param repeat_obs Number of repeated observations at the lowest level
 #' @param level_names An optional list, containing names for the levels of different grouping factors
+#' @param int_names An optional vector, containing names for the interactions (see details). These will be applied to the interaction terms in the same order they are specified in the structure argument
 #' @param ... Further arguments passed to or from other methods.
-#' @details Factors are input as a text string. The name of each factor is followed by the number of levels in that factor in brackets e.g. "individual(100)". Nested factors can be specified using "/", e.g. "population(2)/individual(2)", the lower levels being specified after the higher levels, and the sample sizes of the lower levels. Crossed factors are indicated using "+" 
+#' @details Factors are input as a text string. The name of each factor is followed by the number of levels in that factor in brackets e.g. "individual(100)". Nested factors can be specified using "/", e.g. "population(2)/individual(2)", the lower levels being specified after the higher levels, and the sample sizes of the lower levels. Crossed factors are indicated using "+". Factor levels can be combined to make new combinations, with unique levels for each combination, as an 'interaction' using ':', with factors already in the character existing  (e.g. "population(2)/individual(2) + population:individual").
 #' @author Joel Pick - joel.l.pick@gmail.com
 #' @return A data.frame with the data structure
 #' @examples
@@ -79,10 +84,11 @@ add_interactions <- function(all_levels, int){
 #' @export
 
 
-make_structure <- function(structure, repeat_obs=1, level_names,...){
+make_structure <- function(structure, repeat_obs=1, level_names, int_names, ...){
 
 	if(missing(level_names)) level_names<-NULL
-
+	if (missing(int_names)) int_names <- NULL
+	
 	## strip white space from structure
 	structure <- gsub("\\s","",structure)
 
@@ -113,6 +119,7 @@ make_structure <- function(structure, repeat_obs=1, level_names,...){
 
 	## add in interaction columns
 	all_levels_int<- if(length(int)>0){
+		if(!is.null(int_names) && length(int)!= length(int_names)) stop("Length of int_names does not match number of interaction terms")
 		add_interactions(all_levels, int)
 	}else{
 		all_levels

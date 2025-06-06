@@ -32,3 +32,8 @@ squidSim 0.2.3
 ===========
 
 Bug with 'fixed' factor is fixed. Now if the levels in the data structure have names, the same names have to be specified in the parameter list. The order doesn't matter (this will be matched internally), but the names have to match exactly. If the factor levels in the data structure are numeric then these do not need to match; the order of the effects will match the order of the numeric factor levels.
+
+
+squidSim 0.2.3
+===========
+- Added 'int_names' argument to 'make_structure' function, that allows combination/interaction terms to be named. 

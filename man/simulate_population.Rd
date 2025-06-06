@@ -24,6 +24,7 @@ simulate_population(
   sample_param,
   sample_plot = FALSE,
   n_pop = 1,
+  seed,
   verbose = FALSE,
   suppress_index_warning = FALSE
 )
@@ -66,6 +67,8 @@ simulate_population(
 \item{sample_plot}{Logical. Should illustrative plots be made - defaults to FALSE - currently not implemented.}
 
 \item{n_pop}{Number of populations. Default = 1}
+
+\item{seed}{Seed for random number generation. Setting seed allows for simulations to be easily reproduced. If seed is not set, one is set internally, which is then saved and returned in the squidSim object}
 
 \item{verbose}{Logical. Whether to print diagnostics. Useful for debugging. Defaults to FALSE}
 
