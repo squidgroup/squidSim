@@ -37,6 +37,8 @@ cross_levels <-function(x){
 }
 
 add_interactions <- function(all_levels, int, int_names){	
+	if (missing(int_names)) int_names <- NULL
+
 	int_str <-do.call(cbind,lapply(strsplit(int, ":"), function(x){
 			z<- apply(all_levels[,x],2,function(y) {
 			  char_dif <- max(nchar(y)) - nchar(y)
@@ -106,7 +108,7 @@ make_structure <- function(structure, repeat_obs=1, level_names, int_names, ...)
 	comp_list_N <- lapply(comp_list,extract_N)
 	comp_names <- do.call(c,lapply(comp_list,extract_name))
 
-	if(any(comp_names%in% c("intercept","observation","residual","interactions","squid_pop"))) stop("'intercept','observation','residual','interactions','squid_pop' are reserved names")
+	if(any(comp_names%in% c("intercept","observation","residual","interactions","squid_pop"))) stop("'intercept','observation','residual','interactions','squid_pop' are reserved names", call.=FALSE)
 
 	## apply generate levels function to all components	
 	comp_levels <- lapply(comp_list_N,generate_levels)
@@ -119,8 +121,8 @@ make_structure <- function(structure, repeat_obs=1, level_names, int_names, ...)
 
 	## add in interaction columns
 	all_levels_int<- if(length(int)>0){
-		if(!is.null(int_names) && length(int)!= length(int_names)) stop("Length of int_names does not match number of interaction terms")
-		add_interactions(all_levels, int)
+		if(length(int_names)>0 && length(int)!= length(int_names)) stop("Length of int_names does not match number of interaction terms", call.=FALSE)
+		add_interactions(all_levels, int, int_names)
 	}else{
 		all_levels
 	}
