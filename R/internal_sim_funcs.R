@@ -345,6 +345,7 @@ generate_y_list <- function(parameters, str_index, predictors, model,known_predi
 transform_dist <- function(y, family, link, response_names,...){
 
   inv <- function(x) 1/x
+  cloglog <- function(x) 1 - exp(-1*exp(x))
 
   j <- ncol(y)
 

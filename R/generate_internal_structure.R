@@ -11,7 +11,7 @@ generate_internal_structure <- function(data_structure, n, parameters, n_respons
   
   if(missing("parameters")) stop("'parameters' need to be specified")
 
-  if(!all(link %in% c("identity", "log", "inverse", "sqrt", "logit", "probit"))) stop("Link must be 'identity', 'log', 'inverse', 'sqrt', 'logit', 'probit'")
+  if(!all(link %in% c("identity", "log", "inverse", "sqrt", "logit", "probit", "cloglog"))) stop("Link must be 'identity', 'log', 'inverse', 'sqrt', 'logit', 'probit', 'cloglog'")
   if(!(length(link)==n_response || length(link)==1))  stop("Link must either be length 1 or same length as the number of responses")
   
   if(!all(family %in% c("gaussian", "poisson", "binomial"))) stop("Family must be 'gaussian', 'poisson', 'binomial'")
