@@ -12,9 +12,7 @@
 #' @param family A description of the error distribution. Options are 'gaussian' (default), 'poisson' and 'binomial'. 'binomial' generates a binary response variable.
 #' @param link A description of the link function distribution. Options are 'identity' (default),'log', 'inverse', 'sqrt', 'logit' and 'probit'.
 #' @param pedigree A list of pedigrees for each hierarchical level. Each pedigree must be matrix or data.frame, that is at least 3 columns, which correspond to ID, dam and sire. The name in the pedigree list must match a name in the parameter list.
-#' @param pedigree_type A list describing what kind of genetic variance is to be simulated from each pedigree. Default is 'A', other options are 'D' (dominance) and 'E' (epistatic). Makes use of relationship matrices created by the MCMCglmm and nadiv packages.
 #' @param phylogeny A list of phylogenies for each hierarchical level. Each phylogeny should be phylo class. The name in the phylogeny list must match a name in the parameter list.
-#' @param phylogeny_type A list describing what mode of evolution should be simulated from each phylogeny. Options are 'brownian'(default) or 'OU'. 
 #' @param cov_str A list of covariance structures for each hierarchical level. The name in the cov_str list must match a name in the parameter list.
 #' @param sample_type Type of sampling, must be one of 'nested', 'missing', 'survival' or 'temporal.' If not specified, then no sampling is done. See details
 #' @param sample_param A set of parameters, specific to the sampling type. See details.
@@ -60,7 +58,7 @@
 #' )
 #' 
 #' @export
-simulate_population <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, index_link, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, n_pop=1, seed, verbose=FALSE,suppress_index_warning=FALSE){
+simulate_population <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, index_link, family="gaussian", link="identity", pedigree, phylogeny, cov_str,sample_type, sample_param, sample_plot=FALSE, n_pop=1, seed, verbose=FALSE,suppress_index_warning=FALSE){
 
 
 
@@ -223,8 +221,6 @@ simulate_population <- function(data_structure, n, parameters, n_response=1, res
   return(output)
 }
 
-## problem that by default the predictors and the level IDs will have the same names
-## - maybe append "_effects"
 
 
 #' @title print.squid

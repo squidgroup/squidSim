@@ -1,10 +1,15 @@
 ### wrapper for MCMCglmm::rbv that allows 0 variances 
-rbv0 <- function(pedigree, G){
-  X <- matrix(0, nrow=nrow(pedigree), ncol=nrow(G))
+rbv0 <- function(pedigree, G,...){
+  n <- if(class(pedigree)=="phylo"){ 
+    length(pedigree$tip.label)
+  }else{
+    nrow(pedigree)
+  }
+  X <- matrix(0, nrow=n, ncol=nrow(G))
   index <- which(diag(G)!=0)
   if(length(index)>0){
     if(any(diag(G)==0)) G <- G[index,index]
-    X2 <- MCMCglmm::rbv(pedigree=pedigree, G=G)
+    X2 <- MCMCglmm::rbv(pedigree=pedigree, G=G,...)
     X[,index] <- X2 
   }
   X
@@ -147,8 +152,8 @@ index_factors <- function(data_structure, pedigree, phylogeny, cov_str, paramete
 }
 
 
-cov_str_list <- function(parameters, data_structure, phylogeny, phylogeny_type, cov_str,...){
-#pedigree, pedigree_type, 
+cov_str_list <- function(parameters, data_structure, cov_str,...){
+#phylogeny, phylogeny_type, pedigree, pedigree_type, 
 
   # ped_chol <- sapply(names(pedigree), function(x){
   #   if(pedigree_type[[x]]=="A") Matrix::chol(nadiv::makeA(pedigree[[x]]))
@@ -156,19 +161,19 @@ cov_str_list <- function(parameters, data_structure, phylogeny, phylogeny_type, 
   #   else if(pedigree_type[[x]]=="E") Matrix::chol(nadiv::makeAA(pedigree[[x]]))
   # })
 
-  phylo_chol <- sapply(names(phylogeny), function(x){
-    phylo_vcv <- ape::vcv(phylogeny[[x]], corr = TRUE)
-    # if(phylogeny_type[[x]]=="OU") {
-    #   ## need way of specifying alpha
-    #   phylo_vcv <- exp(phylo_vcv * - alpha)
-    #   diag(phylo_vcv) <- 1
-    # }
-    methods::as(chol(phylo_vcv), "dgCMatrix")
-  })
+  # phylo_chol <- sapply(names(phylogeny), function(x){
+  #   phylo_vcv <- ape::vcv(phylogeny[[x]], corr = TRUE)
+  #   # if(phylogeny_type[[x]]=="OU") {
+  #   #   ## need way of specifying alpha
+  #   #   phylo_vcv <- exp(phylo_vcv * - alpha)
+  #   #   diag(phylo_vcv) <- 1
+  #   # }
+  #   methods::as(chol(phylo_vcv), "dgCMatrix")
+  # })
 
-  cor_chol <- lapply(cov_str, function(x) methods::as(chol(x), "dgCMatrix"))
+  chol_str_all <- lapply(cov_str, function(x) methods::as(chol(x), "dgCMatrix"))
 
-  chol_str_all<-c(phylo_chol,cor_chol)#ped_chol,
+  # chol_str_all<-c(phylo_chol,cor_chol)#ped_chol,
 
   add_list<-names(parameters)[!names(parameters) %in% c(names(chol_str_all),"intercept","interactions")]
   for(i in add_list){
@@ -179,7 +184,7 @@ cov_str_list <- function(parameters, data_structure, phylogeny, phylogeny_type, 
 
 
 
-sim_predictors <- function(parameters,data_structure, str_index, cov_str_all, known_predictors, pedigree, ...){
+sim_predictors <- function(parameters,data_structure, str_index, cov_str_all, known_predictors, pedigree, phylogeny, ...){
 
   traits <- do.call(cbind, lapply( names(parameters)[!names(parameters)%in%c("intercept","interactions")], function(i){  
 
@@ -219,7 +224,10 @@ sim_predictors <- function(parameters,data_structure, str_index, cov_str_all, kn
 
       if(i %in% names(pedigree)){
         ## if name is listed in pedigree argument, link to pedigree
-        x <- rbv0(pedigree[[i]],p$vcov)
+        x <- rbv0(pedigree=pedigree[[i]],G=p$vcov)
+      }else if(i %in% names(phylogeny)){
+        ## if name is listed in phylogeny argument, link to phylogeny
+        x <- rbv0(pedigree=phylogeny[[i]],G=p$vcov,nodes="TIPS")
       }else{
         x <- rmvn0(n=n, mu=p$mean, sigma=p$vcov)  
       }

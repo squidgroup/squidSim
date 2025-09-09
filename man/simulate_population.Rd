@@ -16,9 +16,7 @@ simulate_population(
   family = "gaussian",
   link = "identity",
   pedigree,
-  pedigree_type,
   phylogeny,
-  phylogeny_type,
   cov_str,
   sample_type,
   sample_param,
@@ -52,11 +50,7 @@ simulate_population(
 
 \item{pedigree}{A list of pedigrees for each hierarchical level. Each pedigree must be matrix or data.frame, that is at least 3 columns, which correspond to ID, dam and sire. The name in the pedigree list must match a name in the parameter list.}
 
-\item{pedigree_type}{A list describing what kind of genetic variance is to be simulated from each pedigree. Default is 'A', other options are 'D' (dominance) and 'E' (epistatic). Makes use of relationship matrices created by the MCMCglmm and nadiv packages.}
-
 \item{phylogeny}{A list of phylogenies for each hierarchical level. Each phylogeny should be phylo class. The name in the phylogeny list must match a name in the parameter list.}
-
-\item{phylogeny_type}{A list describing what mode of evolution should be simulated from each phylogeny. Options are 'brownian'(default) or 'OU'.}
 
 \item{cov_str}{A list of covariance structures for each hierarchical level. The name in the cov_str list must match a name in the parameter list.}
 
