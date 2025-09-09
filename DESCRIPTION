@@ -1,6 +1,6 @@
 Package: squidSim
 Title: Flexible and reproducible structured simulations
-Version: 0.2.4
+Version: 0.2.5
 Authors@R: c(
     person("Joel"    , "Pick"           , email = "joel.l.pick@gmail.com"             , role = c("aut","cre")),
     person("Hassen"  , "Allegue"        , email = "h.all@disroot.org"                 , role = "aut"))
@@ -19,7 +19,7 @@ Imports:
     methods,
     MCMCglmm,
     mvnfast
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 Suggests: 
     rmarkdown,
     knitr,

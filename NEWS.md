@@ -9,7 +9,7 @@ squidSim 0.1.0
 squidSim 0.2.0
 ===========
 
--   Simulation of additive genetic effects now uses MCMCglmm::rbv internally. It is substantially faster!
+-   Simulation of additive genetic effects now uses `MCMCglmm::rbv` internally. It is substantially faster!
 -   Removed nadiv dependency until it back on CRAN, so temporarily doesn't simulate dominance or epigenetic effects internally. This can still be done by including matrices generated from nadiv as covariance structures
 
 
@@ -31,9 +31,17 @@ squidSim 0.2.2
 squidSim 0.2.3
 ===========
 
-Bug with 'fixed' factor is fixed. Now if the levels in the data structure have names, the same names have to be specified in the parameter list. The order doesn't matter (this will be matched internally), but the names have to match exactly. If the factor levels in the data structure are numeric then these do not need to match; the order of the effects will match the order of the numeric factor levels.
+- Bug with 'fixed' factor is fixed. Now if the levels in the data structure have names, the same names have to be specified in the parameter list. The order doesn't matter (this will be matched internally), but the names have to match exactly. If the factor levels in the data structure are numeric then these do not need to match; the order of the effects will match the order of the numeric factor levels.
 
 
-squidSim 0.2.3
+squidSim 0.2.4
 ===========
-- Added 'int_names' argument to 'make_structure' function, that allows combination/interaction terms to be named. 
+- Added 'int_names' argument to `make_structure` function, that allows combination/interaction terms to be named. 
+
+
+squidSim 0.2.5
+===========
+- Added cloglog link function to `simulate_population`
+- Added functions `exp2lat` and `lat2exp`, which convert means and (co)variances between normal and log normal distributions, and so can be used to transform between latent and expected scales with GLMs
+- Fixed phylogenetic effect simulation
+
