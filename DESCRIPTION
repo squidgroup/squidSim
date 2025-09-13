@@ -1,6 +1,6 @@
 Package: squidSim
 Title: Flexible and reproducible structured simulations
-Version: 0.2.5
+Version: 0.2.6
 Authors@R: c(
     person("Joel"    , "Pick"           , email = "joel.l.pick@gmail.com"             , role = c("aut","cre")),
     person("Hassen"  , "Allegue"        , email = "h.all@disroot.org"                 , role = "aut"))
@@ -13,9 +13,7 @@ License: MIT + file LICENSE
 LazyData: true
 Imports:
     stats,
-    MASS (>= 7.3-51.1),
     Matrix,
-    ape,
     methods,
     MCMCglmm,
     mvnfast

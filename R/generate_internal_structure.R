@@ -50,11 +50,3 @@ generate_internal_structure <- function(data_structure, n, parameters, n_respons
   lapply(as.list(environment()), function(x) if (!is.list(x) &&length(x)==1 && x=="") NULL else x)
 }
 
-# simulate_population <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, index_link, family="gaussian", link="identity", pedigree, pedigree_type, phylogeny, phylogeny_type, cov_str,sample_type, sample_param, sample_plot=FALSE, n_pop=1, verbose=FALSE){
-
-
-#   # input<- lapply(as.list(environment()), function(x) if (!is.list(x) &&length(x)==1 && x=="") NULL else x)
-#   do.call(generate_internal_structure,as.list(environment()))
-
-# }
-

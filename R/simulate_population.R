@@ -61,9 +61,6 @@
 simulate_population <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, index_link, family="gaussian", link="identity", pedigree, phylogeny, cov_str,sample_type, sample_param, sample_plot=FALSE, n_pop=1, seed, verbose=FALSE,suppress_index_warning=FALSE){
 
 
-
-
-
   if(verbose) cat("checking input\n")
   output <- do.call(generate_internal_structure,as.list(environment()))
 

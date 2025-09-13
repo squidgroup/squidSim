@@ -1,6 +1,6 @@
 ### wrapper for MCMCglmm::rbv that allows 0 variances 
 rbv0 <- function(pedigree, G,...){
-  n <- if(class(pedigree)=="phylo"){ 
+  n <- if(inherits(pedigree,"phylo")){ 
     length(pedigree$tip.label)
   }else{
     nrow(pedigree)
@@ -34,52 +34,6 @@ ar1_cor <- function(n, rho) {
 #ar1_cor(n=10,rho=0.5)
 
 
-## cov_str_check
-##  performs error checking of all cov structures
-cov_str_check <- function(data_structure, pedigree, phylogeny, cov_str, parameters,...){
-  cs_check <- lapply(c("pedigree","phylogeny","cov_str"), function(j){
-      cs <- get(j)
-      if(!is.list(cs) | is.data.frame(cs)) stop(j, " needs to be a list", call.=FALSE) 
-    })
-
-  param_names <- names(parameters)
-  group_names <- sapply(parameters,function(x) x$group)
-  ped_names <- names(pedigree)
-  phylo_names <- names(phylogeny)
-  cov_names <- names(cov_str)
-  cs_names <- c(ped_names,phylo_names,cov_names)
-
-  if(any(duplicated(cs_names))) stop("Cannot have multiple covariance structures (pedigree/phylogeny/cov_str) linking to the same item in the parameter list. If multiple covariance structures are needed to be linked to the same grouping factor in the data_structure (for example simulating additive genetic and dominance effects), then create multiple items in the parameter list, with different names, but the same 'group', and link the covariance structures accordingly.", call.=FALSE)
-  if(any(!cs_names %in% param_names)) stop("Some names in pedigree/phylogeny/cov_str are not in the parameter list", call.=FALSE)
-
-
-  lapply(colnames(data_structure), function(i){
-      # i = colnames(data_structure)[1]
-    
-    # are any of the parameter list names associated with it     
-    list_names <- param_names[group_names %in% i]
-    
-    ped_link <- list_names[list_names %in% ped_names]
-    phylo_link <- list_names[list_names %in% phylo_names]
-    cov_link <- list_names[list_names %in% cov_names]
-    all_link <- c(ped_link,phylo_link,cov_link)
-
-    if(length(all_link)>1){ 
-      warning("Multiple covariance structures linked to ",i,". The function assumes that the covariance structures are ordered exactly the same. If they are not then the simulations will not run as you expect. You will need to create multiple columns in grouping structure and link different covariance structures to each one.", call.=FALSE) 
-    }
-  })
-
-  # ped_names <- c(names(pedigree),names(phylogeny),names(cov_str))
-
-  # names_check <- lapply(ped_names,function(i){
-  # # data_structure[,i]
-  #   if(!all(unique(rownames(chol_str_all[[i]])) %in% unique(data_structure[,parameters[[i]]$group]))) stop(paste("all IDs in the pedigree/phylogeny/cov_str linked with", i, "are not in the data_structure"), call.=FALSE)
-  #   if(!all(unique(data_structure[,parameters[[i]]$group]) %in% unique(rownames(chol_str_all[[i]])))) stop(paste("all IDs in data_structure are not in the pedigree/phylogeny/cov_str linked with", i), call.=FALSE)      
-  # })
-  
-}
-
-
 
 ### function to turn data_structure into indexes. Matches names in data_structure to linked pedigree/phylogeny/cov_str to make sure indexing is correct. Doesnt do any error checking
 index_factors <- function(data_structure, pedigree, phylogeny, cov_str, parameters, index_link,suppress_index_warning,...){
@@ -111,18 +65,27 @@ index_factors <- function(data_structure, pedigree, phylogeny, cov_str, paramete
         phylo_link <- list_names[list_names %in% names(phylogeny)]
         cov_link <- list_names[list_names %in% names(cov_str)]
        
+        all_link <- c(ped_link,phylo_link,cov_link)
+
+        if(length(all_link)>1) warning("Multiple covariance structures linked to ",i,". The function assumes that the covariance structures are ordered exactly the same. If they are not then the simulations will not run as you expect. You will need to create multiple columns in data structure and link different covariance structures to each one.", call.=FALSE) 
         # if linked with a something get the row number in the relevant cov_str, so the indexing will match the order in that cov str.
         # Can only match with one so is assuming that if multiple things are linked with it that the ordering is the same, so takes the first linked cov str it can find and indexes according to that
 
         if(length(ped_link)>0){
           # first column of pedigree
+          if(!all(unique(data_structure[,i]) %in% unique(pedigree[[ped_link[1]]][,1]) )) stop(paste("all IDs in data_structure are not in the first column of the pedigree linked with", i), call.=FALSE)  
           match(data_structure[,i],pedigree[[ped_link[1]]][,1])
         }else if(length(phylo_link)>0){ 
           # names of phylogeny
+          if(!all(unique(data_structure[,i]) %in% unique(phylogeny[[phylo_link[1]]]$tip.label) )) stop(paste("all IDs in data_structure are not in the tip labels of the phylogeny linked with", i), call.=FALSE)  
           match(data_structure[,i],phylogeny[[phylo_link[1]]]$tip.label)
         }else if(length(cov_link)>0){
-          # rownames(of cov_str) 
+          # rownames of cov_str 
+          if(!all(unique(data_structure[,i]) %in% unique(rownames(cov_str[[cov_link[1]]])) )) stop(paste("all IDs in data_structure are not in the rownames of the cov_str linked with", i), call.=FALSE)  
           match(data_structure[,i],rownames(cov_str[[cov_link[1]]]))
+
+            
+
         }else{
           as.numeric(factor(data_structure[,i]))
         }
@@ -152,8 +115,23 @@ index_factors <- function(data_structure, pedigree, phylogeny, cov_str, paramete
 }
 
 
-cov_str_list <- function(parameters, data_structure, cov_str,...){
+cov_str_list <- function(parameters, data_structure, pedigree, phylogeny, cov_str,...){
 #phylogeny, phylogeny_type, pedigree, pedigree_type, 
+
+
+##  perform error checking of all cov structures
+
+  # cs_check <- lapply(c("pedigree","phylogeny","cov_str"), function(j){
+  #     cs <- get(j)
+  #     if(!is.list(cs) | is.data.frame(cs)) stop(j, " needs to be a list", call.=FALSE) 
+  #   })
+
+  p_names <- names(parameters)[!names(parameters)%in%c("intercept","interactions")]
+  cs_names <- c(names(pedigree),names(phylogeny),names(cov_str))
+
+  if(any(duplicated(cs_names))) stop("Cannot have multiple covariance structures (pedigree/phylogeny/cov_str) linking to the same item in the parameter list. If multiple covariance structures are needed to be linked to the same grouping factor in the data_structure (for example simulating additive genetic and dominance effects), then create multiple items in the parameter list, with different names, but the same 'group', or multiple columns in the data structure with the same IDs, and link the covariance structures accordingly.", call.=FALSE)
+
+  if(any(!cs_names %in% p_names)) stop("Some components in pedigree/phylogeny/cov_str do not link to any components in the parameter list", call.=FALSE)
 
   # ped_chol <- sapply(names(pedigree), function(x){
   #   if(pedigree_type[[x]]=="A") Matrix::chol(nadiv::makeA(pedigree[[x]]))
@@ -171,7 +149,9 @@ cov_str_list <- function(parameters, data_structure, cov_str,...){
   #   methods::as(chol(phylo_vcv), "dgCMatrix")
   # })
 
-  chol_str_all <- lapply(cov_str, function(x) methods::as(chol(x), "dgCMatrix"))
+  chol_str_all <- lapply(cov_str, function(x) 
+    Matrix::chol( Matrix::Matrix(x, sparse=TRUE)) )
+    # Matrix::chol(methods::as(x, "dgCMatrix")) )
 
   # chol_str_all<-c(phylo_chol,cor_chol)#ped_chol,
 
