@@ -207,10 +207,10 @@ sim_predictors <- function(parameters,data_structure, str_index, cov_str_all, kn
 
       if(i %in% names(pedigree)){
         ## if name is listed in pedigree argument, link to pedigree
-        x <- rbv0(pedigree=pedigree[[i]],G=p$vcov)
+        x <- rbv0(pedigree=pedigree[[i]],G=p$vcov) + p$mean
       }else if(i %in% names(phylogeny)){
         ## if name is listed in phylogeny argument, link to phylogeny
-        x <- rbv0(pedigree=phylogeny[[i]],G=p$vcov,nodes="TIPS")
+        x <- rbv0(pedigree=phylogeny[[i]],G=p$vcov,nodes="TIPS") + p$mean
       }else{
         x <- rmvn0(n=n, mu=p$mean, sigma=p$vcov)  
       }
