@@ -224,7 +224,7 @@ sim_predictors <- function(parameters,data_structure, str_index, cov_str_all, kn
       # }
       ## add on the mean
       x <- x + rep(p$mean,each=nrow(x))
-      
+
       ### apply functions
       ### add them in likes betas, making sure they are in the right order? then apply them to the cols?
       x <- sapply(1:k,function(i) sapply(x[,i],p[["functions"]][i]))
@@ -342,6 +342,7 @@ generate_y_list <- function(parameters, str_index, predictors, model,known_predi
 transform_dist <- function(y, family, link, response_names,...){
 
   inv <- function(x) 1/x
+  sq <- function(x) x^2 ## inverse of the sqrt link
   cloglog <- function(x) 1 - exp(-1*exp(x))
 
   j <- ncol(y)
@@ -353,9 +354,10 @@ transform_dist <- function(y, family, link, response_names,...){
   link_function <- 
   ifelse(link=="log", "exp", 
   ifelse(link=="inverse", "inv", 
+  ifelse(link=="sqrt", "sq", 
   ifelse (link=="logit", "plogis", 
   ifelse (link=="probit", "pnorm", 
-   link))))
+   link)))))
   
 
   y_family <-  sapply(1:j,function(i){
