@@ -207,18 +207,24 @@ sim_predictors <- function(parameters,data_structure, str_index, cov_str_all, kn
 
       if(i %in% names(pedigree)){
         ## if name is listed in pedigree argument, link to pedigree
-        x <- rbv0(pedigree=pedigree[[i]],G=p$vcov) + p$mean
+        x <- rbv0(pedigree=pedigree[[i]],G=p$vcov)
       }else if(i %in% names(phylogeny)){
         ## if name is listed in phylogeny argument, link to phylogeny
-        x <- rbv0(pedigree=phylogeny[[i]],G=p$vcov,nodes="TIPS") + p$mean
+        x <- rbv0(pedigree=phylogeny[[i]],G=p$vcov,nodes="TIPS")
+      }else if(!is.null(cov_str_all[[i]])){
+        ## cov_str can have more levels than the data_structure, and is simulated around 0 so the mean isn't transformed
+        x <- rmvn0(n=nrow(cov_str_all[[i]]), mu=rep(0,k), sigma=p$vcov)
+        x <- methods::as(Matrix::crossprod(cov_str_all[[i]],x),"matrix")
       }else{
-        x <- rmvn0(n=n, mu=p$mean, sigma=p$vcov)  
+        x <- rmvn0(n=n, mu=rep(0,k), sigma=p$vcov)  
       }
       
-      if(!is.null(cov_str_all[[i]])) {
-        x <- methods::as(Matrix::crossprod(cov_str_all[[i]],x),"matrix")
-      }
-
+      # if(!is.null(cov_str_all[[i]])) {
+      #   x <- methods::as(Matrix::crossprod(cov_str_all[[i]],x),"matrix")
+      # }
+      ## add on the mean
+      x <- x + rep(p$mean,each=nrow(x))
+      
       ### apply functions
       ### add them in likes betas, making sure they are in the right order? then apply them to the cols?
       x <- sapply(1:k,function(i) sapply(x[,i],p[["functions"]][i]))
