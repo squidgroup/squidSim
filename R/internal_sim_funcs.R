@@ -3,6 +3,8 @@ rbv0 <- function(pedigree, G,...){
   n <- if(inherits(pedigree,"phylo")){ 
     length(pedigree$tip.label)
   }else{
+    ## MCMCglmm only accepts id, dam and sire columns
+    pedigree <- as.data.frame(pedigree)[,1:3]
     nrow(pedigree)
   }
   X <- matrix(0, nrow=n, ncol=nrow(G))
@@ -17,7 +19,8 @@ rbv0 <- function(pedigree, G,...){
 
 ### wrapper for mvnfast::rmvn that allows 0 variances 
 rmvn0 <- function(n,mu,sigma){
-  X <- matrix(0, nrow=n, ncol=nrow(sigma))
+## variables with 0 variance are constant, and equal to their mean
+  X <- matrix(rep(mu,each=n), nrow=n, ncol=nrow(sigma))
   index <- which(diag(sigma)!=0)
   X[,index] <- mvnfast::rmvn(n=n, mu=mu[index], sigma=sigma[index,index])
   X
