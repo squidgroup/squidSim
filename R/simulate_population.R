@@ -63,58 +63,6 @@ simulate_population <- function(data_structure, n, parameters, n_response=1, res
 
   if(verbose) cat("checking input\n")
   output <- do.call(generate_internal_structure,as.list(environment()))
-
-  # if(!all(link %in% c("identity", "log", "inverse", "sqrt", "logit", "probit"))) stop("Link must be 'identity', 'log', 'inverse', 'sqrt', 'logit', 'probit'")
-  # if(!(length(link)==n_response || length(link)==1))  stop("Link must either be length 1 or same length as the number of responses")
-  
-  # if(!all(family %in% c("gaussian", "poisson", "binomial"))) stop("Family must be 'gaussian', 'poisson', 'binomial'")
-  # if(!(length(family)==n_response || length(family)==1))  stop("Family must either be length 1 or same length as the number of responses")
-
-  # if(missing("n") & missing("data_structure")){
-  #   stop("Either 'n' or 'data_structure' need to be specified")
-  # }else if(missing("n")){
-  #   n <- nrow(data_structure)
-  # }else if(!missing("n") & !missing("data_structure")){
-  #   if(nrow(data_structure)!=n) stop("'n' and nrow(data_structure) are not equal. Only one needs to be specified.")
-  # }
-  
-
-
-  # if(n_response > 1 & !missing("model")) stop("Currently cannot specify multiple responses and a model formula")
-
-  # if(!missing(response_names)) {
-  #   if(!missing("model")) message("response_names is ignored when a model formula is specified") 
-  #   if(length(response_names)!=n_response) stop("response_names needs to be the same length as n_response")  
-  # }
-
-  # if(!missing(pedigree)){
-  #   if(missing(pedigree_type)){
-  #     pedigree_type <- as.list(rep("A",length(pedigree)))
-  #     names(pedigree_type) <- names(pedigree)
-  #   }else{
-  #     if(!pedigree_type %in% c("A","D","E"))stop("pedigree_type must be either 'A','D' or 'E'")
-  #     if(length(pedigree)!=length(pedigree_type)) stop("pedigree and pedigree_type need to be the same length")
-  #     if(sort(names(pedigree))==sort(names(pedigree))) stop("names of pedigree and pedigree_type need to match")
-  #   }
-  # }
-  # if(!missing(phylogeny)){
-  #   if(missing(phylogeny_type)){
-  #     phylogeny_type <- as.list(rep("brownian",length(phylogeny)))
-  #     names(phylogeny_type) <- names(phylogeny)
-  #   }else{
-  #     if(!phylogeny_type %in% c("brownian","OU")) stop("phylogeny_type must be either 'brownian' or 'OU'")
-  #     if(length(phylogeny)!=length(phylogeny_type)) stop("phylogeny and phylogeny_type need to be the same length")
-  #     if(sort(names(phylogeny))==sort(names(phylogeny))) stop("names of phylogeny and phylogeny_type need to match")
-  #   }
-  # }
-
-
-
-
-
-
-  # ## gets the arguments into a list that is added to for the output
-  # output <- lapply(as.list(environment()), function(x) if (!is.list(x) &&length(x)==1 && x=="") NULL else x)
   
 
 #####################  
@@ -173,7 +121,21 @@ simulate_population <- function(data_structure, n, parameters, n_response=1, res
 #####################  
   if(verbose) cat("simulating predictors\n")
 
-  if(is.null(output$seed))output$seed<-sample(1:10000,1)
+  # if(is.null(output$seed))output$seed<-sample(1:10000,1)
+## if no seed is given, draw one from the user's RNG stream. The stream is restored on exit, so that repeated calls keep moving along it, rather than being reset to one of a small set of seeds, and set.seed() here has no side effects on the user's session
+ 
+  # if not RNG steam, initiates RNG steam
+  if(!exists(".Random.seed", envir=globalenv(), inherits=FALSE)) stats::runif(1)
+  
+  # if no seed is given, draw one from the user's RNG stream.
+  if(is.null(output$seed)) output$seed <- sample.int(.Machine$integer.max,1)
+  
+  # get RNG steam
+  old_seed <- get(".Random.seed", envir=globalenv(), inherits=FALSE)
+
+  # restore RNG steam on exit, so that repeated calls keep moving along it, rather than being reset to one of a small set of seeds, and set.seed() here has no side effects on the user's session
+  on.exit(assign(".Random.seed", old_seed, envir=globalenv()), add=TRUE)
+
   set.seed(output$seed)
   
   output$predictors <- lapply(1:n_pop, function(x) do.call(sim_predictors, output))
