@@ -136,22 +136,7 @@ cov_str_list <- function(parameters, data_structure, pedigree, phylogeny, cov_st
 
   if(any(!cs_names %in% p_names)) stop("Some components in pedigree/phylogeny/cov_str do not link to any components in the parameter list", call.=FALSE)
 
-  # ped_chol <- sapply(names(pedigree), function(x){
-  #   if(pedigree_type[[x]]=="A") Matrix::chol(nadiv::makeA(pedigree[[x]]))
-  #   else if(pedigree_type[[x]]=="D") Matrix::chol(nadiv::makeD(pedigree[[x]]))
-  #   else if(pedigree_type[[x]]=="E") Matrix::chol(nadiv::makeAA(pedigree[[x]]))
-  # })
-
-  # phylo_chol <- sapply(names(phylogeny), function(x){
-  #   phylo_vcv <- ape::vcv(phylogeny[[x]], corr = TRUE)
-  #   # if(phylogeny_type[[x]]=="OU") {
-  #   #   ## need way of specifying alpha
-  #   #   phylo_vcv <- exp(phylo_vcv * - alpha)
-  #   #   diag(phylo_vcv) <- 1
-  #   # }
-  #   methods::as(chol(phylo_vcv), "dgCMatrix")
-  # })
-
+ 
  chol_str_all <- lapply(names(cov_str), function(i){
   x <- cov_str[[i]]
   if(nrow(x)!=ncol(x) || !isSymmetric(unname(as.matrix(x)))) stop("cov_str for ",i," must be a symmetric square matrix", call.=FALSE)
@@ -198,16 +183,11 @@ sim_predictors <- function(parameters,data_structure, str_index, cov_str_all, kn
     }else if(p$covariate){
       
       ## if covariate, make design matrix from data structure
-      x<- matrix(rep(str_index[,p$group],k),nrow(str_index),k)
+      # x<- matrix(rep(str_index[,p$group],k),nrow(str_index),k)
+      x<- matrix(rep(as.numeric(data_structure[,p$group]),k),nrow(data_structure),k)
 
     }else{
       ## otherwise simulate 'traits' at each level from multivariate normal 
-
-      # x <- if(is.null(cov_str_all[[i]])) {
-      #   mvnfast::rmvn(n=n, mu=p$mean, sigma=p$vcov)
-      # }else{
-      #   methods::as(Matrix::crossprod(cov_str_all[[i]],mvnfast::rmvn(n=n, mu=p$mean, sigma=p$vcov)),"matrix")
-      # }
 
       if(i %in% names(pedigree)){
         ## if name is listed in pedigree argument, link to pedigree
@@ -223,9 +203,6 @@ sim_predictors <- function(parameters,data_structure, str_index, cov_str_all, kn
         x <- rmvn0(n=n, mu=rep(0,k), sigma=p$vcov)  
       }
       
-      # if(!is.null(cov_str_all[[i]])) {
-      #   x <- methods::as(Matrix::crossprod(cov_str_all[[i]],x),"matrix")
-      # }
       ## add on the mean
       x <- x + rep(p$mean,each=nrow(x))
 
