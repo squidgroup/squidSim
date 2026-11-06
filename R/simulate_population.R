@@ -16,7 +16,6 @@
 #' @param cov_str A list of covariance structures for each hierarchical level. The name in the cov_str list must match a name in the parameter list.
 #' @param sample_type Type of sampling, must be one of 'nested', 'missing', 'survival' or 'temporal.' If not specified, then no sampling is done. See details
 #' @param sample_param A set of parameters, specific to the sampling type. See details.
-#' @param sample_plot Logical. Should illustrative plots be made - defaults to FALSE - currently not implemented.
 #' @param n_pop Number of populations. Default = 1
 #' @param seed Seed for random number generation. Setting seed allows for simulations to be easily reproduced. If seed is not set, one is set internally, which is then saved and returned in the squidSim object
 #' @param verbose Logical. Whether to print diagnostics. Useful for debugging. Defaults to FALSE
@@ -58,7 +57,7 @@
 #' )
 #' 
 #' @export
-simulate_population <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, index_link, family="gaussian", link="identity", pedigree, phylogeny, cov_str,sample_type, sample_param, sample_plot=FALSE, n_pop=1, seed, verbose=FALSE,suppress_index_warning=FALSE){
+simulate_population <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, index_link, family="gaussian", link="identity", pedigree, phylogeny, cov_str,sample_type, sample_param, n_pop=1, seed, verbose=FALSE,suppress_index_warning=FALSE){
 
 
   if(verbose) cat("checking input\n")
