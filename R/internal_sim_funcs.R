@@ -152,9 +152,13 @@ cov_str_list <- function(parameters, data_structure, pedigree, phylogeny, cov_st
   #   methods::as(chol(phylo_vcv), "dgCMatrix")
   # })
 
-  chol_str_all <- lapply(cov_str, function(x) 
-    Matrix::chol( Matrix::Matrix(x, sparse=TRUE)) )
-    # Matrix::chol(methods::as(x, "dgCMatrix")) )
+ chol_str_all <- lapply(names(cov_str), function(i){
+  x <- cov_str[[i]]
+  if(nrow(x)!=ncol(x) || !isSymmetric(unname(as.matrix(x)))) stop("cov_str for ",i," must be a symmetric square matrix", call.=FALSE)
+  tryCatch(suppressWarnings(Matrix::chol(Matrix::Matrix(x, sparse=TRUE))),
+    error=function(e) stop("cov_str for ",i," must be positive definite", call.=FALSE))
+ })
+ names(chol_str_all) <- names(cov_str)
 
   # chol_str_all<-c(phylo_chol,cor_chol)#ped_chol,
 
