@@ -80,10 +80,10 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
         if(!all(diag(parameters[[i]][["vcorr"]])>=0)){ stop("Variances for ",i," must all be >=0", call.=FALSE)}
         if(any(parameters[[i]][["vcorr"]][lower.tri(parameters[[i]][["vcorr"]])]< -1 | parameters[[i]][["vcorr"]][lower.tri(parameters[[i]][["vcorr"]])]>1)){ stop("Correlations for ",i," must all be between -1 and 1", call.=FALSE)}
 
-        sd <- sqrt(diag(parameters[[i]][["vcorr"]]))
+        stand_dev <- sqrt(diag(parameters[[i]][["vcorr"]]))
         corr <- parameters[[i]][["vcorr"]]
         diag(corr) <- 1
-        parameters[[i]][["vcov"]] <- diag(sd) %*% corr %*% diag(sd)
+        parameters[[i]][["vcov"]] <- diag(stand_dev, nrow=length(stand_dev)) %*% corr %*% diag(stand_dev, nrow=length(stand_dev))
       }
     }
 

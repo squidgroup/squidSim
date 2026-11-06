@@ -119,7 +119,6 @@ index_factors <- function(data_structure, pedigree, phylogeny, cov_str, paramete
 
 
 cov_str_list <- function(parameters, data_structure, pedigree, phylogeny, cov_str,...){
-#phylogeny, phylogeny_type, pedigree, pedigree_type, 
 
 
 ##  perform error checking of all cov structures
@@ -144,8 +143,6 @@ cov_str_list <- function(parameters, data_structure, pedigree, phylogeny, cov_st
     error=function(e) stop("cov_str for ",i," must be positive definite", call.=FALSE))
  })
  names(chol_str_all) <- names(cov_str)
-
-  # chol_str_all<-c(phylo_chol,cor_chol)#ped_chol,
 
   add_list<-names(parameters)[!names(parameters) %in% c(names(chol_str_all),"intercept","interactions")]
   for(i in add_list){
