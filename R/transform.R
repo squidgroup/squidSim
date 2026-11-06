@@ -3,7 +3,7 @@
 #' @description Transforms means and covariance matrix from expected (log-normal) to latent (normal) scale
 #' @param mean a vector of means. These need to all be >0.
 #' @param cov a single variance or a covariance matrix
-#' @details Transforms expected mean(s) and (co)variance(s) of a multivariate normal distribution to expected mean(s) and (co)variance(s) of a multivariate log-normal distribution. This is useful when trying to go from expected (log-normal) to expected (log-normal) scales in a Poisson GLM with a log link function.
+#' @details Transforms expected mean(s) and (co)variance(s) of a multivariate log-normal distribution to expected mean(s) and (co)variance(s) of a multivariate normal distribution. This is useful when trying to go from expected (log-normal) to latent (normal) scales in a Poisson GLM with a log link function.
 #' @author Joel Pick - joel.l.pick@gmail.com
 #' @return a list, which an element 'mean' for the transformed mean(s) and another element 'cov' for the transformed covariance matrix
 #' @examples
@@ -13,7 +13,7 @@
 #' 
 exp2lat<- function(mean,cov){
 
-	if(!(is.numeric(mean) & is.numeric(mean)))  stop( "Inputs must be numeric", call.=FALSE)
+	if(!(is.numeric(mean) & is.numeric(cov)))  stop( "Inputs must be numeric", call.=FALSE)
 	
 	if(!is.vector(mean))  stop( "mean must be vector", call.=FALSE)
 	if(any(mean<=0)) stop("elements of mean should all be >0", call.=FALSE)
@@ -28,6 +28,7 @@ exp2lat<- function(mean,cov){
 	}
 	if(is.vector(cov)){
 		if(length(mean)!=length(cov)) stop('mean must be the same length as cov', call.=FALSE)
+		if(any(cov<0)) stop('variances must be >=0', call.=FALSE)
 		cov <- diag(cov, nrow=length(cov),ncol=length(cov)) 
 	}
 	
@@ -46,7 +47,7 @@ exp2lat<- function(mean,cov){
 #' @description Transforms means and covariance matrix from latent (normal) to expected (log-normal) scale
 #' @param mean a vector of means
 #' @param cov a single variance or a covariance matrix
-#' @details Transforms expected mean(s) and (co)variance(s) of a multivariate log-normal distribution to expected mean(s) and (co)variance(s) of a multivariate normal distribution. This is useful when trying to go from latent (normal) to expected (log-normal) scales in a Poisson GLM with a log link function.
+#' @details Transforms expected mean(s) and (co)variance(s) of a multivariate normal distribution to expected mean(s) and (co)variance(s) of a multivariate log-normal distribution. This is useful when trying to go from latent (normal) to expected (log-normal) scales in a Poisson GLM with a log link function.
 #' @author Joel Pick - joel.l.pick@gmail.com
 #' @return a list, which an element 'mean' for the transformed mean(s) and another element 'cov' for the transformed covariance matrix
 #' @examples
@@ -56,7 +57,7 @@ exp2lat<- function(mean,cov){
 
 lat2exp<- function(mean,cov){
 	
-	if(!(is.numeric(mean) & is.numeric(mean)))  stop( "Inputs must be numeric", call.=FALSE)
+	if(!(is.numeric(mean) & is.numeric(cov)))  stop( "Inputs must be numeric", call.=FALSE)
 	
 	if(!is.vector(mean))  stop( "mean must be vector", call.=FALSE)
 	mean <- as.matrix(mean) #make a column vector
@@ -70,6 +71,7 @@ lat2exp<- function(mean,cov){
 	}
 	if(is.vector(cov)){
 		if(length(mean)!=length(cov)) stop('mean must be the same length as cov', call.=FALSE)
+		if(any(cov<0)) stop('variances must be >=0', call.=FALSE)
 		cov <- diag(cov, nrow=length(cov),ncol=length(cov)) 
 	}
 	
