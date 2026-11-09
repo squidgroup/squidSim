@@ -10,7 +10,7 @@ n_phenotypes <- function(parameters){
 
 
 ## I've used loops rather than apply functions in here because then the original parameter list can then be added to rather than new lists made - this will be slightly slower but very negligible given their size
-fill_parameters <- function(parameters,data_structure, n, n_response, response_names,known_predictors,...){
+fill_parameters <- function(parameters,data_structure, n, n_response, response_names,known_predictors,model=NULL,...){
 
   reserved_p_names <- c("intercept","observation","residual","interactions") 
 
