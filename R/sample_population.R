@@ -98,12 +98,7 @@ sample_missing <- function(pop_data, param, plot=FALSE){
 		})
 		e <- stats::plogis(l)
 		o <- apply(e,2,function(x)as.logical(stats::rbinom(length(x),1,x)))
-		indices  <- apply(o,2,which)
-		if(length(param)==1){
-			list(which(o))
-		}else{
-			apply(o,2,which)
-		}
+		lapply(seq_len(ncol(o)), function(k) which(o[,k]))
 	})
 	# could make total N constant ;using the probabilities e with sample
 
