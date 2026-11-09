@@ -144,10 +144,9 @@ sample_temporal <- function(data_structure, time, group, variance, n, balanced=T
 	all_levels <- unique(data_structure[,group])
   N_levels <- length(all_levels)
 
-  Tsamp <- length(unique(data_structure[,time]))
-  # Tsamp - number of time points
+  times <- sort(unique(data_structure[,time]))
+  Tsamp <- length(times)
 
-  Tmin <- min(unique(data_structure[,time]))
   ## work out within group and between group range
   TsampB <- round(Tsamp*variance,0)
   TsampW <- Tsamp-TsampB
@@ -161,13 +160,11 @@ sample_temporal <- function(data_structure, time, group, variance, n, balanced=T
   }
 
   indices <- sort(c(lapply(1:N_levels, function(x){ 
-  			if(!balanced) n <- rztpois(1,n)
-        Tx <- sort(sample(1:TsampW,n, replace=FALSE)) + sample(1:TsampB,1) + Tmin -1
+  			if(!balanced) n <- min(rztpois(1,n),TsampW)
+        Tx <- sort(sample.int(TsampW,n, replace=FALSE)) + sample.int(TsampB+1,1) -1
         if(plot) graphics::points(Tx,rep(x,n), pch=19, col=x)
-        # Tx
-        # all_levels[x]
         index1 <- which(data_structure[,group]==all_levels[x])
-        index1[which(data_structure[index1,time] %in% Tx)]
+        index1[which(data_structure[index1,time] %in%  times[Tx])]
         
       }), recursive=TRUE))
   if(plot)graphics::points(individual~day,data_structure[indices,])
