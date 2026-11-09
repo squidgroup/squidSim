@@ -2,12 +2,19 @@
 ## function which tells whether consecutive columns are nested, assuming that the first one is the highest level
 is.nested <-function(x) sapply(2:ncol(x), function(i) nrow(unique(x[,c(i-1,i)])) == length(unique(x[,i])) )
 
+## sample() treats a single number x as 1:x, so sample levels by position. If a group has fewer levels than requested, all are taken
+sample_levels <- function(x, size) {
+	x <- unique(x)
+	x[sample.int(length(x), min(size,length(x)), replace=FALSE)]
+}
+
 ## function
 ## param 
 sample_nested <- function(data_structure, param, plot=FALSE){
 	
 	groups <- colnames(param)
-	
+	if(is.null(groups)) stop("param needs column names for type='nested'", call.=FALSE)
+
 	## check naming
 	if(!all(groups %in% c(colnames(data_structure),"observation"))){
 		stop("Names in sample order need to be in data_structure")
@@ -23,30 +30,36 @@ sample_nested <- function(data_structure, param, plot=FALSE){
 		stop("Grouping factors are not nested in the order provided")
 	}
 
-	# check that all levels of factor have at least the maximum samples
-
-		# for(i in colnames(data_structure)){
-		# 	if(min(table(data_structure[,i]) ) < max(simple[[i]])) stop("not all levels of ",i, " have the maximum number of samples")
-		# }
-
-	# for (i in colnames(param)){
-	# 	if(length(unique(data_structure[,i])) < max(param[,i])) stop("not all levels of ",i, " have the maximum number of samples")
-	# }
-
-		
+	# check that the numbers requested are available in at least one group
+	for(i in seq_along(groups)){
+	  n_available <- if(i==1){
+	    length(unique(data_structure[,groups[1]]))
+	  }else{
+	    max(tapply(data_structure[,groups[i]], data_structure[,groups[i-1]], function(x) length(unique(x))))
+	  }
+	  if(any(param[,i]>n_available)) stop("Cannot sample ",max(param[,i])," levels of ",groups[i],", the maximum available is ",n_available, call.=FALSE)
+	  if(i>1){
+	    n_fewest <- min(tapply(data_structure[,groups[i]], data_structure[,groups[i-1]], function(x) length(unique(x))))
+	    if(any(param[,i]>n_fewest)) warning("Some levels of ",groups[i-1]," have fewer than ",max(param[,i])," levels of ",groups[i],", so all of their levels are sampled", call.=FALSE)
+	  }
+	}
+			
 
 	# for each parameter set (row in param)
 	apply(param,1, function(j){
 		
 		## get the right number of levels for the highest group
-		index<-which(data_structure[,groups[1]] %in% sample(unique(data_structure[,groups[1]]), j[1], replace=FALSE))
+		index<-which(data_structure[,groups[1]] %in% sample_levels(data_structure[,groups[1]], j[1]))
 
 		##then cascade through nested groups to get right number of levels within each
 		if(ncol(param)>1){
 			for(i in 2:ncol(param)){
-				index_new <- sort(which(data_structure[index,groups[i]] %in% c(tapply(data_structure[index,groups[i]],data_structure[index,groups[i-1]], function(x){
-					if(length(x)>1) sample(unique(x),j[i], replace=FALSE) else x
-				}), recursive=TRUE)))
+				index_new <- sort(which(data_structure[index,groups[i]] %in% c(
+					tapply(data_structure[index,groups[i]],data_structure[index,groups[i-1]], function(x){
+					sample_levels(x,j[i])
+				})
+					, recursive=TRUE)))
+
 				index <- index[index_new]
 			}	
 		}
@@ -191,7 +204,7 @@ sample_population <- function(x){
 		if(!is.matrix(param)){
 		  stop("param needs to be a matrix for type='nested'")
 		}
-		indices <- lapply(1:x$n_pop,function(y) sample_nested(x$data_structure, param, plot))
+		indices <- lapply(1:x$n_pop,function(y) sample_nested(x$str_index, param, plot))
 	
 	}else if(type=="missing"){
 		if(!is.vector(param)){
