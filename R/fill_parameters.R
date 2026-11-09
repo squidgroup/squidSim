@@ -145,7 +145,7 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
       }
       ##
       ## remove any colnames on beta
-      # colnames(parameters[[i]][["beta"]])<-NULL
+      colnames(parameters[[i]][["beta"]])<-NULL
     }else{ 
     ## if the number of responses and the size of cov are the same, and beta is not specified, then beta = I, as assuming that the user is simulating random effects
     ## if not the same then matrix of 1s
@@ -217,7 +217,6 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
 
     if(parameters[[i]][["fixed"]] & (!is.null(parameters[[i]][["mean"]]) || !is.null(parameters[[i]][["vcov"]]) || !is.null(parameters[[i]][["functions"]]))) warning("Fixed=TRUE for ",i,", so mean, vcov and functions are ignored", call.=FALSE)
 
-    if(parameters[[i]][["fixed"]] & (!is.null(parameters[[i]][["mean"]]) || !is.null(parameters[[i]][["vcov"]]) || !is.null(parameters[[i]][["functions"]]))) warning("Fixed=TRUE for ",i,", so mean, vcov and functions are ignored", call.=FALSE)
 
     ## check factor levels match those in the data structure, if data structure had numeric names
     
@@ -238,7 +237,7 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
     
     if(parameters[[i]][["covariate"]] && is.null(parameters[[i]][["beta"]])) stop("If covariate =TRUE, beta also needs to be specified", call.=FALSE)
 
-    if(parameters[[i]][["covariate"]] && is.null(parameters[[i]][["fixed"]])) stop("covariate =TRUE and fixed=TRUE for ", i, call.=FALSE)
+    if(parameters[[i]][["covariate"]] && parameters[[i]][["fixed"]]) stop("covariate =TRUE and fixed=TRUE for ", i, call.=FALSE)
 
     if(parameters[[i]][["covariate"]] && !is.numeric(data_structure[,parameters[[i]][["group"]]])) stop("If covariate =TRUE, the corresponding grouping factor in the data_structure needs to be coded as a numeric", call.=FALSE)
 
@@ -282,7 +281,9 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
   if(!is.null(parameters[["intercept"]])){
     ## needs to be same length as n_response
     if(length(parameters[["intercept"]])!=n_response) stop("intercept needs to same length as n_response")
-    if(!is.vector(parameters[["intercept"]])) stop("intercept needs to be a vector of length N_reponse") 
+    if(!is.vector(parameters[["intercept"]])) stop("intercept needs to be a vector of length N_reponse")
+    ## remove names on the intercept, otherwise they will be read as extra parameters
+    parameters[["intercept"]] <- unname(parameters[["intercept"]])
 
   }else{
     parameters[["intercept"]] <- rep(0, n_response)
@@ -322,6 +323,7 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
       if(n_response != ncol(interactions[["beta"]])){ 
         stop("number of columns in beta is not the same as n_response for interactions", call.=FALSE)
       }
+      colnames(interactions[["beta"]]) <- NULL
     }else{ 
       interactions[["beta"]] <- matrix(1,length(interaction_names),n_response)
       #diag(interactions[["n_response"]])
@@ -364,11 +366,14 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
 
 
   ## Check whether all names in data_structure and parameters contain only words, digits, : and _
-  all_names <- c(response_names, e_p, pred_names, colnames(data_structure))
+  # all_names <- c(response_names, e_p, pred_names, colnames(data_structure))
+  ## responses take their default names if none are given (the model argument names its own responses)
+  default_response <- if(is.null(model)){ if(n_response==1) "y" else paste0("y",1:n_response) }
+  all_names <- c(if(is.null(response_names)) default_response else response_names, e_p, pred_names, colnames(data_structure))
 
   if(any(duplicated(all_names))) stop("Response names, names in data structure and names in parameters must be unique")
 
-  if(!all(grepl("^[A-z0-9_:]*$",all_names))) stop("Response names, names in data structure and names in parameters must be alphanumeric, '_' or ':'", call.=FALSE)
+  if(!all(grepl("^[A-Za-z0-9_:]*$",all_names))) stop("Response names, names in data structure and names in parameters must be alphanumeric, '_' or ':'", call.=FALSE)
 
   ### check no names are repeated!!
   if(any(duplicated(e_p)) || any(e_p %in% c(pred_names, colnames(data_structure)))) stop("Additional parameters names must be unique", call.=FALSE)
@@ -417,6 +422,8 @@ fill_preds <- function(known_predictors,n, n_response,...){
     if(!is.numeric(betas))stop("beta in known_predictors must be numeric", call.=FALSE)
     if(n_response != ncol(betas)) stop("Number of columns in beta is not the same as n_response for known_predictors", call.=FALSE)      
     if(ncol(preds) != nrow(betas)) stop("The dimensions of beta do not match the number of predictors for known_predictors", call.=FALSE)
+    ## remove any colnames on beta, otherwise they become the names of the responses
+    colnames(betas) <- NULL
       ##
   }else{ 
     betas <- matrix(1, nrow= ncol(preds), ncol= n_response)  

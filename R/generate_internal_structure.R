@@ -11,6 +11,9 @@ generate_internal_structure <- function(data_structure, n, parameters, n_respons
   
   if(missing("parameters")) stop("'parameters' need to be specified")
 
+  ## tibbles and data.tables index differently from data.frames
+  if(!missing("data_structure") && is.data.frame(data_structure)) data_structure <- as.data.frame(data_structure)
+
   if(!all(link %in% c("identity", "log", "inverse", "sqrt", "logit", "probit", "cloglog"))) stop("Link must be 'identity', 'log', 'inverse', 'sqrt', 'logit', 'probit', 'cloglog'")
   if(!(length(link)==n_response || length(link)==1))  stop("Link must either be length 1 or same length as the number of responses")
   

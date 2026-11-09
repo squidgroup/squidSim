@@ -230,7 +230,7 @@ sim_predictors <- function(parameters,data_structure, str_index, cov_str_all, kn
   if(!is.null(parameters[["interactions"]])){
 
     x_int <- do.call(cbind,lapply(strsplit(parameters[["interactions"]]$names,":"), function(j){
-        eval(parse(text=paste(j, collapse="*")), envir = as.data.frame(traits) )
+        eval(parse(text=paste0("`",j,"`", collapse="*")), envir = as.data.frame(traits) )
     }))
 
     colnames(x_int) <- parameters[["interactions"]]$names
