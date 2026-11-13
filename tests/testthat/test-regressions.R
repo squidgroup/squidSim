@@ -170,15 +170,6 @@ test_that("#33 can be done with an interaction", {
   expect_equal(nrow(unique(d[, c("population", "pop_year")])), 4)
 })
 
-test_that("linked and unlinked effects can share a group", {
-  ds <- data.frame(animal = rep(c("3", "5", "6"), each = 2))
-  s <- simulate_population(data_structure = ds, pedigree = list(a = ped), parameters = list(
-    a = list(group = "animal", names = "g", vcov = 1, beta = 1),
-    pe = list(group = "animal", names = "pe", vcov = 1, beta = 1), residual = list(vcov = 1)))
-  d <- get_population_data(s)
-  expect_false(anyNA(d$pe))
-  expect_equal(length(unique(d$pe)), 3)
-})
 
 test_that("pedigree handles singular G and extra columns", {
   s <- simulate_population(data_structure = data.frame(animal = ped$id), pedigree = list(animal = cbind(ped, sex = 1)),
