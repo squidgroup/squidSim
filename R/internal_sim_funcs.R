@@ -197,16 +197,16 @@ sim_predictors <- function(parameters,data_structure, str_index, cov_str_all, kn
     }else{
       ## otherwise simulate 'traits' at each level from multivariate normal 
 
-      if(i %in% names(pedigree)){
+      if(p$group %in% names(pedigree)){
         ## if name is listed in pedigree argument, link to pedigree
-        x <- rbv0(pedigree=pedigree[[i]],G=p$vcov)
-      }else if(i %in% names(phylogeny)){
+        x <- rbv0(pedigree=pedigree[[p$group]],G=p$vcov)
+      }else if(p$group %in% names(phylogeny)){
         ## if name is listed in phylogeny argument, link to phylogeny
-        x <- rbv0(pedigree=phylogeny[[i]],G=p$vcov,nodes="TIPS")
-      }else if(!is.null(cov_str_all[[i]])){
+        x <- rbv0(pedigree=phylogeny[[p$group]],G=p$vcov,nodes="TIPS")
+      }else if(!is.null(cov_str_all[[p$group]])){
         ## cov_str can have more levels than the data_structure, and is simulated around 0 so the mean isn't transformed
-        x <- rmvn0(n=nrow(cov_str_all[[i]]), mu=rep(0,k), sigma=p$vcov)
-        x <- methods::as(Matrix::crossprod(cov_str_all[[i]],x),"matrix")
+        x <- rmvn0(n=nrow(cov_str_all[[p$group]]), mu=rep(0,k), sigma=p$vcov)
+        x <- methods::as(Matrix::crossprod(cov_str_all[[p$group]],x),"matrix")
       }else{
         x <- rmvn0(n=n, mu=rep(0,k), sigma=p$vcov)  
       }
