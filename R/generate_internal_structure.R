@@ -42,7 +42,19 @@ generate_internal_structure <- function(data_structure, n, parameters, n_respons
     if(!(n_pop>0 && is.wholenumber(n_pop))) stop("n_pop must be a positive whole number", call.=FALSE)  
   }
   
-  # if(!missing(pedigree)){
+  if(!missing(pedigree)){
+    if(!is.list(pedigree) | is.data.frame(pedigree)) stop("pedigree needs to be a list", call.=FALSE) 
+    if(is.null(names(pedigree))) stop("elements of pedigree list need to be named", call.=FALSE) 
+  }
+  if(!missing(phylogeny)){
+    if(!is.list(phylogeny) | is.data.frame(phylogeny)) stop("phylogeny needs to be a list", call.=FALSE) 
+    if(is.null(names(phylogeny))) stop("elements of phylogeny list need to be named", call.=FALSE) 
+  }
+  if(!missing(cov_str)){
+    if(!is.list(cov_str) | is.data.frame(cov_str)) stop("cov_str needs to be a list", call.=FALSE) 
+    if(is.null(names(cov_str))) stop("elements of cov_str list need to be named", call.=FALSE) 
+  }
+
   #   if(missing(pedigree_type)){
   #     pedigree_type <- as.list(rep("A",length(pedigree)))
   #     names(pedigree_type) <- names(pedigree)

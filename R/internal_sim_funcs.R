@@ -138,11 +138,12 @@ cov_str_list <- function(parameters, data_structure, pedigree, phylogeny, cov_st
   #   })
 
   p_names <- names(parameters)[!names(parameters)%in%c("intercept","interactions")]
+  group_names <- sapply(parameters[!names(parameters) %in% c("intercept","interactions")],function(x) x[["group"]])
   cs_names <- c(names(pedigree),names(phylogeny),names(cov_str))
 
   if(any(duplicated(cs_names))) stop("Cannot have multiple covariance structures (pedigree/phylogeny/cov_str) linking to the same item in the parameter list. If multiple covariance structures are needed to be linked to the same grouping factor in the data_structure (for example simulating additive genetic and dominance effects), then create multiple items in the parameter list, with different names, but the same 'group', or multiple columns in the data structure with the same IDs, and link the covariance structures accordingly.", call.=FALSE)
 
-  if(any(!cs_names %in% p_names)) stop("Some components in pedigree/phylogeny/cov_str do not link to any components in the parameter list", call.=FALSE)
+  if(any(!cs_names %in% unique(c(group_names)))) stop("Some components in pedigree/phylogeny/cov_str do not link to any components in the parameter list", call.=FALSE)
 
  
  chol_str_all <- lapply(names(cov_str), function(i){
