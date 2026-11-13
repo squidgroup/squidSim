@@ -199,6 +199,7 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
 
     ## covariate and fixed should be fixed to false for observation and residual
     if(parameters[[i]][["group"]] %in% c("observation","residual")){
+      if(isTRUE(parameters[[i]][["covariate"]]) | isTRUE(parameters[[i]][["fixed"]])) warning("covariate =TRUE and fixed=TRUE are ignored for ", i, call.=FALSE)
       parameters[[i]][["fixed"]] <- FALSE
       parameters[[i]][["covariate"]] <- FALSE
     }
