@@ -199,32 +199,32 @@ sample_population <- function(x){
 
 	if(type=="nested"){
 		if(!is.matrix(param)){
-		  stop("param needs to be a matrix for type='nested'")
+		  stop("param needs to be a matrix for type='nested'", call.=FALSE)
 		}
 	  data_structure <- if(is.null(x$str_index)) data.frame(observation=seq_len(x$n)) else x$str_index
 		indices <- lapply(1:x$n_pop,function(y) sample_nested(data_structure, param, plot))
-		
+
 	}else if(type=="missing"){
 		if(!is.vector(param)){
-		  stop("param needs to be a vector for type='missing'")
+		  stop("param needs to be a vector for type='missing'", call.=FALSE)
 		}
 		indices <- sample_missing(x, param, plot)
 	
 	}else if(type=="survival"){
 		if(!is.list(param)){
-		  stop("param needs to be a list for type='survival'")
+		  stop("param needs to be a list for type='survival'", call.=FALSE)
 		}
 		if(!all(sapply(param,is.vector))){
-		  stop("All elements of param list must be vectors for type='survival'")
+		  stop("All elements of param list must be vectors for type='survival'", call.=FALSE)
 		}
 		if(!all(sapply(param,length)==1)) {
-		  stop("vectors in param list must be length 1 for type='survival'")
+		  stop("vectors in param list must be length 1 for type='survival'", call.=FALSE)
 		}
 		if(!all(c("y", "ID", "age")	%in% names(param))) {
-			stop("param list must include 'y', 'ID' and 'age' for type='survival'")
+			stop("param list must include 'y', 'ID' and 'age' for type='survival'", call.=FALSE)
 		}
 		if(!is.null(param[["all"]]) && !is.logical(param[["all"]]) ){
-			stop("'all' in param list must logical for type='survival'")
+			stop("'all' in param list must logical for type='survival'", call.=FALSE)
 		}
 		indices <- lapply(x$y,function(z) { # for each population
 			list(sample_survival(
@@ -237,14 +237,14 @@ sample_population <- function(x){
 
 	}else if(type=="temporal"){
 		if(!is.list(param)){
-		  stop("param needs to be a list for type='temporal'")
+		  stop("param needs to be a list for type='temporal'", call.=FALSE)
 		}
 		if(!all(sapply(param,is.vector))){
-		  stop("All elements of param list must be vectors for type='temporal'")
+		  stop("All elements of param list must be vectors for type='temporal'", call.=FALSE)
 		}
 		vec_length <- sapply(param,length)
 		if(!all(vec_length%in%c(1,max(vec_length)))){
-		  stop("vectors in param list must be same length or length 1, for type='temporal'")
+		  stop("vectors in param list must be same length or length 1, for type='temporal'", call.=FALSE)
 		}
 		param <- lapply(param,function(y) if(length(y)==1) {rep(y,max(vec_length))} else {y})
 		indices <- lapply(1:x$n_pop,function(y) { # for each population
@@ -253,7 +253,7 @@ sample_population <- function(x){
 			})
 		})
 	}else {
-		stop("type must be 'nested', 'missing', 'survival' or 'temporal'")
+		stop("sampling_type must be 'nested', 'missing', 'survival' or 'temporal'", call.=FALSE)
 	}
 
 	# pop_data$sample_param <- list(type=type, param=param)
@@ -292,7 +292,7 @@ get_sample_data <- function(x, sample_set=1, list=FALSE,...){
 
   pop_list <- lapply(1:x$n_pop,function(i) {
   	# data.table::data.table(cbind(x$y[[i]],x$predictors[[i]],x$data_structure,squid_pop=i)[x$samples[[i]][[sample_set]],])
-  	as.data.frame(cbind(x$y[[i]],x$predictors[[i]],x$data_structure,squid_pop=i)[x$samples[[i]][[sample_set]],])
+  	as.data.frame(cbind(x$y[[i]],x$predictors[[i]],x$data_structure,squid_pop=i)[x$samples[[i]][[sample_set]],,drop=FALSE])
   })
   
   if(list){
