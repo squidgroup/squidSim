@@ -8,22 +8,30 @@ rbv0 <- function(pedigree, G,...){
     nrow(pedigree)
   }
   X <- matrix(0, nrow=n, ncol=nrow(G))
+  
   index <- which(diag(G)!=0)
   if(length(index)>0){
     G <- G[index,index]
-    # X2 <- MCMCglmm::rbv(pedigree=pedigree, G=G,...)
-    # X[,index] <- X2 
     e <- eigen(G, symmetric=TRUE)
     r <- sum(e$values > sqrt(.Machine$double.eps)*max(e$values))
     if(r==length(index)){
-      X[,index] <- MCMCglmm::rbv(pedigree=pedigree, G=G,...)
+      bv <- MCMCglmm::rbv(pedigree=pedigree, G=G,...)
     }else{
       ## singular G (e.g. correlation of 1) - simulate independent effects and rotate
       L <- e$vectors[,1:r,drop=FALSE] %*% diag(sqrt(e$values[1:r]),nrow=r)
-      X[,index] <- MCMCglmm::rbv(pedigree=pedigree, G=diag(r),...) %*% t(L)
+      bv <- MCMCglmm::rbv(pedigree=pedigree, G=diag(r),...) %*% t(L)
     }
-
+    X[,index] <- bv
+    rownames(X) <- rownames(bv)
+    if(inherits(pedigree,"phylo")) X <- X[pedigree$tip.label,,drop=FALSE]
+  }else{
+    if(inherits(pedigree,"phylo")){
+      rownames(X) <- pedigree$tip.label
+    }else{
+      rownames(X) <- pedigree[,1]
+    }
   }
+  
   X
 }
 
