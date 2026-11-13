@@ -39,7 +39,7 @@ simulate_population(
 
 \item{known_predictors}{This argument provides a way of inputting existing predictor variables. This argument takes a list, with items 'predictors' and 'beta', where 'predictors' is a matrix or data.frame, the number of rows of which MUST equal 'n' or the number of rows in 'data_structure'. The column names of 'predictors' are used as the variable names, and the 'beta's are assumed to be in the same order as the predictors.}
 
-\item{model}{Optional. A formula description of the simulation model. See details.}
+\item{model}{Optional. A equation description of the simulation model given as a character string. See details.}
 
 \item{index_link}{Optional. Make new factors in the data structure indexed by other factors. This is only really used in the context of the model argument. Takes a list, the names of which indicate the new grouping factor name and the elements of the list represent which grouping factors should be linked, for example "mother-ID" would index mother with the same indexes as ID.}
 
