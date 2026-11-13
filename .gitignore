@@ -3,6 +3,3 @@
 .RData
 *.Rproj
 *.Renviron
-docs/
-inst/doc
-docs
