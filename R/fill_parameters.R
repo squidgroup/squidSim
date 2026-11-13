@@ -142,6 +142,8 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
     }else{ 
     ## if the number of responses and the size of cov are the same, and beta is not specified, then beta = I, as assuming that the user is simulating random effects
     ## if not the same then matrix of 1s
+      if(isTRUE(parameters[[i]][["fixed"]])) stop("If fixed =TRUE, beta also needs to be specified", call.=FALSE)
+
       if(n_response == ncol(parameters[[i]][["vcov"]])){ 
         parameters[[i]][["beta"]] <- diag(n_response)
       }else{
