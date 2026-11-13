@@ -2,11 +2,11 @@
 generate_internal_structure <- function(data_structure, n, parameters, n_response=1, response_names, known_predictors, model, index_link, family="gaussian", link="identity", pedigree, phylogeny, cov_str,sample_type, sample_param, sample_plot=FALSE, n_pop=1, seed, verbose=FALSE,suppress_index_warning=FALSE){
   
   if(missing("n") & missing("data_structure")){
-    stop("Either 'n' or 'data_structure' need to be specified")
+    stop("Either 'n' or 'data_structure' need to be specified", call.=FALSE)
   }else if(missing("n")){
     n <- nrow(data_structure)
   }else if(!missing("n") & !missing("data_structure")){
-    if(nrow(data_structure)!=n) stop("'n' and nrow(data_structure) are not equal. Only one needs to be specified.")
+    if(nrow(data_structure)!=n) stop("'n' and nrow(data_structure) are not equal. Only one needs to be specified.", call.=FALSE)
   }
   
   if(missing("parameters")) stop("'parameters' need to be specified")
@@ -15,18 +15,30 @@ generate_internal_structure <- function(data_structure, n, parameters, n_respons
   if(!missing("data_structure") && is.data.frame(data_structure)) data_structure <- as.data.frame(data_structure)
 
   if(!all(link %in% c("identity", "log", "inverse", "sqrt", "logit", "probit", "cloglog"))) stop("Link must be 'identity', 'log', 'inverse', 'sqrt', 'logit', 'probit', 'cloglog'")
-  if(!(length(link)==n_response || length(link)==1))  stop("Link must either be length 1 or same length as the number of responses")
+  if(!(length(link)==n_response || length(link)==1))  stop("Link must either be length 1 or same length as the number of responses", call.=FALSE)
   
   if(!all(family %in% c("gaussian", "poisson", "binomial"))) stop("Family must be 'gaussian', 'poisson', 'binomial'")
-  if(!(length(family)==n_response || length(family)==1))  stop("Family must either be length 1 or same length as the number of responses")
+  if(!(length(family)==n_response || length(family)==1))  stop("Family must either be length 1 or same length as the number of responses", call.=FALSE)
 
 
-  if(n_response > 1 & !missing("model")) stop("Currently cannot specify multiple responses and a model formula")
+  if(n_response > 1 & !missing("model")) stop("Currently cannot specify multiple responses and a model formula", call.=FALSE)
 
   if(!missing(response_names)) {
     if(!missing("model")) message("response_names is ignored when a model formula is specified") 
-    if(length(response_names)!=n_response) stop("response_names needs to be the same length as n_response")  
+    if(length(response_names)!=n_response) stop("response_names needs to be the same length as n_response", call.=FALSE)  
   }
+
+
+is.wholenumber <- function(x, tol = .Machine$double.eps^0.5){  
+  if(is.numeric(x)){
+    return(abs(x - round(x)) < tol)
+  }else{
+    return(FALSE)
+  }
+  return(FALSE)
+}
+
+  if(!(n_pop>0 && is.wholenumber(n_pop))) stop("n_pop must be a positive whole number", call.=FALSE)  
 
   # if(!missing(pedigree)){
   #   if(missing(pedigree_type)){
