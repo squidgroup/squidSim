@@ -24,7 +24,7 @@ generate_levels <- function(x){
 cross_levels <-function(x){
 	crossed_lower_levels <- expand.grid(lapply(x,function(i) i[,ncol(i)])[length(x):1])[,length(x):1,drop=FALSE]    
 	# crossed_lower_levels <- expand.grid(lapply(x,function(i) i[,ncol(i)]))  
-    do.call(cbind,lapply( 1:ncol(crossed_lower_levels), function(j) x[[j]][crossed_lower_levels[,j],] ))
+    do.call(cbind,lapply( 1:ncol(crossed_lower_levels), function(j) x[[j]][crossed_lower_levels[,j],,drop=FALSE] ))
 }
 
 add_interactions <- function(all_levels, int, int_names){	
