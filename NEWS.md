@@ -69,3 +69,4 @@ squidSim 0.3.0
 - More informative errors in `make_structure` and `get_sample_data`
 - Added tests. Now requires R (>= 4.1.0)
 - `simulated_variance` removed from this version. Is now in the development branch, and will be reinstated in a later version
+ - A pedigree, phylogeny or `cov_str` cannot share a grouping factor with an unlinked effect (e.g. additive genetic and permanent environment effects)
