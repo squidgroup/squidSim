@@ -11,6 +11,9 @@
 
 \item{...}{further arguments passed to or from other methods.}
 }
+\value{
+A list, printed as a side effect, with the number of populations, observations and responses, and the sampling type.
+}
 \description{
 summary method for class 'squid'
 }

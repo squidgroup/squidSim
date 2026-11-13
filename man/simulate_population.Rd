@@ -20,7 +20,6 @@ simulate_population(
   cov_str,
   sample_type,
   sample_param,
-  sample_plot = FALSE,
   n_pop = 1,
   seed,
   verbose = FALSE,
@@ -38,7 +37,7 @@ simulate_population(
 
 \item{response_names}{Names given to response variables. Defaults to 'y', or c('y1','y2',...) if n_response>1. Not used if model is specified.}
 
-\item{known_predictors}{This argument provides a way of inputting existing predictor variables. This argument takes a list, with items 'predictors' and 'beta', where 'predictors' is a matrix or data.frame, the number of rows of which MUST equal 'n' or the number of rows in 'data_structure'. The column names of 'predictors' are used as the variable names, and the 'beta's are assumed to be int he same order as the predictors.}
+\item{known_predictors}{This argument provides a way of inputting existing predictor variables. This argument takes a list, with items 'predictors' and 'beta', where 'predictors' is a matrix or data.frame, the number of rows of which MUST equal 'n' or the number of rows in 'data_structure'. The column names of 'predictors' are used as the variable names, and the 'beta's are assumed to be in the same order as the predictors.}
 
 \item{model}{Optional. A formula description of the simulation model. See details.}
 
@@ -46,7 +45,7 @@ simulate_population(
 
 \item{family}{A description of the error distribution. Options are 'gaussian' (default), 'poisson' and 'binomial'. 'binomial' generates a binary response variable.}
 
-\item{link}{A description of the link function distribution. Options are 'identity' (default),'log', 'inverse', 'sqrt', 'logit' and 'probit'.}
+\item{link}{A description of the link function distribution. Options are 'identity' (default),'log', 'inverse', 'sqrt', 'logit', 'probit' and 'cloglog'.}
 
 \item{pedigree}{A list of pedigrees for each hierarchical level. Each pedigree must be matrix or data.frame, that is at least 3 columns, which correspond to ID, dam and sire. The name in the pedigree list must match a name in the parameter list.}
 
@@ -57,8 +56,6 @@ simulate_population(
 \item{sample_type}{Type of sampling, must be one of 'nested', 'missing', 'survival' or 'temporal.' If not specified, then no sampling is done. See details}
 
 \item{sample_param}{A set of parameters, specific to the sampling type. See details.}
-
-\item{sample_plot}{Logical. Should illustrative plots be made - defaults to FALSE - currently not implemented.}
 
 \item{n_pop}{Number of populations. Default = 1}
 
@@ -75,9 +72,9 @@ a squid object, which is a list including all inputs and simulated data.
 Simulate population level data
 }
 \details{
-A detailed vignette can be found at http://squidgroup.org/squidSim_vignette/
+A detailed vignette can be found at https://squidgroup.org/squidSim_vignette/
 
-The parameters list contains one (or more) list for each hierarchical level that you want to simulate at. A residual list is always need, specifying variances/covariances for the residual. Additionally, the parameter list can also be provided with an intercept vector and interactions list. For each item in the parameter list (excluding intercept, interactions, and residual), the following can be specified (but all have default values): 
+The parameters list contains one (or more) list for each hierarchical level that you want to simulate at. A residual list is always needed, specifying variances/covariances for the residual. Additionally, the parameter list can also be provided with an intercept vector and interactions list. For each item in the parameter list (excluding intercept, interactions, and residual), the following can be specified (but all have default values): 
 names - vector containing the names of predictors simulated at this level
  group - character string relating to the data_structure
 mean - vector of means for the predictor variables
@@ -86,11 +83,11 @@ beta - vector of effect sizes (or matrix with n_response columns when n_response
 fixed - Logical, indicating whether the effects for the levels are fixed or to be simulated
 covariate - Logical, indicating whether the indexes in the data structure are to be used as a continuous variable rather than simulating one
 functions - vector - transformation to be applied to the response variable. Defaults to ‘identity’.
-A more detailed explanation can be found at http://squidgroup.org/squidSim_vignette/1.9-parameter-list-summary.html 
+A more detailed explanation can be found at https://squidgroup.org/squidSim_vignette/1.9-parameter-list-summary.html 
 
-The model argument is character string which explicitly tells the simulate_population function how to put the simulated predictors together to form the response variable. For example, if the predictors temperature and rainfall had been specified in the parameter list, providing the model argument with "y = temperature + rainfall + residual" would result in generating a response variable 'y' in the same way the siumulate_population function does by default. For more detailed information see http://squidgroup.org/squidSim_vignette/1.7-modeleq.html
+The model argument is character string which explicitly tells the simulate_population function how to put the simulated predictors together to form the response variable. For example, if the predictors temperature and rainfall had been specified in the parameter list, providing the model argument with "y = temperature + rainfall + residual" would result in generating a response variable 'y' in the same way the simulate_population function does by default. For more detailed information see http://squidgroup.org/squidSim_vignette/1.7-modeleq.html
 
-Different sampling schemes can be implemented, (sample_type can be 'nested', 'missing', 'survival' or 'temporal'). The sample_param takes a different form depending on the sample_type. See http://squidgroup.org/squidSim_vignette/7-sampling.html for full details.
+Different sampling schemes can be implemented, (sample_type can be 'nested', 'missing', 'survival' or 'temporal'). The sample_param takes a different form depending on the sample_type. See https://squidgroup.org/squidSim_vignette/7-sampling.html for full details.
 }
 \examples{
 # simple linear model with three predictors variables

@@ -1,16 +1,7 @@
-is.wholenumber <- function(x, tol = .Machine$double.eps^0.5){  
-	if(is.numeric(x)){
-		return(abs(x - round(x)) < tol)
-	}else{
-		return(FALSE)
-	}
-	return(FALSE)
-}
 
 ## function to get sample size out of structure
 extract_N <- function(x){
  N <- as.numeric(sub("\\w+\\((\\d+)\\)","\\1",x))
- # if(length(N)>1) for(i in 1:(length(N)-1)) if(!is.wholenumber(N[i+1]/N[i])) stop("Nested factors need to be completely balanced ", call.=FALSE) ##better error message needed
  return(N)
 }
 
@@ -94,7 +85,9 @@ make_structure <- function(structure, repeat_obs=1, level_names, int_names, ...)
 	## strip white space from structure
 	structure <- gsub("\\s","",structure)
 
-    if(!grepl("^[A-z0-9_:/()+]*$",structure)) stop("Characters in structure must be alphanumeric or in one of _ / + ( ) :", call.=FALSE)
+  if(!grepl("^[A-Za-z0-9_:/()+]*$",structure)) stop("Characters in structure must be alphanumeric or in one of _ / + ( ) :", call.=FALSE)
+  if(structure=="") stop("structure is empty", call.=FALSE)
+  if(repeat_obs<1) stop("repeat_obs must be at least 1", call.=FALSE)
 
 	## separate into crossed and nested components
 	components <- strsplit(structure, "\\+")[[1]]
@@ -104,12 +97,18 @@ make_structure <- function(structure, repeat_obs=1, level_names, int_names, ...)
 	## split nested grouping levels
 	comp_list <- strsplit(comp2, "\\/")
 
+	## each factor must be a name followed by a positive number of levels in brackets
+	bad_comp <- unlist(comp_list)[!grepl("^\\w+\\(0*[1-9][0-9]*\\)$",unlist(comp_list))]
+	if(length(bad_comp)>0) stop("Could not read '",paste(bad_comp,collapse="', '"),"' in structure. Each factor must be a name, followed by a positive number of levels in brackets e.g. 'individual(10)'. Brackets cannot be used to group factors.", call.=FALSE)
+
 	## separate names and sample sizes
 	comp_list_N <- lapply(comp_list,extract_N)
 	comp_names <- do.call(c,lapply(comp_list,extract_name))
 
 	if(any(comp_names%in% c("intercept","observation","residual","interactions","squid_pop"))) stop("'intercept','observation','residual','interactions','squid_pop' are reserved names", call.=FALSE)
-
+  if(any(duplicated(comp_names))) stop("Names of grouping factors in structure must be unique", call.=FALSE)
+  if(!all(unlist(strsplit(int,":")) %in% comp_names)) stop("Interactions in structure must be made up of named grouping factors", call.=FALSE)
+ 
 	## apply generate levels function to all components	
 	comp_levels <- lapply(comp_list_N,generate_levels)
 

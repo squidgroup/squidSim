@@ -11,6 +11,9 @@
 
 \item{...}{further arguments passed to or from other methods.}
 }
+\value{
+x, invisibly
+}
 \description{
 Print method for class 'squid'
 }

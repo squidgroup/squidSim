@@ -1,12 +1,4 @@
 
-n_phenotypes <- function(parameters){
-  j <- sapply(parameters[names(parameters) !="interactions"], function(x) ncol(x[["beta"]]))
-  if(length(unique(j))!= 1) stop("The number of phenotypes (columns in beta) are not consistent across hierarchical levels in the parameter list", call.=FALSE)
-  return(unique(j))
-}
-# [names(parameters) !="interactions"]
-# n_phenotypes(parameters)
-
 
 
 ## I've used loops rather than apply functions in here because then the original parameter list can then be added to rather than new lists made - this will be slightly slower but very negligible given their size
@@ -106,7 +98,8 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
         #   v <- parameters[[i]][["vcov"]]
         #   if(any(eigen(v[which(diag(v)!=0),which(diag(v)!=0)])$values<0))stop("vcov matrix should be positive definite for ",i, call.=FALSE)
         # }
-        if(any(eigen(parameters[[i]][["vcov"]])$values<0))stop("vcov matrix should be positive semi-definite for ",i, call.=FALSE)
+        ev <- eigen(parameters[[i]][["vcov"]], symmetric=TRUE, only.values=TRUE)$values
+        if(any(ev < -sqrt(.Machine$double.eps)*max(abs(ev))))stop("vcov matrix should be positive semi-definite for ",i, call.=FALSE)
         if(!all(diag(parameters[[i]][["vcov"]])>=0)){ stop("Variances for ",i," must all be >=0", call.=FALSE)}
       }else if(is.vector(parameters[[i]][["vcov"]])){
         if(!all(parameters[[i]][["vcov"]]>=0)){ stop("Variances for ",i," must all be >=0", call.=FALSE)}
@@ -199,7 +192,7 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
           nrow(data_structure)
         }
       }else{
-        length(unique(data_structure[,parameters[[i]][["group"]]]))
+        length(unique(stats::na.omit(data_structure[,parameters[[i]][["group"]]])))
       }
 
     ## covariate and fixed should be fixed to false for observation and residual
@@ -222,7 +215,7 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
     
 
     if(parameters[[i]][["fixed"]]){
-      ds_levels_group <- unique(data_structure[,parameters[[i]][["group"]]])
+      ds_levels_group <- unique(stats::na.omit(data_structure[,parameters[[i]][["group"]]]))
       if(!all(ds_levels_group %in% 1:length(ds_levels_group)) & !all(parameters[[i]][["names"]] %in%ds_levels_group)
       ){
         stop("Fixed=TRUE for ",i,", so either levels in data structure match names, or levels in data structure are consecutive and numeric starting from 1.", call.=FALSE)
@@ -270,9 +263,6 @@ fill_parameters <- function(parameters,data_structure, n, n_response, response_n
     names(parameters[[i]][["functions"]]) <- names(parameters[[i]][["mean"]]) <- rownames(parameters[[i]][["beta"]]) <- rownames(parameters[[i]][["vcov"]]) <- colnames(parameters[[i]][["vcov"]]) <- parameters[[i]][["names"]]
 
   }
-
-  ##check whether all betas have same dimension
-  # j <- n_phenotypes(parameters)
 
 
 ########

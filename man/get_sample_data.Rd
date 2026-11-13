@@ -11,10 +11,22 @@ get_sample_data(x, sample_set = 1, list = FALSE, ...)
 
 \item{sample_set}{Integer - which sample set to return. Defaults to 1}
 
-\item{list}{Logical - whether to return data as a list or data_table (FALSE; default).}
+\item{list}{Logical - whether to return data as a list or data.frame (FALSE; default).}
 
 \item{...}{further arguments passed to or from other methods.}
 }
+\value{
+A data.frame with the sampled data for all populations, or a list of data.frames, one for each population, if list=TRUE.
+}
 \description{
 Extracts sampled data from a squid object
+}
+\examples{
+squid_data <- simulate_population(
+  data_structure = make_structure("individual(10)", repeat_obs=2),
+  parameters = list(individual=list(vcov=1), residual=list(vcov=1)),
+  sample_type = "nested",
+  sample_param = matrix(5, dimnames=list(NULL,"individual"))
+)
+get_sample_data(squid_data)
 }

@@ -1,27 +1,24 @@
 Package: squidSim
-Title: Flexible and reproducible structured simulations
-Version: 0.2.6
+Title: Flexible and Reproducible Structured Simulations
+Version: 0.3.0
 Authors@R: c(
     person("Joel"    , "Pick"           , email = "joel.l.pick@gmail.com"             , role = c("aut","cre")),
     person("Hassen"  , "Allegue"        , email = "h.all@disroot.org"                 , role = "aut"))
-Description: A simulation-based tool made to help researchers to become familiar with multilevel variations, and to build up sampling designs for their study.
-URL: https://github.com/squid-group/squidSim
-BugReports: https://github.com/squid-group/squidSim/issues
+Description: Simulates hierarchical and multivariate data from (generalised) linear mixed effects models, including additive genetic, phylogenetic and other covariance structures, and samples from the simulated populations in different ways. Helps researchers to become familiar with multilevel variation and to build sampling designs for their study. Builds on the Statistical Quantification of Individual Differences (SQuID) framework of Allegue et al. (2017) <doi:10.1111/2041-210X.12659> and Pick et al. (2025) <doi:10.32942/X20M0T>.
+URL: https://github.com/squidgroup/squidSim
+BugReports: https://github.com/squidgroup/squidSim/issues
 Depends:
-    R (>= 3.6.0)
+    R (>= 4.1.0)
 License: MIT + file LICENSE
-LazyData: true
 Imports:
     stats,
     Matrix,
     methods,
     MCMCglmm,
     mvnfast
-RoxygenNote: 7.3.3
-Suggests: 
-    rmarkdown,
-    knitr,
-    testthat,
-    scales,
-VignetteBuilder: knitr
+Suggests:
+    testthat (>= 3.0.0)
 Encoding: UTF-8
+Config/testthat/edition: 3
+Config/roxygen2/version: 8.1.1
+RoxygenNote: 7.3.3

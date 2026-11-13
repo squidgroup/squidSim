@@ -10,9 +10,19 @@ rbv0 <- function(pedigree, G,...){
   X <- matrix(0, nrow=n, ncol=nrow(G))
   index <- which(diag(G)!=0)
   if(length(index)>0){
-    if(any(diag(G)==0)) G <- G[index,index]
-    X2 <- MCMCglmm::rbv(pedigree=pedigree, G=G,...)
-    X[,index] <- X2 
+    G <- G[index,index]
+    # X2 <- MCMCglmm::rbv(pedigree=pedigree, G=G,...)
+    # X[,index] <- X2 
+    e <- eigen(G, symmetric=TRUE)
+    r <- sum(e$values > sqrt(.Machine$double.eps)*max(e$values))
+    if(r==length(index)){
+      X[,index] <- MCMCglmm::rbv(pedigree=pedigree, G=G,...)
+    }else{
+      ## singular G (e.g. correlation of 1) - simulate independent effects and rotate
+      L <- e$vectors[,1:r,drop=FALSE] %*% diag(sqrt(e$values[1:r]),nrow=r)
+      X[,index] <- MCMCglmm::rbv(pedigree=pedigree, G=diag(r),...) %*% t(L)
+    }
+
   }
   X
 }
@@ -22,20 +32,19 @@ rmvn0 <- function(n,mu,sigma){
 ## variables with 0 variance are constant, and equal to their mean
   X <- matrix(rep(mu,each=n), nrow=n, ncol=nrow(sigma))
   index <- which(diag(sigma)!=0)
-  X[,index] <- mvnfast::rmvn(n=n, mu=mu[index], sigma=sigma[index,index])
+  if(length(index)>0){
+    s <- sigma[index,index,drop=FALSE]
+    e <- eigen(s, symmetric=TRUE)
+    if(min(e$values) > sqrt(.Machine$double.eps)*max(e$values)){
+      X[,index] <- mvnfast::rmvn(n=n, mu=mu[index], sigma=s)
+    }else{
+      ## singular (e.g. correlation of 1) - cholesky decomposition is not possible
+      L <- e$vectors %*% diag(sqrt(pmax(e$values,0)), nrow=length(index))
+      X[,index] <- matrix(stats::rnorm(n*length(index)),n) %*% t(L) + rep(mu[index],each=n)
+    }
+  }
   X
 }
-
-
-### function to generate ar1 matrix 
-ar1_cor <- function(n, rho) {
-  exponent <- abs(matrix(1:n - 1, nrow = n, ncol = n, byrow = TRUE) - 
-      (1:n - 1))
-  rho^exponent
-}
-# from https://www.r-bloggers.com/2020/02/generating-correlation-matrix-for-ar1-model/
-#ar1_cor(n=10,rho=0.5)
-
 
 
 ### function to turn data_structure into indexes. Matches names in data_structure to linked pedigree/phylogeny/cov_str to make sure indexing is correct. Doesnt do any error checking
@@ -167,7 +176,7 @@ sim_predictors <- function(parameters,data_structure, str_index, cov_str_all, kn
       ## if factor make design matrix
       # x<-stats::model.matrix(stats::formula(paste("~ factor(",p$group,")-1")),as.data.frame(str_index))
       ## if there are group names in the data structure, then use factor levels with the same order as the specified names
-      ds_levels_group <- unique(data_structure[,p[["group"]]])
+      ds_levels_group <- unique(stats::na.omit(data_structure[,p[["group"]]]))
 
       if(all(ds_levels_group %in% 1:length(ds_levels_group)) ){
         fac_levels <- 1:length(ds_levels_group)
@@ -175,7 +184,8 @@ sim_predictors <- function(parameters,data_structure, str_index, cov_str_all, kn
         fac_levels <- p$names
       }
 
-      x<-stats::model.matrix(stats::formula(paste("~ factor(",p$group,",levels=fac_levels)-1")),as.data.frame(data_structure))
+      # x<-stats::model.matrix(stats::formula(paste("~ factor(",p$group,",levels=fac_levels)-1")),as.data.frame(data_structure))
+      x <- 1*outer(as.character(data_structure[,p[["group"]]]), as.character(fac_levels), "==")
 
     }else if(p$covariate){
       
@@ -205,8 +215,9 @@ sim_predictors <- function(parameters,data_structure, str_index, cov_str_all, kn
 
       ### apply functions
       ### add them in likes betas, making sure they are in the right order? then apply them to the cols?
-      x <- sapply(1:k,function(i) sapply(x[,i],p[["functions"]][i]))
-      
+      # x <- sapply(1:k,function(i) sapply(x[,i],p[["functions"]][i]))
+      for(j in which(p[["functions"]]!="identity")) x[,j] <- sapply(x[,j],p[["functions"]][j])
+
       ## expand traits to be the same length as the number of observations using data structure  
       if(!p$group %in% c("observation","residual")) x <- x[str_index[,p$group],,drop=FALSE]
     }
@@ -270,6 +281,7 @@ generate_y <- function(predictors, intercepts, betas, str_index, model, y_pred_n
     
     model2 <- paste(model,";\n return(data.frame(mget(ls()[!ls() %in% c(colnames(y_predictors),names(extra_param),'intercept')])))")
     y <- eval(parse(text=model2), envir = c(as.data.frame(y_predictors),intercept=intercepts,as.list(extra_param)))
+    if(ncol(y)==0) stop("model needs to assign the response variable, e.g. 'y = a + residual'", call.=FALSE)
 
     if(!grepl("intercept",model)) y <- y + intercepts
     
@@ -306,7 +318,7 @@ generate_y_list <- function(parameters, str_index, predictors, model,known_predi
       names(extra_param) <- unlist(sapply(parameters, function(x) names(x)[!names(x) %in% param_names]
         ))
       ## check extra param names dont clash with y_trait names
-      if(any(names(extra_param) %in% colnames(y_pred_names))) stop("You cannot name extra parameters the same as any variables")
+      if(any(names(extra_param) %in% y_pred_names)) stop("You cannot name extra parameters the same as any variables")
     }
   }
 
@@ -337,15 +349,15 @@ transform_dist <- function(y, family, link, response_names,...){
   ifelse (link=="probit", "pnorm", 
    link)))))
   
-
-  y_family <-  sapply(1:j,function(i){
+ y_family <- do.call(cbind,lapply(1:j,function(i){
+  # y_family <-  sapply(1:j,function(i){
     ## apply link function to y
   y_link <- get(link_function[i])(y[,i])
     ## sample from poisson or binomial 
     if(family[i]=="gaussian") y_link else 
     if(family[i]=="poisson") stats::rpois(length(y_link),y_link) else 
     if(family[i]=="binomial") stats::rbinom(length(y_link),1,y_link)
-  })
+  }))
   
   ## think colnames(y) will be null unless model is specified but should check :)
   if(is.null(colnames(y))){

@@ -1,7 +1,9 @@
 
 ## function which tells whether consecutive columns are nested, assuming that the first one is the highest level
-is.nested <-function(x) sapply(2:ncol(x), function(i) nrow(unique(x[,c(i-1,i)])) == length(unique(x[,i])) )
-
+is.nested <-function(x) {
+	if(ncol(x)<2) return(TRUE)
+	sapply(2:ncol(x), function(i) nrow(unique(x[,c(i-1,i)])) == length(unique(x[,i])) )
+}
 ## sample() treats a single number x as 1:x, so sample levels by position. If a group has fewer levels than requested, all are taken
 sample_levels <- function(x, size) {
 	x <- unique(x)
@@ -14,7 +16,10 @@ sample_nested <- function(data_structure, param, plot=FALSE){
 	
 	groups <- colnames(param)
 	if(is.null(groups)) stop("param needs column names for type='nested'", call.=FALSE)
-
+  ## factors are converted as tapply below does not return them properly
+  data_structure <- as.data.frame(data_structure)
+  data_structure[] <- lapply(data_structure, function(x) if(is.factor(x)) as.character(x) else x)
+ 	
 	## check naming
 	if(!all(groups %in% c(colnames(data_structure),"observation"))){
 		stop("Names in sample order need to be in data_structure")
@@ -26,7 +31,7 @@ sample_nested <- function(data_structure, param, plot=FALSE){
 	}
 
 	## test if nested
-	if(!all(is.nested(data_structure[,groups]))){
+	if(!all(is.nested(data_structure[,groups,drop=FALSE]))){
 		stop("Grouping factors are not nested in the order provided")
 	}
 
@@ -196,8 +201,9 @@ sample_population <- function(x){
 		if(!is.matrix(param)){
 		  stop("param needs to be a matrix for type='nested'")
 		}
-		indices <- lapply(1:x$n_pop,function(y) sample_nested(x$str_index, param, plot))
-	
+	  data_structure <- if(is.null(x$str_index)) data.frame(observation=seq_len(x$n)) else x$str_index
+		indices <- lapply(1:x$n_pop,function(y) sample_nested(data_structure, param, plot))
+		
 	}else if(type=="missing"){
 		if(!is.vector(param)){
 		  stop("param needs to be a vector for type='missing'")
@@ -267,11 +273,23 @@ sample_population <- function(x){
 #' @description Extracts sampled data from a squid object
 #' @param x an R object of class 'squid'
 #' @param sample_set Integer - which sample set to return. Defaults to 1
-#' @param list Logical - whether to return data as a list or data_table (FALSE; default).
+#' @param list Logical - whether to return data as a list or data.frame (FALSE; default).
 #' @param ... further arguments passed to or from other methods.
+#' @return A data.frame with the sampled data for all populations, or a list of data.frames, one for each population, if list=TRUE.
+#' @examples
+#' squid_data <- simulate_population(
+#'   data_structure = make_structure("individual(10)", repeat_obs=2),
+#'   parameters = list(individual=list(vcov=1), residual=list(vcov=1)),
+#'   sample_type = "nested",
+#'   sample_param = matrix(5, dimnames=list(NULL,"individual"))
+#' )
+#' get_sample_data(squid_data)
 #' @export
 get_sample_data <- function(x, sample_set=1, list=FALSE,...){
   
+  if(is.null(x$samples)) stop("x does not contain any samples. Use the sample_type and sample_param arguments in simulate_population", call.=FALSE)
+  if(sample_set > length(x$samples[[1]])) stop("sample_set is larger than the number of sample sets in x", call.=FALSE)
+
   pop_list <- lapply(1:x$n_pop,function(i) {
   	# data.table::data.table(cbind(x$y[[i]],x$predictors[[i]],x$data_structure,squid_pop=i)[x$samples[[i]][[sample_set]],])
   	as.data.frame(cbind(x$y[[i]],x$predictors[[i]],x$data_structure,squid_pop=i)[x$samples[[i]][[sample_set]],])

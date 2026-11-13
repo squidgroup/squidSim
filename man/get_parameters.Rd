@@ -9,6 +9,13 @@ get_parameters(x)
 \arguments{
 \item{x}{an R object of class 'squid'}
 }
+\value{
+A named vector of the means, variances, covariances and betas used in the simulation.
+}
 \description{
-Extracts population level data from a squid object
+Extracts the simulation parameters from a squid object
+}
+\examples{
+squid_data <- simulate_population(n=10, parameters=list(residual=list(vcov=1)))
+get_parameters(squid_data)
 }

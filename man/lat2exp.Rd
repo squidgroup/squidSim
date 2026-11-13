@@ -18,7 +18,7 @@ a list, which an element 'mean' for the transformed mean(s) and another element 
 Transforms means and covariance matrix from latent (normal) to expected (log-normal) scale
 }
 \details{
-Transforms expected mean(s) and (co)variance(s) of a multivariate log-normal distribution to expected mean(s) and (co)variance(s) of a multivariate normal distribution. This is useful when trying to go from latent (normal) to expected (log-normal) scales in a Poisson GLM with a log link function.
+Transforms expected mean(s) and (co)variance(s) of a multivariate normal distribution to expected mean(s) and (co)variance(s) of a multivariate log-normal distribution. This is useful when trying to go from latent (normal) to expected (log-normal) scales in a Poisson GLM with a log link function.
 }
 \examples{
 lat2exp(1,1)

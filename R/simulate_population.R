@@ -6,11 +6,11 @@
 #' @param parameters A list of parameters for each hierarchical level. See details.
 #' @param n_response The number of response variables, defaults to 1. 
 #' @param response_names Names given to response variables. Defaults to 'y', or c('y1','y2',...) if n_response>1. Not used if model is specified. 
-#' @param known_predictors This argument provides a way of inputting existing predictor variables. This argument takes a list, with items 'predictors' and 'beta', where 'predictors' is a matrix or data.frame, the number of rows of which MUST equal 'n' or the number of rows in 'data_structure'. The column names of 'predictors' are used as the variable names, and the 'beta's are assumed to be int he same order as the predictors.
+#' @param known_predictors This argument provides a way of inputting existing predictor variables. This argument takes a list, with items 'predictors' and 'beta', where 'predictors' is a matrix or data.frame, the number of rows of which MUST equal 'n' or the number of rows in 'data_structure'. The column names of 'predictors' are used as the variable names, and the 'beta's are assumed to be in the same order as the predictors.
 #' @param model Optional. A formula description of the simulation model. See details.
 #' @param index_link Optional. Make new factors in the data structure indexed by other factors. This is only really used in the context of the model argument. Takes a list, the names of which indicate the new grouping factor name and the elements of the list represent which grouping factors should be linked, for example "mother-ID" would index mother with the same indexes as ID.
 #' @param family A description of the error distribution. Options are 'gaussian' (default), 'poisson' and 'binomial'. 'binomial' generates a binary response variable.
-#' @param link A description of the link function distribution. Options are 'identity' (default),'log', 'inverse', 'sqrt', 'logit' and 'probit'.
+#' @param link A description of the link function distribution. Options are 'identity' (default),'log', 'inverse', 'sqrt', 'logit', 'probit' and 'cloglog'.
 #' @param pedigree A list of pedigrees for each hierarchical level. Each pedigree must be matrix or data.frame, that is at least 3 columns, which correspond to ID, dam and sire. The name in the pedigree list must match a name in the parameter list.
 #' @param phylogeny A list of phylogenies for each hierarchical level. Each phylogeny should be phylo class. The name in the phylogeny list must match a name in the parameter list.
 #' @param cov_str A list of covariance structures for each hierarchical level. The name in the cov_str list must match a name in the parameter list.
@@ -21,9 +21,9 @@
 #' @param verbose Logical. Whether to print diagnostics. Useful for debugging. Defaults to FALSE
 #' @param suppress_index_warning Logical. Whether to print warnings relating to the index-link argument. Useful to switch off if using in large number of simulations. Defaults to FALSE.
 #' @details 
-#' A detailed vignette can be found at http://squidgroup.org/squidSim_vignette/
+#' A detailed vignette can be found at https://squidgroup.org/squidSim_vignette/
 #' 
-#' The parameters list contains one (or more) list for each hierarchical level that you want to simulate at. A residual list is always need, specifying variances/covariances for the residual. Additionally, the parameter list can also be provided with an intercept vector and interactions list. For each item in the parameter list (excluding intercept, interactions, and residual), the following can be specified (but all have default values): 
+#' The parameters list contains one (or more) list for each hierarchical level that you want to simulate at. A residual list is always needed, specifying variances/covariances for the residual. Additionally, the parameter list can also be provided with an intercept vector and interactions list. For each item in the parameter list (excluding intercept, interactions, and residual), the following can be specified (but all have default values): 
 #' names - vector containing the names of predictors simulated at this level
 #'  group - character string relating to the data_structure
 #' mean - vector of means for the predictor variables
@@ -32,11 +32,11 @@
 #' fixed - Logical, indicating whether the effects for the levels are fixed or to be simulated
 #' covariate - Logical, indicating whether the indexes in the data structure are to be used as a continuous variable rather than simulating one
 #' functions - vector - transformation to be applied to the response variable. Defaults to ‘identity’.
-#' A more detailed explanation can be found at http://squidgroup.org/squidSim_vignette/1.9-parameter-list-summary.html 
+#' A more detailed explanation can be found at https://squidgroup.org/squidSim_vignette/1.9-parameter-list-summary.html 
 #' 
-#' The model argument is character string which explicitly tells the simulate_population function how to put the simulated predictors together to form the response variable. For example, if the predictors temperature and rainfall had been specified in the parameter list, providing the model argument with "y = temperature + rainfall + residual" would result in generating a response variable 'y' in the same way the siumulate_population function does by default. For more detailed information see http://squidgroup.org/squidSim_vignette/1.7-modeleq.html
+#' The model argument is character string which explicitly tells the simulate_population function how to put the simulated predictors together to form the response variable. For example, if the predictors temperature and rainfall had been specified in the parameter list, providing the model argument with "y = temperature + rainfall + residual" would result in generating a response variable 'y' in the same way the simulate_population function does by default. For more detailed information see http://squidgroup.org/squidSim_vignette/1.7-modeleq.html
 #' 
-#' Different sampling schemes can be implemented, (sample_type can be 'nested', 'missing', 'survival' or 'temporal'). The sample_param takes a different form depending on the sample_type. See http://squidgroup.org/squidSim_vignette/7-sampling.html for full details.
+#' Different sampling schemes can be implemented, (sample_type can be 'nested', 'missing', 'survival' or 'temporal'). The sample_param takes a different form depending on the sample_type. See https://squidgroup.org/squidSim_vignette/7-sampling.html for full details.
 #' 
 #' 
 #' @author Joel Pick - joel.l.pick@gmail.com
@@ -185,6 +185,7 @@ simulate_population <- function(data_structure, n, parameters, n_response=1, res
 #' @description Print method for class 'squid'
 #' @param x an R object of class 'squid'
 #' @param ... further arguments passed to or from other methods.
+#' @return x, invisibly
 #' @export
 print.squid <- function(x, ...){
   cat("Data simulated using squid \n
@@ -209,30 +210,37 @@ print.squid <- function(x, ...){
        /              \\      
       0                0      
 ")
+  invisible(x)
 }
-
 
 
 #' @title summary.squid
 #' @description summary method for class 'squid'
 #' @param object an R object of class 'squid'
 #' @param ... further arguments passed to or from other methods.
+#' @return A list, printed as a side effect, with the number of populations, observations and responses, and the sampling type.
 #' @export
 summary.squid <- function(object, ...){
   
-  ## description of sampling.
+  out <- list(n_pop=object$n_pop, n=object$n, n_response=object$n_response, seed=object$seed, sample_type=object$sample_type)
+  cat("squid simulation:",out$n_pop,"population(s),",out$n,"observations,",out$n_response,"response(s)\n")
+  cat("Sampling:",if(is.null(out$sample_type)) "none" else out$sample_type,"\n")
+  invisible(out)
 }
 
 
 #' @title get_population_data
 #' @description Extracts population level data from a squid object
 #' @param x an R object of class 'squid'
-#' @param list Logical - whether to return data as a list or data_table (FALSE; default).
+#' @param list Logical - whether to return data as a list or data.frame (FALSE; default).
 #' @param ... further arguments passed to or from other methods.
+#' @return A data.frame with the response(s), predictors and data structure for all populations, or a list of data.frames, one for each population, if list=TRUE.
+#' @examples
+#' squid_data <- simulate_population(n=10, parameters=list(residual=list(vcov=1)))
+#' get_population_data(squid_data)
 #' @export
 get_population_data <- function(x,list=FALSE,...){
 
-  # pop_list <- lapply(1:x$n_pop,function(i) data.table::data.table(cbind(x$y[[i]],x$predictors[[i]],x$data_structure,squid_pop=i)))
   pop_list <- lapply(1:x$n_pop,function(i) as.data.frame(cbind(x$y[[i]],x$predictors[[i]],x$data_structure,squid_pop=i)))
   if(list){
     return(pop_list)
@@ -244,27 +252,37 @@ get_population_data <- function(x,list=FALSE,...){
 
 
 #' @title get_parameters
-#' @description Extracts population level data from a squid object
+#' @description Extracts the simulation parameters from a squid object
 #' @param x an R object of class 'squid'
+#' @return A named vector of the means, variances, covariances and betas used in the simulation.
+#' @examples
+#' squid_data <- simulate_population(n=10, parameters=list(residual=list(vcov=1)))
+#' get_parameters(squid_data)
 #' @export
 
 get_parameters <- function(x){
   intercept <- x$parameters$intercept
   param <- x$parameters[names(x$parameters)!="intercept"]
+  names(intercept) <- if(length(intercept)==1) "intercept" else paste0("intercept_y",seq_along(intercept))
+
   p_out<- lapply(param,function(y){
-
-    means <- y$mean
-    names(means) <- paste0(y$names,"_mean")
-
-    vars <- diag(y$vcov)
-    names(vars) <- paste0(y$names,"_var")
-
-    if(ncol(y$vcov)>1){ 
-      covs <- y$vcov[lower.tri(y$vcov)]
-      name_ind<-which(lower.tri(y$vcov), arr.ind=TRUE)
-      names(covs) <- paste0(y$names[name_ind[,2]],":",y$names[name_ind[,1]],"_cov")
+  ## interactions only have names and betas
+    if(is.null(y$vcov)){
+      means <- vars <- covs <- NULL
     }else{
-      covs<-NULL
+      means <- y$mean
+      names(means) <- paste0(y$names,"_mean")
+
+      vars <- diag(y$vcov)
+      names(vars) <- paste0(y$names,"_var")
+
+      if(ncol(y$vcov)>1){ 
+        covs <- y$vcov[lower.tri(y$vcov)]
+        name_ind<-which(lower.tri(y$vcov), arr.ind=TRUE)
+        names(covs) <- paste0(y$names[name_ind[,2]],":",y$names[name_ind[,1]],"_cov")
+      }else{
+        covs<-NULL
+      }
     }
 
     betas <- as.vector(y$beta)
@@ -277,7 +295,15 @@ get_parameters <- function(x){
     c(means,vars,covs,betas)  
   })
   names(p_out)<-NULL
-  c(intercept,p_out, recursive=TRUE)
+  known <- x$known_predictors$beta
+  known_betas <- as.vector(known)
+  if(!is.null(known)) names(known_betas) <- if(x$n_response==1){ 
+    paste0(rownames(known),"_beta") 
+  }else{ 
+    paste0(rep(rownames(known),x$n_response),"_beta_y",rep(1:x$n_response, each=nrow(known) )) 
+  }
+
+  c(intercept,p_out,known_betas, recursive=TRUE)
 
   ## extra_parameters
 }
