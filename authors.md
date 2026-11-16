@@ -14,7 +14,7 @@ Source:
 Pick JL, Allegue H, Araya Ajoy YG, Class B, Dochtermann NA, Ivimey-Cook
 ER, Laskowski K, Réale D, Wright J, Dingemanse NJ, Westneat DF (2025)
 squidSim: a flexible R package for structured and reproducible
-simulations in Ecology and Evolutionary Biology EcoEvoRxiv URL
+simulations in Ecology and Evolutionary Biology. EcoEvoRxiv.
 https://doi.org/10.32942/X20M0T
 
     @Article{,
