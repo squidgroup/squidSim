@@ -292,7 +292,7 @@ generate_y <- function(predictors, intercepts, betas, str_index, model, y_pred_n
     y <- eval(parse(text=model2), envir = c(as.data.frame(y_predictors),intercept=intercepts,as.list(extra_param)))
     if(ncol(y)==0) stop("model needs to assign the response variable, e.g. 'y = a + residual'", call.=FALSE)
 
-    if(!grepl("intercept",model)) y <- y + intercepts
+    if(!grepl("\\bintercept\\b",model)) y <- y + intercepts
     
     if(is.vector(y)) y <- matrix(y)
   }
