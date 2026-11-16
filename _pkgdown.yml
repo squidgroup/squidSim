@@ -19,6 +19,6 @@ navbar:
       icon: fa-github
       href: https://github.com/squidgroup/squidSim
 
-    course-notes:
-      text: "Course Notes"
+    vignette:
+      text: "Vignette"
       href: https://squidgroup.org/squidSim_vignette/index.html
