@@ -1,0 +1,53 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+- type: article
+  authors:
+  - family-names: "Pick"
+    given-names: "Joel L"
+    orcid: "https://orcid.org/0000-0002-6295-3742"
+  - family-names: "Allegue"
+    given-names: "Hassen"
+    orcid: "https://orcid.org/0000-0001-9357-9151"
+  - family-names: "Araya Ajoy"
+    given-names: "Yimen G"
+    orcid: "https://orcid.org/0000-0001-7844-0477"
+  - family-names: "Class"
+    given-names: "Barbara"
+    orcid: "https://orcid.org/0000-0002-2361-9821"
+  - family-names: "Dochtermann"
+    given-names: "Ned A"
+    orcid: "https://orcid.org/0000-0002-8370-4614"
+  - family-names: "Ivimey-Cook"
+    given-names: "Edward R"
+    orcid: "https://orcid.org/0000-0003-4910-0443"
+  - family-names: "Laskowski"
+    given-names: "Kate L"
+    orcid: "https://orcid.org/0000-0003-1523-9340"
+  - family-names: "Réale"
+    given-names: "Denis"
+    orcid: "https://orcid.org/0000-0002-0419-7125"
+  - family-names: "Wright"
+    given-names: "Jonathan"
+    orcid: "https://orcid.org/0000-0002-5848-4736"
+  - family-names: "Dingemanse"
+    given-names: "Niels J"
+    orcid: "https://orcid.org/0000-0003-3320-0861"
+  - family-names: "Westneat"
+    given-names: "David F"
+    orcid: "https://orcid.org/0000-0001-5163-8096"
+  title: "squidSim: a flexible R package for structured and reproducible simulations in Ecology and Evolutionary Biology"
+  journal: 'EcoEvoRxiv'
+  year: '2025'
+  url: 'https://doi.org/10.32942/X20M0T'
+- type: manual
+  authors:
+  - family-names: "Pick"
+    given-names: "Joel L"
+    orcid: "https://orcid.org/0000-0002-6295-3742"
+  - family-names: "Allegue"
+    given-names: "Hassen"
+    orcid: "https://orcid.org/0000-0001-9357-9151"
+  title: 'squidSim: Flexible and Reproducible Structured Simulations'
+  year: '2026'
+  version: 1.0.0
+  url: "https://github.com/squidgroup/squidSim"
