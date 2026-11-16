@@ -68,7 +68,7 @@ index_factors <- function(data_structure, pedigree, phylogeny, cov_str, paramete
 
   }else if(is.null(pedigree) & is.null(phylogeny) & is.null(cov_str)){
 
-    apply(data_structure,2,function(x) as.numeric(factor(x)))
+    do.call(cbind,lapply(as.data.frame(data_structure),function(x) as.numeric(factor(x))))
 
   }else{
 
