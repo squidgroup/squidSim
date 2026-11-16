@@ -36,9 +36,9 @@ message: "If you use this software, please cite it as below."
     given-names: "David F"
     orcid: "https://orcid.org/0000-0001-5163-8096"
   title: "squidSim: a flexible R package for structured and reproducible simulations in Ecology and Evolutionary Biology"
-  journal: 'EcoEvoRxiv'
-  year: '2025'
-  url: 'https://doi.org/10.32942/X20M0T'
+  journal: EcoEvoRxiv
+  year: 2025
+  url: https://doi.org/10.32942/X20M0T
 - type: manual
   authors:
   - family-names: "Pick"
@@ -47,7 +47,7 @@ message: "If you use this software, please cite it as below."
   - family-names: "Allegue"
     given-names: "Hassen"
     orcid: "https://orcid.org/0000-0001-9357-9151"
-  title: 'squidSim: Flexible and Reproducible Structured Simulations'
-  year: '2026'
+  title: "squidSim: Flexible and Reproducible Structured Simulations"
+  year: 2026
   version: 1.0.0
-  url: "https://github.com/squidgroup/squidSim"
+  url: https://github.com/squidgroup/squidSim
