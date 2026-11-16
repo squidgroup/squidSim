@@ -242,7 +242,7 @@ summary.squid <- function(object, ...){
 #' @export
 get_population_data <- function(x,list=FALSE,...){
 
-ds <- if(is.null(x$data_structure)){ NULL }else{ as.data.frame(x$data_structure)}
+  ds <- if(is.null(x$data_structure)){ NULL }else{ as.data.frame(x$data_structure)}
 
   pop_list <- lapply(1:x$n_pop,function(i) as.data.frame(cbind(x$y[[i]],x$predictors[[i]],ds,squid_pop=i)))
   if(list){
