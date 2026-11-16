@@ -29,6 +29,10 @@ generate_internal_structure <- function(data_structure, n, parameters, n_respons
   if(!all(family %in% c("gaussian", "poisson", "binomial"))) stop("Family must be 'gaussian', 'poisson', 'binomial'", call.=FALSE)
   if(!(length(family)==n_response || length(family)==1))  stop("Family must either be length 1 or same length as the number of responses", call.=FALSE)
 
+  if(any(family!="gaussian" & link=="identity")) warning("family is not 'gaussian' but link is 'identity': values outside the family's range give NAs in response variable", call.=FALSE)
+  if(any(family=="binomial" & !link%in%c('logit', 'probit', 'cloglog'))) warning("family is 'binomial' but link is not 'logit', 'probit' or 'cloglog': this may produce undeired behaviour in simulations and values outside the family's range will give NAs in response variable", call.=FALSE)
+  if(any(family=="poisson" & !link%in%c('log', 'sqrt'))) warning("family is 'poisson' but link is not 'log' or 'sqrt': this may produce undesired behaviour in simulations and values outside the family's range will give NAs in simulated response variable", call.=FALSE)
+
 
   if(n_response > 1 & !missing("model")) stop("Currently cannot specify multiple responses and a model formula", call.=FALSE)
 
