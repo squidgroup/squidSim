@@ -94,7 +94,10 @@ sample_missing <- function(pop_data, param, plot=FALSE){
 
 		## put together y and predictors and scale
 		## scaling means that all coefficients are comparable
-		dat <- as.data.frame(apply(cbind(pop_data$y[[i]],pop_data$predictors[[i]]),2,scale) )
+		raw <- cbind(pop_data$y[[i]],pop_data$predictors[[i]])
+		dat <- as.data.frame(apply(raw,2,scale) )
+		## constant columns have no variance to scale by, so are at their mean
+		dat[apply(raw,2,function(x) length(unique(x[!is.na(x)]))==1)] <- 0
 
 		l <- sapply(param, function(x) {
 			y <- eval(parse(text=x),envir = dat)
@@ -290,9 +293,10 @@ get_sample_data <- function(x, sample_set=1, list=FALSE,...){
   if(is.null(x$samples)) stop("x does not contain any samples. Use the sample_type and sample_param arguments in simulate_population", call.=FALSE)
   if(sample_set > length(x$samples[[1]])) stop("sample_set is larger than the number of sample sets in x", call.=FALSE)
 
+  ds <- if(is.null(x$data_structure)){ NULL }else{ as.data.frame(x$data_structure)}
+
   pop_list <- lapply(1:x$n_pop,function(i) {
-  	# data.table::data.table(cbind(x$y[[i]],x$predictors[[i]],x$data_structure,squid_pop=i)[x$samples[[i]][[sample_set]],])
-  	as.data.frame(cbind(x$y[[i]],x$predictors[[i]],x$data_structure,squid_pop=i)[x$samples[[i]][[sample_set]],,drop=FALSE])
+  	as.data.frame(cbind(x$y[[i]],x$predictors[[i]],ds,squid_pop=i)[x$samples[[i]][[sample_set]],,drop=FALSE])
   })
   
   if(list){
