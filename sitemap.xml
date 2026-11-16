@@ -1,51 +1,19 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://squid-group.github.io/squidSim/404.html</loc>
-  </url>
-  <url>
-    <loc>https://squid-group.github.io/squidSim/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://squid-group.github.io/squidSim/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://squid-group.github.io/squidSim/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://squid-group.github.io/squidSim/index.html</loc>
-  </url>
-  <url>
-    <loc>https://squid-group.github.io/squidSim/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://squid-group.github.io/squidSim/reference/get_parameters.html</loc>
-  </url>
-  <url>
-    <loc>https://squid-group.github.io/squidSim/reference/get_population_data.html</loc>
-  </url>
-  <url>
-    <loc>https://squid-group.github.io/squidSim/reference/get_sample_data.html</loc>
-  </url>
-  <url>
-    <loc>https://squid-group.github.io/squidSim/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://squid-group.github.io/squidSim/reference/make_structure.html</loc>
-  </url>
-  <url>
-    <loc>https://squid-group.github.io/squidSim/reference/print.squid.html</loc>
-  </url>
-  <url>
-    <loc>https://squid-group.github.io/squidSim/reference/print.squid_var.html</loc>
-  </url>
-  <url>
-    <loc>https://squid-group.github.io/squidSim/reference/simulate_population.html</loc>
-  </url>
-  <url>
-    <loc>https://squid-group.github.io/squidSim/reference/simulated_variance.html</loc>
-  </url>
-  <url>
-    <loc>https://squid-group.github.io/squidSim/reference/summary.squid.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>http://squidgroup.org/squidSim/404.html</loc></url>
+<url><loc>http://squidgroup.org/squidSim/LICENSE-text.html</loc></url>
+<url><loc>http://squidgroup.org/squidSim/LICENSE.html</loc></url>
+<url><loc>http://squidgroup.org/squidSim/authors.html</loc></url>
+<url><loc>http://squidgroup.org/squidSim/index.html</loc></url>
+<url><loc>http://squidgroup.org/squidSim/news/index.html</loc></url>
+<url><loc>http://squidgroup.org/squidSim/reference/exp2lat.html</loc></url>
+<url><loc>http://squidgroup.org/squidSim/reference/get_parameters.html</loc></url>
+<url><loc>http://squidgroup.org/squidSim/reference/get_population_data.html</loc></url>
+<url><loc>http://squidgroup.org/squidSim/reference/get_sample_data.html</loc></url>
+<url><loc>http://squidgroup.org/squidSim/reference/index.html</loc></url>
+<url><loc>http://squidgroup.org/squidSim/reference/lat2exp.html</loc></url>
+<url><loc>http://squidgroup.org/squidSim/reference/make_structure.html</loc></url>
+<url><loc>http://squidgroup.org/squidSim/reference/print.squid.html</loc></url>
+<url><loc>http://squidgroup.org/squidSim/reference/simulate_population.html</loc></url>
+<url><loc>http://squidgroup.org/squidSim/reference/summary.squid.html</loc></url>
 </urlset>
+

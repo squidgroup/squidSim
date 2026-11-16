@@ -1,9 +1,8 @@
-pandoc: 2.7.3
-pkgdown: 2.0.6
+pandoc: 3.8.3
+pkgdown: 2.2.1
 pkgdown_sha: ~
 articles: {}
-last_built: 2022-10-12T14:38Z
+last_built: 2026-11-16T15:55Z
 urls:
-  reference: https://squid-group.github.io/squidSim/reference
-  article: https://squid-group.github.io/squidSim/articles
-
+  reference: http://squidgroup.org/squidSim/reference
+  article: http://squidgroup.org/squidSim/articles
