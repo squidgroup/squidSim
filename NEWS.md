@@ -48,9 +48,10 @@ squidSim 0.2.6
 - Updating internal error checking
 
 
-squidSim 0.3.0
+squidSim 1.0.0
 ===========
-- This version follows a comprehensive bug and documentation check using Claude Opus 5.5 medium. All bugs found and changes suggested by Claude were checked thoroughly by maintainers, and no automated bug correction was used.
+- Major update preparing for submission to CRAN. Mainly fixing bugs and documentation.
+- This follows a comprehensive bug and documentation check using Claude Opus 5.5 medium. All bugs found and changes suggested by Claude were checked thoroughly by maintainers, and no automated bug correction was used.
 - Without a `seed`, repeated calls to `simulate_population` no longer cycle through a small set of datasets. `simulate_population` now leaves the user's random number stream as it found it
 - `link="sqrt"` now applies the inverse link (squares the linear predictor)
 - Predictors with 0 variance now equal their mean, rather than 0

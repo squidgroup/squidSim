@@ -2,3 +2,23 @@ url: http://squidgroup.org/squidSim/
 template:
   bootstrap: 5
 
+navbar:
+  structure:
+    left:
+      - reference
+      - vignette
+    right:
+      - github
+
+  components:
+    reference:
+      text: "Reference"
+      href: reference/index.html
+
+    github:
+      icon: fa-github
+      href: https://github.com/squidgroup/squidSim
+
+    course-notes:
+      text: "Course Notes"
+      href: https://squidgroup.org/squidSim_vignette/index.html

@@ -1,6 +1,6 @@
 Package: squidSim
 Title: Flexible and Reproducible Structured Simulations
-Version: 0.3.0
+Version: 1.0.0
 Authors@R: c(
     person("Joel"    , "Pick"           , email = "joel.l.pick@gmail.com"             , role = c("aut","cre")),
     person("Hassen"  , "Allegue"        , email = "h.all@disroot.org"                 , role = "aut"))
